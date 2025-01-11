@@ -5,76 +5,126 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum InstitutionType {
+    SCHOOL
+    UNIVERSITY
+    COLLEGE
+    COMPANY
+}
+
+enum AccessType {
+    PUBLIC
+    PRIVATE
+}
+
+enum UserType {
+    EMPLOYEE
+    STUDENT
+    PRESENTATOR
+    PRINCIPAL
+    EXECUTIVE
 }
 
 model Institutions {
-  id           String         @id @default(uuid())
-  name         String         @unique
-  groups       Groups[]
-  presentators Presentators[]
-  subjects     Subjects[]
-  rooms        Rooms[]
-  timeTables   TimeTables[]
+    id           String          @id @default(uuid())
+    name         String          @unique
+    type         InstitutionType
+    access       AccessType
+    color        String
+    website      String
+    groups       Groups[]
+    presentators Presentators[]
+    subjects     Subjects[]
+    rooms        Rooms[]
+    timetables   TimeTables[]
+    users        Users[]
 }
 
 model Groups {
-  id            String       @id @default(uuid())
-  name          String       @unique
-  timeTables    TimeTables[]
-  institution   Institutions @relation(fields: [institutionId], references: [id])
-  institutionId String
+    id            String       @id @default(uuid())
+    name          String       @unique
+    timetables    TimeTables[]
+    institution   Institutions @relation(fields: [institutionId], references: [id])
+    institutionId String
 }
 
 model Presentators {
-  id            String         @id @default(uuid())
-  name          String         @unique
-  appointments  Appointments[]
-  institution   Institutions   @relation(fields: [institutionId], references: [id])
-  institutionId String
+    id            String         @id @default(uuid())
+    name          String         @unique
+    appointments  Appointments[]
+    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    institutionId String
 }
 
 model Subjects {
-  id            String         @id @default(uuid())
-  name          String         @unique
-  appointments  Appointments[]
-  institution   Institutions   @relation(fields: [institutionId], references: [id])
-  institutionId String
+    id            String         @id @default(uuid())
+    name          String         @unique
+    subjectId     String
+    appointments  Appointments[]
+    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    institutionId String
 }
 
 model Rooms {
-  id            String         @id @default(uuid())
-  name          String         @unique
-  isAvailable   Boolean
-  appointments  Appointments[]
-  institution   Institutions   @relation(fields: [institutionId], references: [id])
-  institutionId String
+    id            String         @id @default(uuid())
+    name          String         @unique
+    isAvailable   Boolean
+    appointments  Appointments[]
+    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    institutionId String
 }
 
 model TimeTables {
-  id            String         @id @default(uuid())
-  group         Groups         @relation(fields: [groupId], references: [id])
-  groupId       String
-  appointments  Appointments[]
-  institution   Institutions   @relation(fields: [institutionId], references: [id])
-  institutionId String
+    id            String         @id @default(uuid())
+    group         Groups         @relation(fields: [groupId], references: [id])
+    groupId       String
+    appointments  Appointments[]
+    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    institutionId String
 }
 
 model Appointments {
-  id            String       @id @default(uuid())
-  subject       Subjects     @relation(fields: [subjectId], references: [id])
-  subjectId     String
-  presentator   Presentators @relation(fields: [presentatorId], references: [id])
-  presentatorId String
-  room          Rooms        @relation(fields: [roomId], references: [id])
-  roomId        String
-  dayOfWeek     String
-  start         DateTime
-  end           DateTime
-  TimeTables    TimeTables[]
+    id          String         @id @default(uuid())
+    subject     Subjects?      @relation(fields: [subjectId], references: [id])
+    subjectId   String?
+    presentator Presentators[]
+    rooms       Rooms[]
+    dayOfWeek   String
+    start       DateTime
+    end         DateTime
+    isCancelled Boolean
+    timetables  TimeTables[]
+}
+
+model Users {
+    id          String         @id @default(uuid())
+    email       String         @unique
+    password    String
+    type        UserType
+    institution Institutions[]
+    tokens      Tokens[]
+}
+
+model Admins {
+    id       String   @id @default(uuid())
+    email    String   @unique
+    password String
+    Tokens   Tokens[]
+}
+
+model Tokens {
+    id      String  @id @default(uuid())
+    token   String
+    user    Users?  @relation(fields: [userId], references: [id])
+    userId  String?
+    admin   Admins? @relation(fields: [adminId], references: [id])
+    adminId String?
 }
