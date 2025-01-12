@@ -10,25 +10,21 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  findAll() {
+  async findAllUsers() {
     return `This action returns all users`;
   }
 
-  findOne(id: string, select?: {
-    name?: boolean,
+  async findOneUser(id: string, select?: {
+    id?: boolean,
     email?: boolean,
     role?: boolean,
-    access?: boolean,
     institutions?: boolean,
-    groups?: boolean,
-    rooms?: boolean,
-    subjects?: boolean,
-    timetables?: boolean,
-  }
-  ) {
-    return this.prisma.users.findUniqueOrThrow({
+    tokens?: boolean,
+  }) {
+    return await this.prisma.users.findUniqueOrThrow({
       select: {
         ...select,
+        role: true,
       },
       where: {
         id,

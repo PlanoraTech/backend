@@ -1,26 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
+import { InstitutionsService } from 'src/institutions/institutions.service';
 
 @Injectable()
 export class SubjectsService {
+  constructor(private institutionsService: InstitutionsService) {}
   create(createSubjectDto: CreateSubjectDto) {
     return 'This action adds a new subject';
   }
 
-  findAll() {
-    return `This action returns all subjects`;
+  async findAll(institutionsId: string) {
+    return (await this.institutionsService.findOne(institutionsId, {
+      subjects: true,
+    })).subjects;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} subject`;
+  async findOne(institutionsId: string, id: string) {
+    return (await this.institutionsService.findOne(institutionsId, {
+      subjects: true,
+    })).subjects.find((subject) => subject.id === id);
   }
 
-  update(id: number, updateSubjectDto: UpdateSubjectDto) {
+  update(id: string, updateSubjectDto: UpdateSubjectDto) {
     return `This action updates a #${id} subject`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} subject`;
   }
 }

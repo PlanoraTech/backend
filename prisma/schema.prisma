@@ -25,7 +25,7 @@ enum AccessType {
     PRIVATE
 }
 
-enum UserType {
+enum Roles {
     EMPLOYEE
     STUDENT
     PRESENTATOR
@@ -92,25 +92,25 @@ model TimeTables {
 }
 
 model Appointments {
-    id          String         @id @default(uuid())
-    subject     Subjects?      @relation(fields: [subjectId], references: [id])
-    subjectId   String?
-    presentator Presentators[]
-    rooms       Rooms[]
-    dayOfWeek   String
-    start       DateTime
-    end         DateTime
-    isCancelled Boolean
-    timetables  TimeTables[]
+    id           String         @id @default(uuid())
+    subject      Subjects?      @relation(fields: [subjectId], references: [id])
+    subjectId    String?
+    presentators Presentators[]
+    rooms        Rooms[]
+    dayOfWeek    String
+    start        DateTime
+    end          DateTime
+    isCancelled  Boolean
+    timetables   TimeTables[]
 }
 
 model Users {
-    id          String         @id @default(uuid())
-    email       String         @unique
-    password    String
-    type        UserType
-    institution Institutions[]
-    tokens      Tokens[]
+    id           String         @id @default(uuid())
+    email        String         @unique
+    password     String
+    role         Roles
+    institutions Institutions[]
+    tokens       Tokens[]
 }
 
 model Admins {

@@ -23,19 +23,35 @@ export class InstitutionsService {
 	async findOne(id: string, select?: {
 		name?: boolean,
 		type?: boolean,
+		access?: boolean,
 		color?: boolean,
 		website?: boolean,
 		groups?: boolean,
-		presentators?: boolean,
-		rooms?: boolean,
+		presentators?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				appointments?: boolean,
+				institution?: boolean,
+			},
+		},
 		subjects?: boolean,
-		timetables?: boolean,
+		rooms?: boolean,
+		timetables?: {
+			select: {
+				id?: boolean,
+				group?: boolean,
+				appointments?: boolean,
+				institution?: boolean,
+			},
+		},
 		users?: boolean,
 	}) {
 		let institution = await this.prisma.institutions.findUniqueOrThrow({
 			select: {
-				...select,
+				id: true,
 				access: true,
+				...select,
 			},
 			where: {
 				id,

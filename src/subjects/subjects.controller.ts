@@ -13,22 +13,22 @@ export class SubjectsController {
   }
 
   @Get()
-  findAll() {
-    return this.subjectsService.findAll();
+  findAll(@Param('institutionsId') institutionsId: string) {
+    return this.subjectsService.findAll(institutionsId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subjectsService.findOne(+id);
+  findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+    return this.subjectsService.findOne(institutionsId, id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto) {
-    return this.subjectsService.update(+id, updateSubjectDto);
+    return this.subjectsService.update(id, updateSubjectDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.subjectsService.remove(+id);
+    return this.subjectsService.remove(id);
   }
 }

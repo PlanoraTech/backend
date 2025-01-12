@@ -56,6 +56,10 @@ import { RegisterModule } from './auth/register/register.module';
             ]
           },
           {
+            path: ':institutionsId/users',
+            module: UsersModule
+          },
+          {
             path: ':institutionsId/login',
             module: LoginModule
           },

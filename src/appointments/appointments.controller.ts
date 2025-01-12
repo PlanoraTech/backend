@@ -13,13 +13,13 @@ export class AppointmentsController {
   }
 
   @Get()
-  findAll() {
-    return this.appointmentsService.findAll();
+  findAll(@Param('institutionsId') institutionsId: string) {
+    return this.appointmentsService.findAll(institutionsId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.appointmentsService.findOne(id);
+  findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+    return this.appointmentsService.findOne(institutionsId, id);
   }
 
   @Patch(':id')

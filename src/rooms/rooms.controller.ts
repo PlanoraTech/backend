@@ -13,13 +13,13 @@ export class RoomsController {
   }
 
   @Get()
-  findAll() {
-    return this.roomsService.findAll();
+  findAll(@Param('institutionsId') institutionsId: string) {
+    return this.roomsService.findAll(institutionsId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomsService.findOne(+id);
+  findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+    return this.roomsService.findOne(institutionsId, id);
   }
 
   @Patch(':id')

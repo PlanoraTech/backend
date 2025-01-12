@@ -13,13 +13,13 @@ export class PresentatorsController {
   }
 
   @Get()
-  findAll() {
-    return this.presentatorsService.findAll();
+  findAll(@Param('institutionsId') institutionsId: string) {
+    return this.presentatorsService.findAll(institutionsId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.presentatorsService.findOne(+id);
+  findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+    return this.presentatorsService.findOne(institutionsId, id);
   }
 
   @Patch(':id')
