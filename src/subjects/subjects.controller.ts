@@ -14,12 +14,18 @@ export class SubjectsController {
 
   @Get()
   findAll(@Param('institutionsId') institutionsId: string) {
-    return this.subjectsService.findAll(institutionsId);
+    return this.subjectsService.findAll(institutionsId, {
+      name: true,
+      subjectId: true,
+    });
   }
 
   @Get(':id')
   findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-    return this.subjectsService.findOne(institutionsId, id);
+    return this.subjectsService.findOne(institutionsId, id, {
+      name: true,
+      subjectId: true,
+    });
   }
 
   @Patch(':id')

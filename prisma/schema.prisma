@@ -25,6 +25,16 @@ enum AccessType {
     PRIVATE
 }
 
+enum DayOfWeek {
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
+    SATURDAY
+    SUNDAY
+}
+
 enum Roles {
     EMPLOYEE
     STUDENT
@@ -62,6 +72,7 @@ model Presentators {
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
+    user          Users?
 }
 
 model Subjects {
@@ -84,6 +95,7 @@ model Rooms {
 
 model TimeTables {
     id            String         @id @default(uuid())
+    name          String         
     groups        Groups[]
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
@@ -96,7 +108,7 @@ model Appointments {
     subjectId    String?
     presentators Presentators[]
     rooms        Rooms[]
-    dayOfWeek    String
+    dayOfWeek    DayOfWeek
     start        DateTime
     end          DateTime
     isCancelled  Boolean
@@ -104,12 +116,14 @@ model Appointments {
 }
 
 model Users {
-    id           String         @id @default(uuid())
-    email        String         @unique
-    password     String
-    role         Roles
-    institutions Institutions[]
-    tokens       Tokens[]
+    id            String         @id @default(uuid())
+    email         String         @unique
+    password      String
+    role          Roles
+    institutions  Institutions[]
+    presentator   Presentators?  @relation(fields: [presentatorId], references: [id])
+    presentatorId String?        @unique
+    tokens        Tokens[]
 }
 
 model Admins {

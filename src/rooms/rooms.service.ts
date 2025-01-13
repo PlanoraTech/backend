@@ -5,20 +5,40 @@ import { InstitutionsService } from 'src/institutions/institutions.service';
 
 @Injectable()
 export class RoomsService {
-  constructor(private institutionsService: InstitutionsService) {}
+  constructor(private institutionsService: InstitutionsService) { }
   create(createRoomDto: CreateRoomDto) {
     return 'This action adds a new room';
   }
 
-  async findAll(institutionsId: string) {
+  async findAll(institutionsId: string, select?: {
+    name?: boolean,
+    isAvailable?: boolean,
+    appointments?: boolean,
+    institution?: boolean,
+  }) {
     return (await this.institutionsService.findOne(institutionsId, {
-      rooms: true,
+      rooms: {
+        select: {
+          id: true,
+          ...select,
+        },
+      },
     })).rooms;
   }
 
-  async findOne(institutionsId: string, id: string) {
+  async findOne(institutionsId: string, id: string, select?: {
+    name?: boolean,
+    isAvailable?: boolean,
+    appointments?: boolean,
+    institution?: boolean,
+  }) {
     return (await this.institutionsService.findOne(institutionsId, {
-      rooms: true,
+      rooms: {
+        select: {
+          id: true,
+          ...select,
+        },
+      },
     })).rooms.find((room) => room.id === id);
   }
 

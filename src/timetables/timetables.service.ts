@@ -5,20 +5,33 @@ import { InstitutionsService } from 'src/institutions/institutions.service';
 
 @Injectable()
 export class TimeTablesService {
-  constructor(private institutionsService: InstitutionsService) {}
+  constructor(private institutionsService: InstitutionsService) { }
   create(createTimetableDto: CreateTimeTableDto) {
     return 'This action adds a new timetable';
   }
 
   async findAll(institutionsId: string, select?: {
-    id?: boolean,
-    group?: boolean,
-    appointments?: boolean,
+    name?: boolean,
+    groups?: boolean,
+    appointments?: {
+      select: {
+        id?: boolean,
+        subject?: boolean,
+        presentators?: boolean,
+        rooms?: boolean,
+        dayOfWeek?: boolean,
+        start?: boolean,
+        end?: boolean,
+        isCancelled?: boolean,
+        timetables?: boolean,
+      },
+    },
     institution?: boolean,
   }) {
     return (await this.institutionsService.findOne(institutionsId, {
       timetables: {
         select: {
+          id: true,
           ...select,
         },
       },
@@ -26,8 +39,21 @@ export class TimeTablesService {
   }
 
   async findOne(institutionsId: string, id: string, select?: {
-    group?: boolean,
-    appointments?: boolean,
+    name?: boolean,
+    groups?: boolean,
+    appointments?: {
+      select: {
+        id?: boolean,
+        subject?: boolean,
+        presentators?: boolean,
+        rooms?: boolean,
+        dayOfWeek?: boolean,
+        start?: boolean,
+        end?: boolean,
+        isCancelled?: boolean,
+        timetables?: boolean,
+      },
+    },
     institution?: boolean,
   }) {
     return (await this.institutionsService.findOne(institutionsId, {

@@ -11,7 +11,6 @@ export class PresentatorsService {
   }
 
   async findAll(institutionsId: string, select?: {
-    id?: boolean,
     name?: boolean,
     appointments?: boolean,
     institution?: boolean,
@@ -19,6 +18,7 @@ export class PresentatorsService {
     return (await this.institutionsService.findOne(institutionsId, {
       presentators: {
         select: {
+          id: true,
           ...select,
         }
       },

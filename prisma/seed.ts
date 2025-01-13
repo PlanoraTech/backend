@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function seed() {
-	for (let i = 0; i < 100; i++) {
+	for (let i = 0; i < 30; i++) {
 		await prisma.institutions.create({
 			data: {
 				name: faker.company.name(),
@@ -16,11 +16,10 @@ async function seed() {
 		});
 	}
 
-	for (let i = 0; i < 5; i++) {
-		let classes = ["13A", "13B", "13C", "13D", "13E"];
+	for (let i = 0; i < 100; i++) {
 		await prisma.groups.create({
 			data: {
-				name: classes[i],
+				name: faker.lorem.word() + i,
 				institution: {
 					connect: {
 						id: await prisma.institutions.findMany({
@@ -104,6 +103,7 @@ async function seed() {
 	for (let i = 0; i < 100; i++) {
 		await prisma.timeTables.create({
 			data: {
+				name: faker.lorem.word() + i,
 				groups: {
 					connect: {
 						id: await prisma.groups.findMany({

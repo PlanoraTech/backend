@@ -14,7 +14,12 @@ export class InstitutionsController {
 
   @Get()
   findAll() {
-    return this.institutionsService.findAll();
+    return this.institutionsService.findAll({
+      name: true,
+      type: true,
+      color: true,
+      website: true,
+    });
   }
 
   @Get(':id')

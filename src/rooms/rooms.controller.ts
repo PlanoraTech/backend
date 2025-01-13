@@ -14,12 +14,18 @@ export class RoomsController {
 
   @Get()
   findAll(@Param('institutionsId') institutionsId: string) {
-    return this.roomsService.findAll(institutionsId);
+    return this.roomsService.findAll(institutionsId, {
+      name: true,
+      isAvailable: true,
+    });
   }
 
   @Get(':id')
   findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-    return this.roomsService.findOne(institutionsId, id);
+    return this.roomsService.findOne(institutionsId, id, {
+      name: true,
+      isAvailable: true,
+    });
   }
 
   @Patch(':id')

@@ -10,14 +10,40 @@ export class AppointmentsService {
     return 'This action adds a new appointment';
   }
 
-  findAll(institutionsId: string) {
-    return 
+  async findAll(institutionsId: string, timetablesId: string) {
+    return (await this.timetablesService.findOne(institutionsId, timetablesId, {
+      appointments: {
+        select: {
+          id: true,
+          subject: true,
+          presentators: true,
+          rooms: true,
+          dayOfWeek: true,
+          start: true,
+          end: true,
+          isCancelled: true,
+          timetables: true,
+        },
+      },
+    })).appointments 
   }
 
-  async findOne(institutionsId: string, id: string) {
-    return await this.timetablesService.findOne(institutionsId, id, {
-      appointments: true,
-    });
+  async findOne(institutionsId: string, timetablesId: string, id: string) {
+    return (await this.timetablesService.findOne(institutionsId, timetablesId, {
+      appointments: {
+        select: {
+          id: true,
+          subject: true,
+          presentators: true,
+          rooms: true,
+          dayOfWeek: true,
+          start: true,
+          end: true,
+          isCancelled: true,
+          timetables: true,
+        },
+      },
+    })).appointments.find((appointment) => appointment.id === id);
   }
 
   update(id: string, updateAppointmentDto: UpdateAppointmentDto) {

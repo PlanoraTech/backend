@@ -5,20 +5,40 @@ import { InstitutionsService } from 'src/institutions/institutions.service';
 
 @Injectable()
 export class SubjectsService {
-  constructor(private institutionsService: InstitutionsService) {}
+  constructor(private institutionsService: InstitutionsService) { }
   create(createSubjectDto: CreateSubjectDto) {
     return 'This action adds a new subject';
   }
 
-  async findAll(institutionsId: string) {
+  async findAll(institutionsId: string, select?: {
+    name?: boolean,
+    subjectId?: boolean,
+    appointments?: boolean,
+    institution?: boolean,
+  }) {
     return (await this.institutionsService.findOne(institutionsId, {
-      subjects: true,
+      subjects: {
+        select: {
+          id: true,
+          ...select,
+        }
+      },
     })).subjects;
   }
 
-  async findOne(institutionsId: string, id: string) {
+  async findOne(institutionsId: string, id: string, select?: {
+    name?: boolean,
+    subjectId?: boolean,
+    appointments?: boolean,
+    institution?: boolean,
+  }) {
     return (await this.institutionsService.findOne(institutionsId, {
-      subjects: true,
+      subjects: {
+        select: {
+          id: true,
+          ...select,
+        }
+      },
     })).subjects.find((subject) => subject.id === id);
   }
 

@@ -10,23 +10,19 @@ export class InstitutionsService {
 		return 'This action adds a new institution';
 	}
 
-	async findAll() {
-		return this.prisma.institutions.findMany({
-			select: {
-				id: true,
-				name: true,
-				type: true,
-			},
-		});
-	}
-
-	async findOne(id: string, select?: {
+	async findAll(select?: {
 		name?: boolean,
 		type?: boolean,
-		access?: boolean,
 		color?: boolean,
 		website?: boolean,
-		groups?: boolean,
+		groups?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				timetables?: boolean,
+				institution?: boolean,
+			},
+		},
 		presentators?: {
 			select: {
 				id?: boolean,
@@ -35,17 +31,132 @@ export class InstitutionsService {
 				institution?: boolean,
 			},
 		},
-		subjects?: boolean,
-		rooms?: boolean,
-		timetables?: {
+		subjects?: {
 			select: {
 				id?: boolean,
-				group?: boolean,
+				name?: boolean,
+				subjectId?: boolean,
+				appointments?: boolean,
+				institution?: boolean
+			},
+		},
+		rooms?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				isAvailable?: boolean,
 				appointments?: boolean,
 				institution?: boolean,
 			},
 		},
-		users?: boolean,
+		timetables?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				groups?: boolean,
+				appointments?: {
+					select: {
+						id?: boolean,
+						subject?: boolean,
+						presentators?: boolean,
+						rooms?: boolean,
+						dayOfWeek?: boolean,
+						start?: boolean,
+						end?: boolean,
+						isCancelled?: boolean,
+						timetables?: boolean,
+					},
+				},
+				institution?: boolean,
+			},
+		},
+		users?: {
+			select: {
+				id?: boolean,
+				email?: boolean,
+				role?: boolean,
+				appointments?: boolean,
+				institution?: boolean
+			},
+		},
+	}) {
+		return this.prisma.institutions.findMany({
+			select: {
+				id: true,
+				...select,
+			},
+		});
+	}
+
+	async findOne(id: string, select?: {
+		name?: boolean,
+		type?: boolean,
+		color?: boolean,
+		website?: boolean,
+		groups?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				timetables?: boolean,
+				institution?: boolean,
+			},
+		},
+		presentators?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				appointments?: boolean,
+				institution?: boolean,
+			},
+		},
+		subjects?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				subjectId?: boolean,
+				appointments?: boolean,
+				institution?: boolean
+			},
+		},
+		rooms?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				isAvailable?: boolean,
+				appointments?: boolean,
+				institution?: boolean,
+			},
+		},
+		timetables?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				groups?: boolean,
+				appointments?: {
+					select: {
+						id?: boolean,
+						subject?: boolean,
+						presentators?: boolean,
+						rooms?: boolean,
+						dayOfWeek?: boolean,
+						start?: boolean,
+						end?: boolean,
+						isCancelled?: boolean,
+						timetables?: boolean,
+					},
+				},
+				institution?: boolean,
+			},
+		},
+		users?: {
+			select: {
+				id?: boolean,
+				email?: boolean,
+				role?: boolean,
+				appointments?: boolean,
+				institution?: boolean
+			},
+		},
 	}) {
 		let institution = await this.prisma.institutions.findUniqueOrThrow({
 			select: {
@@ -61,7 +172,7 @@ export class InstitutionsService {
 			return institution;
 		}
 		else {
-			throw new ForbiddenException("You do not have access to this institution");
+			throw new ForbiddenException("You have to log in to see this institution");
 		}
 	}
 

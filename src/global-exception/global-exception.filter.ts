@@ -24,7 +24,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
 		console.log(exception);
 
-		if (typeof responseMessage.getStatus !== 'function')
+		if (typeof responseMessage.getStatus !== 'function' || typeof responseMessage.message !== 'string')
 		{
 			responseMessage = new InternalServerErrorException;
 		}

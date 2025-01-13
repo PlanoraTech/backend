@@ -31,7 +31,6 @@ import { RegisterModule } from './auth/register/register.module';
           {
             path: ':institutionsId/groups',
             module: GroupsModule
-            
           },
           {
             path: ':institutionsId/presentators',
@@ -59,16 +58,16 @@ import { RegisterModule } from './auth/register/register.module';
             path: ':institutionsId/users',
             module: UsersModule
           },
-          {
-            path: ':institutionsId/login',
-            module: LoginModule
-          },
-          {
-            path: ':institutionsId/register',
-            module: RegisterModule
-          },
         ]
-      }
+      },
+      {
+        path: 'login',
+        module: LoginModule
+      },
+      {
+        path: 'register',
+        module: RegisterModule
+      },
     ]),
   ],
 })

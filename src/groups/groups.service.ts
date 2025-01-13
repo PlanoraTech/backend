@@ -5,20 +5,38 @@ import { InstitutionsService } from 'src/institutions/institutions.service';
 
 @Injectable()
 export class GroupsService {
-  constructor(private institutionsService: InstitutionsService) {}
+  constructor(private institutionsService: InstitutionsService) { }
   create(createGroupDto: CreateGroupDto) {
-    
+
   }
 
-  async findAll(institutionsId: string) {
+  async findAll(institutionsId: string, select?: {
+    name?: boolean,
+    timetables?: boolean,
+    institution?: boolean,
+  }) {
     return (await this.institutionsService.findOne(institutionsId, {
-      groups: true,
+      groups: {
+        select: {
+          id: true,
+          ...select,
+        },
+      },
     })).groups;
   }
 
-  async findOne(institutionsId: string, id: string) {
+  async findOne(institutionsId: string, id: string, select?: {
+    name?: boolean,
+    timetables?: boolean,
+    institution?: boolean,
+  }) {
     return (await this.institutionsService.findOne(institutionsId, {
-      groups: true,
+      groups: {
+        select: {
+          id: true,
+          ...select,
+        },
+      },
     })).groups.find((group) => group.id === id);
   }
 

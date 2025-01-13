@@ -14,12 +14,16 @@ export class GroupsController {
 
   @Get()
   findAll(@Param('institutionsId') institutionsId: string) {
-    return this.groupsService.findAll(institutionsId);
+    return this.groupsService.findAll(institutionsId, {
+      name: true,
+    });
   }
 
   @Get(':id')
   findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-    return this.groupsService.findOne(institutionsId, id);
+    return this.groupsService.findOne(institutionsId, id, {
+      name: true,
+    });
   }
 
   @Patch(':id')
