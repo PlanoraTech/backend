@@ -84,8 +84,7 @@ model Rooms {
 
 model TimeTables {
     id            String         @id @default(uuid())
-    group         Groups         @relation(fields: [groupId], references: [id])
-    groupId       String
+    groups        Groups[]
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String

@@ -17,9 +17,10 @@ async function seed() {
 	}
 
 	for (let i = 0; i < 5; i++) {
+		let classes = ["13A", "13B", "13C", "13D", "13E"];
 		await prisma.groups.create({
 			data: {
-				name: faker.helpers.arrayElements(["13A", "13B", "13C", "13D", "13E"], 1)[0],
+				name: classes[i],
 				institution: {
 					connect: {
 						id: await prisma.institutions.findMany({
@@ -83,7 +84,7 @@ async function seed() {
 	for (let i = 0; i < 100; i++) {
 		await prisma.rooms.create({
 			data: {
-				name: faker.commerce.department(),
+				name: faker.commerce.department() + i,
 				isAvailable: faker.datatype.boolean(),
 				institution: {
 					connect: {
@@ -103,7 +104,7 @@ async function seed() {
 	for (let i = 0; i < 100; i++) {
 		await prisma.timeTables.create({
 			data: {
-				group: {
+				groups: {
 					connect: {
 						id: await prisma.groups.findMany({
 							select: {
