@@ -16,6 +16,27 @@ export class GroupsController {
   findAll(@Param('institutionsId') institutionsId: string) {
     return this.groupsService.findAll(institutionsId, {
       name: true,
+      timetables: {
+        select: {
+          id: true,
+          name: true,
+          groups: true,
+          appointments: {
+            select: {
+              id: true,
+              subject: true,
+              presentators: true,
+              rooms: true,
+              dayOfWeek: true,
+              start: true,
+              end: true,
+              isCancelled: true,
+              timetables: true,
+            },
+          },
+          institution: true,
+        },
+      }
     });
   }
 

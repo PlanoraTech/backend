@@ -17,6 +17,7 @@ export class InstitutionsController {
     return this.institutionsService.findAll({
       name: true,
       type: true,
+      access: true,
       color: true,
       website: true,
     });

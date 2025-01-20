@@ -1,17 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { TimeTablesService } from 'src/timetables/timetables.service';
+import { IAppointmentsService } from './interfaces/IAppointmentsService';
+import { AppointmentsDataService } from './appointmentsdata.service';
 
 @Injectable()
 export class AppointmentsService {
-  constructor(private readonly timetablesService: TimeTablesService) {}
+  constructor(@Inject(AppointmentsDataService) private readonly appointmentsService: IAppointmentsService) {}
   create(createAppointmentDto: CreateAppointmentDto) {
     return 'This action adds a new appointment';
   }
 
   async findAll(institutionsId: string, timetablesId: string) {
-    return (await this.timetablesService.findOne(institutionsId, timetablesId, {
+    return (await this.appointmentsService.findOne(institutionsId, timetablesId, {
       appointments: {
         select: {
           id: true,
@@ -29,7 +30,7 @@ export class AppointmentsService {
   }
 
   async findOne(institutionsId: string, timetablesId: string, id: string) {
-    return (await this.timetablesService.findOne(institutionsId, timetablesId, {
+    return (await this.appointmentsService.findOne(institutionsId, timetablesId, {
       appointments: {
         select: {
           id: true,

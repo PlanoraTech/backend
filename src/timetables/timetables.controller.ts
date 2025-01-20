@@ -13,18 +13,16 @@ export class TimeTablesController {
   }
 
   @Get()
-  findAll(@Param('institutionsId') institutionsId: string) {
-    return this.timetablesService.findAll(institutionsId, {
+  findAll(@Param('institutionsId') institutionsId: string, @Param('groupsId') groupsId?: string) {
+    return this.timetablesService.findAll(institutionsId, groupsId, {
       name: true,
-      groups: true,
     });
   }
 
   @Get(':id')
-  findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-    return this.timetablesService.findOne(institutionsId, id, {
+  findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string, @Param('groupsId') groupsId?: string) {
+    return this.timetablesService.findOne(institutionsId, id, groupsId, {
       name: true,
-      groups: true,
     });
   }
 

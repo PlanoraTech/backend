@@ -1,22 +1,6 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateInstitutionDto } from './dto/create-institution.dto';
-import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { PrismaClient } from '@prisma/client';
-
-@Injectable()
-export class InstitutionsService {
-	constructor(private prisma: PrismaClient) { }
-	create(createInstitutionDto: CreateInstitutionDto) {
-		return 'This action adds a new institution';
-	}
-
-	async findAll(select?: {
-		name?: boolean,
-		type?: boolean,
-		access?: boolean,
-		color?: boolean,
-		website?: boolean,
-		groups?: {
+export interface IService {
+  findAll(institutionsId: string, select?: {
+    groups?: {
 			select: {
 				id?: boolean,
 				name?: boolean,
@@ -100,21 +84,9 @@ export class InstitutionsService {
 				institution?: boolean
 			},
 		},
-	}) {
-		return this.prisma.institutions.findMany({
-			select: {
-				id: true,
-				...select,
-			},
-		});
-	}
-
-	async findOne(id: string, select?: {
-		name?: boolean,
-		type?: boolean,
-		color?: boolean,
-		website?: boolean,
-		groups?: {
+  });
+  findOne(institutionsId: string, id: string, select?: {
+    groups?: {
 			select: {
 				id?: boolean,
 				name?: boolean,
@@ -198,30 +170,5 @@ export class InstitutionsService {
 				institution?: boolean
 			},
 		},
-	}) {
-		let institution = await this.prisma.institutions.findUniqueOrThrow({
-			select: {
-				id: true,
-				access: true,
-				...select,
-			},
-			where: {
-				id,
-			},
-		});
-		if (institution.access != "PRIVATE") {
-			return institution;
-		}
-		else {
-			throw new ForbiddenException("You have to log in to see this institution");
-		}
-	}
-
-	update(id: string, updateInstitutionDto: UpdateInstitutionDto) {
-		return `This action updates a #${id} institution`;
-	}
-
-	remove(id: string) {
-		return `This action removes a #${id} institution`;
-	}
+  });
 }

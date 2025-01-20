@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { InstitutionsModule } from './institutions/institutions.module';
 import { RouterModule } from '@nestjs/core';
-import { AppointmentsModule } from './appointments/appointments.module';
 import { GroupsModule } from './groups/groups.module';
 import { PresentatorsModule } from './presentators/presentators.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { SubjectsModule } from './subjects/subjects.module';
-import { TimeTablesModule } from './timetables/timetables.module';
 import { UsersModule } from './users/users.module';
 import { LoginModule } from './auth/login/login.module';
 import { RegisterModule } from './auth/register/register.module';
@@ -18,8 +16,6 @@ import { RegisterModule } from './auth/register/register.module';
     PresentatorsModule,
     SubjectsModule,
     RoomsModule,
-    TimeTablesModule,
-    AppointmentsModule,
     UsersModule,
     LoginModule,
     RegisterModule,
@@ -30,45 +26,49 @@ import { RegisterModule } from './auth/register/register.module';
         children: [
           {
             path: ':institutionsId/groups',
-            module: GroupsModule
+            module: GroupsModule,
           },
+          /*
           {
             path: ':institutionsId/presentators',
-            module: PresentatorsModule
+            module: PresentatorsModule,
+            children: [
+              {
+                path: ':presentatorsId/appointments',
+                module: AppointmentsModule.forRoot(AppointmentsContext.PRESENTATORS).module,
+              },
+            ]
           },
+          */
           {
             path: ':institutionsId/subjects',
             module: SubjectsModule
           },
+          /*
           {
             path: ':institutionsId/rooms',
-            module: RoomsModule
-          },
-          {
-            path: ':institutionsId/timetables',
-            module: TimeTablesModule,
+            module: RoomsModule,
             children: [
               {
-                path: ':timetablesId/appointments',
-                module: AppointmentsModule,
+                path: ':roomsId/appointments',
+                module: AppointmentsModule.forRoot(AppointmentsContext.ROOMS).module,
+                children: [
+                  {
+                    path: ':appointmentsId/presentators',
+                    module: PresentatorsModule,
+                  },
+                ]
               },
             ]
           },
+          */
           {
             path: ':institutionsId/users',
             module: UsersModule
           },
-        ]
-      },
-      {
-        path: 'login',
-        module: LoginModule
-      },
-      {
-        path: 'register',
-        module: RegisterModule
+        ],
       },
     ]),
   ],
 })
-export class AppModule { }
+export class AppModule {}

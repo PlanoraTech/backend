@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
-import { InstitutionsService } from 'src/institutions/institutions.service';
+import { IService } from 'src/interfaces/IService';
+import { TimeTablesDataService } from './timetablesdata.service';
 
 @Injectable()
 export class TimeTablesService {
-  constructor(private institutionsService: InstitutionsService) { }
+  constructor(@Inject(TimeTablesDataService) private readonly dataService: IService) { }
   create(createTimetableDto: CreateTimeTableDto) {
     return 'This action adds a new timetable';
   }
 
-  async findAll(institutionsId: string, select?: {
+  async findAll(institutionsId: string, groupsId?: string, select?: {
     name?: boolean,
     groups?: boolean,
     appointments?: {
@@ -26,9 +27,8 @@ export class TimeTablesService {
         timetables?: boolean,
       },
     },
-    institution?: boolean,
   }) {
-    return (await this.institutionsService.findOne(institutionsId, {
+    return (await this.dataService.findOne(institutionsId, groupsId, {
       timetables: {
         select: {
           id: true,
@@ -38,7 +38,7 @@ export class TimeTablesService {
     })).timetables;
   }
 
-  async findOne(institutionsId: string, id: string, select?: {
+  async findOne(institutionsId: string, id: string, groupsId?: string, select?: {
     name?: boolean,
     groups?: boolean,
     appointments?: {
@@ -56,7 +56,7 @@ export class TimeTablesService {
     },
     institution?: boolean,
   }) {
-    return (await this.institutionsService.findOne(institutionsId, {
+    return (await this.dataService.findOne(institutionsId, groupsId, {
       timetables: {
         select: {
           id: true,
