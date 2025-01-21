@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { InstitutionsModule } from './institutions/institutions.module';
+import { InstitutionsModule } from './endpoints/institutions/institutions.module';
 import { RouterModule } from '@nestjs/core';
-import { AppointmentsModule } from './appointments/appointments.module';
-import { GroupsModule } from './groups/groups.module';
-import { PresentatorsModule } from './presentators/presentators.module';
-import { RoomsModule } from './rooms/rooms.module';
-import { SubjectsModule } from './subjects/subjects.module';
-import { TimeTablesModule } from './timetables/timetables.module';
-import { UsersModule } from './users/users.module';
-import { LoginModule } from './auth/login/login.module';
-import { RegisterModule } from './auth/register/register.module';
+import { AppointmentsModule } from './endpoints/appointments/appointments.module';
+import { GroupsModule } from './endpoints/groups/groups.module';
+import { PresentatorsModule } from './endpoints/presentators/presentators.module';
+import { RoomsModule } from './endpoints/rooms/rooms.module';
+import { SubjectsModule } from './endpoints/subjects/subjects.module';
+import { TimeTablesModule } from './endpoints/timetables/timetables.module';
+import { UsersModule } from './endpoints/users/users.module';
+import { LoginModule } from './endpoints/auth/login/login.module';
+import { RegisterModule } from './endpoints/auth/register/register.module';
 
 @Module({
   imports: [
