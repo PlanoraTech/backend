@@ -2,11 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { IAppointmentsService } from './interfaces/IAppointmentsService';
-import { AppointmentsDataService } from './appointmentsdata.service';
 
 @Injectable()
 export class AppointmentsService {
-  constructor(@Inject(AppointmentsDataService) private readonly appointmentsService: IAppointmentsService) {}
+  constructor(@Inject('AppointmentsDataService') private readonly appointmentsService: IAppointmentsService) {}
   create(createAppointmentDto: CreateAppointmentDto) {
     return 'This action adds a new appointment';
   }

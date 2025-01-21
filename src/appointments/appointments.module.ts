@@ -7,8 +7,6 @@ import { PresentatorsService } from 'src/presentators/presentators.service';
 import { RoomsService } from 'src/rooms/rooms.service';
 import { TimeTablesService } from 'src/timetables/timetables.service';
 import { TimeTablesContext, TimeTablesModule } from 'src/timetables/timetables.module';
-import { TimeTablesDataService } from 'src/timetables/timetablesdata.service';
-import { AppointmentsDataService } from './appointmentsdata.service';
 
 export enum AppointmentsContext {
   TIMETABLES,
@@ -21,22 +19,27 @@ export class AppointmentsModule {
   static register(context: AppointmentsContext, timetablesContext?: TimeTablesContext): DynamicModule {
     function AppointmentsServiceContext(context: AppointmentsContext) {
       switch (context) {
-        case AppointmentsContext.TIMETABLES && timetablesContext: return TimeTablesService;
-        case AppointmentsContext.PRESENTATORS: return PresentatorsService;
-        case AppointmentsContext.ROOMS: return RoomsService
+        case AppointmentsContext.TIMETABLES:
+          if (timetablesContext) return TimeTablesService;
+          throw new Error('timetablesContext is required for TIMETABLES context');
+        case AppointmentsContext.PRESENTATORS:
+          return PresentatorsService;
+        case AppointmentsContext.ROOMS:
+          return RoomsService;
+        default:
+          throw new Error(`Invalid context: ${context}`);
       }
     }
     return {
       module: AppointmentsModule,
-      imports: [forwardRef(() => TimeTablesModule.register(timetablesContext))],
+      imports: (timetablesContext) ? [TimeTablesModule.register(timetablesContext)] : undefined,
       controllers: [AppointmentsController],
       providers: [AppointmentsService, InstitutionsService, PrismaClient,
         {
-          provide: AppointmentsDataService,
+          provide: 'AppointmentsDataService',
           useClass: AppointmentsServiceContext(context),
         }
       ],
-      exports: [AppointmentsService],
     };
   }
 }

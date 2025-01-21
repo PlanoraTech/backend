@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { InstitutionsService } from 'src/institutions/institutions.service';
+import { IService } from 'src/interfaces/IService';
 
 @Injectable()
-export class GroupsService {
+export class GroupsService implements IService {
   constructor(private institutionsService: InstitutionsService) { }
   create(createGroupDto: CreateGroupDto) {
 
