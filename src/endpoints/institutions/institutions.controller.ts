@@ -3,7 +3,9 @@ import { InstitutionsService } from './institutions.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 
-@Controller()
+@Controller([
+  'institutions'
+])
 export class InstitutionsController {
   constructor(private readonly institutionsService: InstitutionsService) {}
 

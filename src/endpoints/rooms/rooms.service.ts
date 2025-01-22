@@ -13,7 +13,19 @@ export class RoomsService {
   async findAll(institutionsId: string, select?: {
     name?: boolean,
     isAvailable?: boolean,
-    appointments?: boolean,
+    appointments?: {
+      select: {
+        id?: boolean,
+        subject?: boolean,
+        presentators?: boolean,
+        rooms?: boolean,
+        dayOfWeek?: boolean,
+        start?: boolean,
+        end?: boolean,
+        isCancelled?: boolean,
+        timetables?: boolean,
+      },
+    },
     institution?: boolean,
   }) {
     return (await this.institutionsService.findOne(institutionsId, {
@@ -29,7 +41,19 @@ export class RoomsService {
   async findOne(institutionsId: string, id: string, select?: {
     name?: boolean,
     isAvailable?: boolean,
-    appointments?: boolean,
+    appointments?: {
+      select: {
+        id?: boolean,
+        subject?: boolean,
+        presentators?: boolean,
+        rooms?: boolean,
+        dayOfWeek?: boolean,
+        start?: boolean,
+        end?: boolean,
+        isCancelled?: boolean,
+        timetables?: boolean,
+      },
+    },
     institution?: boolean,
   }) {
     return (await this.institutionsService.findOne(institutionsId, {

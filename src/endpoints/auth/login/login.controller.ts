@@ -3,7 +3,7 @@ import { LoginService } from './login.service';
 import { CreateLoginDto } from './dto/create-login.dto';
 import { UpdateLoginDto } from './dto/update-login.dto';
 
-@Controller()
+@Controller('login')
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 

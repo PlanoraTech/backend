@@ -12,7 +12,19 @@ export class PresentatorsService {
 
   async findAll(institutionsId: string, select?: {
     name?: boolean,
-    appointments?: boolean,
+    appointments?: {
+      select: {
+        id?: boolean,
+        subject?: boolean,
+        presentators?: boolean,
+        rooms?: boolean,
+        dayOfWeek?: boolean,
+        start?: boolean,
+        end?: boolean,
+        isCancelled?: boolean,
+        timetables?: boolean,
+      },
+    },
     institution?: boolean,
   }) {
     return (await this.institutionsService.findOne(institutionsId, {
@@ -27,7 +39,19 @@ export class PresentatorsService {
 
   async findOne(institutionsId: string, id: string, select?: {
     name?: boolean,
-    appointments?: boolean,
+    appointments?: {
+      select: {
+        id?: boolean,
+        subject?: boolean,
+        presentators?: boolean,
+        rooms?: boolean,
+        dayOfWeek?: boolean,
+        start?: boolean,
+        end?: boolean,
+        isCancelled?: boolean,
+        timetables?: boolean,
+      },
+    },
     institution?: boolean,
   }) {
     return (await this.institutionsService.findOne(institutionsId, {
@@ -40,11 +64,11 @@ export class PresentatorsService {
     })).presentators.find((presentator) => presentator.id === id);
   }
 
-  update(id: number, updatePresentatorDto: UpdatePresentatorDto) {
+  update(id: string, updatePresentatorDto: UpdatePresentatorDto) {
     return `This action updates a #${id} presentator`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} presentator`;
   }
 }

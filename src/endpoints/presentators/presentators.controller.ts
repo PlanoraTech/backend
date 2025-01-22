@@ -3,7 +3,9 @@ import { PresentatorsService } from './presentators.service';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 
-@Controller()
+@Controller([
+  'institutions/:institutionsId/presentators'
+])
 export class PresentatorsController {
   constructor(private readonly presentatorsService: PresentatorsService) {}
 
@@ -28,11 +30,11 @@ export class PresentatorsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto) {
-    return this.presentatorsService.update(+id, updatePresentatorDto);
+    return this.presentatorsService.update(id, updatePresentatorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.presentatorsService.remove(+id);
+    return this.presentatorsService.remove(id);
   }
 }

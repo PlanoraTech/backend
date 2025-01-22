@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AppointmentsService } from './appointments.service';
-import { AppointmentsController } from './appointments.controller';
+import { AppointmentsFromGroupsTimeTablesController, AppointmentsFromPresentatorsController, AppointmentsFromRoomsController, AppointmentsFromTimeTablesController } from './appointments.controller';
 import { PrismaClient } from '@prisma/client';
 import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
-import { TimeTablesService } from 'src/endpoints/timetables/timetables.service';
+import { AppointmentsFromGroupsTimeTablesService, AppointmentsFromInstitutionsTimeTablesService, AppointmentsFromPresentatorsService, AppointmentsFromRoomsService } from './appointments.service';
+import { GroupsService } from '../groups/groups.service';
+import { RoomsService } from '../rooms/rooms.service';
+import { PresentatorsService } from '../presentators/presentators.service';
+import { TimeTablesFromGroupsService, TimeTablesFromInstitutionsService } from '../timetables/timetables.service';
 
 @Module({
-  controllers: [AppointmentsController],
-  providers: [AppointmentsService, TimeTablesService, InstitutionsService, PrismaClient],
+  controllers: [AppointmentsFromGroupsTimeTablesController, AppointmentsFromPresentatorsController, AppointmentsFromRoomsController, AppointmentsFromTimeTablesController],
+  providers: [AppointmentsFromRoomsService, AppointmentsFromPresentatorsService, AppointmentsFromGroupsTimeTablesService, AppointmentsFromInstitutionsTimeTablesService, RoomsService, PresentatorsService, TimeTablesFromGroupsService, GroupsService, TimeTablesFromInstitutionsService, InstitutionsService, PrismaClient],
 })
 export class AppointmentsModule {}
