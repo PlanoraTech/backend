@@ -1,4 +1,4 @@
-import { DynamicModule, forwardRef, Module, Provider } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { AppointmentsController } from './appointments.controller';
 import { PrismaClient } from '@prisma/client';

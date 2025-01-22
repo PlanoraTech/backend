@@ -1,4 +1,4 @@
-import { DynamicModule, forwardRef, Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { TimeTablesController } from './timetables.controller';
 import { PrismaClient } from '@prisma/client';
 import { TimeTablesService } from './timetables.service';
