@@ -138,34 +138,6 @@ export class InstitutionsService {
 		type?: boolean,
 		color?: boolean,
 		website?: boolean,
-		groups?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				timetables?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						groups?: boolean,
-						appointments?: {
-							select: {
-								id?: boolean,
-								subject?: boolean,
-								presentators?: boolean,
-								rooms?: boolean,
-								dayOfWeek?: boolean,
-								start?: boolean,
-								end?: boolean,
-								isCancelled?: boolean,
-								timetables?: boolean,
-							},
-						},
-						institution?: boolean,
-					},
-				},
-				institution?: boolean,
-			},
-		},
 		presentators?: {
 			select: {
 				id?: boolean,
@@ -220,7 +192,6 @@ export class InstitutionsService {
 			select: {
 				id?: boolean,
 				name?: boolean,
-				groups?: boolean,
 				appointments?: {
 					select: {
 						id?: boolean,

@@ -3,38 +3,36 @@ import { PresentatorsService } from './presentators.service';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 
-@Controller([
-  'institutions/:institutionsId/presentators'
-])
+@Controller()
 export class PresentatorsController {
-  constructor(private readonly presentatorsService: PresentatorsService) {}
+	constructor(private readonly presentatorsService: PresentatorsService) { }
 
-  @Post()
-  create(@Body() createPresentatorDto: CreatePresentatorDto) {
-    return this.presentatorsService.create(createPresentatorDto);
-  }
+	@Post()
+	create(@Body() createPresentatorDto: CreatePresentatorDto) {
+		return this.presentatorsService.create(createPresentatorDto);
+	}
 
-  @Get()
-  findAll(@Param('institutionsId') institutionsId: string) {
-    return this.presentatorsService.findAll(institutionsId, {
-      name: true,
-    });
-  }
+	@Get()
+	findAll(@Param('institutionsId') institutionsId: string) {
+		return this.presentatorsService.findAll(institutionsId, {
+			name: true,
+		});
+	}
 
-  @Get(':id')
-  findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-    return this.presentatorsService.findOne(institutionsId, id, {
-      name: true,
-    });
-  }
+	@Get(':id')
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+		return this.presentatorsService.findOne(institutionsId, id, {
+			name: true,
+		});
+	}
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto) {
-    return this.presentatorsService.update(id, updatePresentatorDto);
-  }
+	@Patch(':id')
+	update(@Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto) {
+		return this.presentatorsService.update(id, updatePresentatorDto);
+	}
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.presentatorsService.remove(id);
-  }
+	@Delete(':id')
+	remove(@Param('id') id: string) {
+		return this.presentatorsService.remove(id);
+	}
 }

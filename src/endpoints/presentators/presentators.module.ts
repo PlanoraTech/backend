@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
 
 @Module({
-  controllers: [PresentatorsController],
-  providers: [PresentatorsService, InstitutionsService, PrismaClient],
+	controllers: [PresentatorsController],
+	providers: [PresentatorsService, InstitutionsService, PrismaClient],
 })
-export class PresentatorsModule {}
+export class PresentatorsModule { }

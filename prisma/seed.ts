@@ -16,25 +16,6 @@ async function seed() {
 		});
 	}
 
-	for (let i = 0; i < 100; i++) {
-		await prisma.groups.create({
-			data: {
-				name: faker.lorem.word() + i,
-				institution: {
-					connect: {
-						id: await prisma.institutions.findMany({
-							select: {
-								id: true,
-							},
-						}).then((institutions) => {
-							return faker.helpers.arrayElements(institutions, 1)[0].id;
-						}),
-					},
-				},
-			}
-		});
-	}
-
 	for (let i = 0; i < 500; i++) {
 		await prisma.presentators.create({
 			data: {
@@ -58,13 +39,7 @@ async function seed() {
 		await prisma.subjects.create({
 			data: {
 				name: faker.lorem.word() + i,
-				subjectId: await prisma.groups.findMany({
-					select: {
-						name: true,
-					},
-				}).then((institutions) => {
-					return faker.helpers.arrayElements(institutions, 1)[0].name + "-" + faker.lorem.word();
-				}),
+				subjectId: faker.lorem.word(),
 				institution: {
 					connect: {
 						id: await prisma.institutions.findMany({
@@ -104,17 +79,6 @@ async function seed() {
 		await prisma.timeTables.create({
 			data: {
 				name: faker.lorem.word() + i,
-				groups: {
-					connect: {
-						id: await prisma.groups.findMany({
-							select: {
-								id: true,
-							},
-						}).then((groups) => {
-							return faker.helpers.arrayElements(groups, 1)[0].id;
-						}),
-					},
-				},
 				institution: {
 					connect: {
 						id: await prisma.institutions.findMany({

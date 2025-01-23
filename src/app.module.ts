@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
+import { RouterModule } from '@nestjs/core';
 import { InstitutionsModule } from './endpoints/institutions/institutions.module';
-import { GroupsModule } from './endpoints/groups/groups.module';
 import { PresentatorsModule } from './endpoints/presentators/presentators.module';
 import { SubjectsModule } from './endpoints/subjects/subjects.module';
 import { RoomsModule } from './endpoints/rooms/rooms.module';
@@ -13,7 +13,6 @@ import { RegisterModule } from './endpoints/auth/register/register.module';
 @Module({
   imports: [
     InstitutionsModule,
-    GroupsModule,
     PresentatorsModule,
     SubjectsModule,
     RoomsModule,
@@ -22,6 +21,34 @@ import { RegisterModule } from './endpoints/auth/register/register.module';
     UsersModule,
     LoginModule,
     RegisterModule,
+    RouterModule.register([
+      {
+        path: 'institutions',
+        module: InstitutionsModule,
+        children: [
+          {
+            path: ':institutionsId/presentators',
+            module: PresentatorsModule,
+          },
+          {
+            path: ':institutionsId/subjects',
+            module: SubjectsModule,
+          },
+          {
+            path: ':institutionsId/rooms',
+            module: RoomsModule,
+          },
+          {
+            path: ':institutionsId/timetables',
+            module: TimeTablesModule,
+          },
+          {
+            path: ':institutionsId/users',
+            module: UsersModule,
+          },
+        ]
+      }
+    ]),
   ],
 })
 export class AppModule { }
