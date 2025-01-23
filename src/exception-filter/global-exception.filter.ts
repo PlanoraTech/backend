@@ -5,33 +5,32 @@ import { Response } from 'express';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
 	catch(exception: any, host: ArgumentsHost) {
-		const ctx = host.switchToHttp();
-		const response = ctx.getResponse<Response>();
-		let responseMessage = exception;
+		const response = host.switchToHttp().getResponse<Response>();
+		let responseObject = exception;
 
 		if (exception instanceof PrismaClientKnownRequestError)
 		{
 			switch (exception.code)
 			{
 				case 'P2025':
-					responseMessage = new NotFoundException;
+					responseObject = new NotFoundException;
 					break;
 				default:
-					responseMessage = new BadRequestException;
+					responseObject = new BadRequestException;
 					break;
 			}
 		}
 
 		console.log(exception);
 
-		if (typeof responseMessage.getStatus !== 'function' || typeof responseMessage.message !== 'string')
+		if (typeof responseObject.getStatus !== 'function' || typeof responseObject.message !== 'string')
 		{
-			responseMessage = new InternalServerErrorException;
+			responseObject = new InternalServerErrorException;
 		}
 
-		response.status(responseMessage.getStatus()).json({
-			statusCode: responseMessage.getStatus(),
-			message: responseMessage.message
+		response.status(responseObject.getStatus()).json({
+			statusCode: responseObject.getStatus(),
+			message: responseObject.message
 		});
 	}
 }

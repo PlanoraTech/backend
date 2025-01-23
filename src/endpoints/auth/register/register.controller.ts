@@ -11,24 +11,4 @@ export class RegisterController {
   create(@Body() createRegisterDto: CreateRegisterDto) {
     return this.registerService.create(createRegisterDto);
   }
-
-  @Get()
-  findAll() {
-    return this.registerService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.registerService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRegisterDto: UpdateRegisterDto) {
-    return this.registerService.update(+id, updateRegisterDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.registerService.remove(+id);
-  }
 }
