@@ -13,35 +13,75 @@ abstract class AppointmentsService {
 		throw new Error('Method not implemented.');
 	}
 
-	async findAll(institutionsId: string, appointmentsServiceId: string) {
+	async findAll(institutionsId: string, appointmentsServiceId: string, select?: {
+		subject?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				subjectId?: boolean,
+			}
+		},
+		presentators?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+			}
+		},
+		rooms?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				isAvailable?: boolean,
+			}
+		},
+		dayOfWeek?: boolean,
+		start?: boolean,
+		end?: boolean,
+		isCancelled?: boolean,
+		timetables?: boolean,
+	}) {
 		return (await this.appointmentsService.findOne(institutionsId, appointmentsServiceId, {
 			appointments: {
 				select: {
 					id: true,
-					subject: true,
-					presentators: true,
-					rooms: true,
-					dayOfWeek: true,
-					start: true,
-					end: true,
-					isCancelled: true,
+					...select,
 				},
 			},
 		})).appointments;
 	}
 
-	async findOne(institutionsId: string, appointmentsServiceId: string, id: string) {
+	async findOne(institutionsId: string, appointmentsServiceId: string, id: string, select?: {
+		subject?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				subjectId?: boolean,
+			}
+		},
+		presentators?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+			}
+		},
+		rooms?: {
+			select: {
+				id?: boolean,
+				name?: boolean,
+				isAvailable?: boolean,
+			}
+		},
+		dayOfWeek?: boolean,
+		start?: boolean,
+		end?: boolean,
+		isCancelled?: boolean,
+		timetables?: boolean,
+	}) {
 		return (await this.appointmentsService.findOne(institutionsId, appointmentsServiceId, {
 			appointments: {
 				select: {
 					id: true,
-					subject: true,
-					presentators: true,
-					rooms: true,
-					dayOfWeek: true,
-					start: true,
-					end: true,
-					isCancelled: true,
+					...select,
 				},
 			},
 		})).appointments.find((appointment) => appointment.id === id);

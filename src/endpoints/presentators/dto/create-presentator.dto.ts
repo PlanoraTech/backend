@@ -1,1 +1,4 @@
-export class CreatePresentatorDto {}
+export class CreatePresentatorDto {
+    name: string;
+    email?: string;
+}

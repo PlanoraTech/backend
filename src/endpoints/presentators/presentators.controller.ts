@@ -8,8 +8,8 @@ export class PresentatorsController {
 	constructor(private readonly presentatorsService: PresentatorsService) { }
 
 	@Post()
-	create(@Body() createPresentatorDto: CreatePresentatorDto) {
-		return this.presentatorsService.create(createPresentatorDto);
+	create(@Param('institutionsId') institutionsId: string, @Body() createPresentatorDto: CreatePresentatorDto) {
+		return this.presentatorsService.create(institutionsId, createPresentatorDto);
 	}
 
 	@Get()

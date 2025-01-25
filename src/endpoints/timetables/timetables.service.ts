@@ -15,17 +15,34 @@ abstract class AbstractTimeTablesService {
 		name?: boolean;
 		appointments?: {
 			select: {
-				id?: boolean;
-				subject?: boolean;
-				presentators?: boolean;
-				rooms?: boolean;
-				dayOfWeek?: boolean;
-				start?: boolean;
-				end?: boolean;
-				isCancelled?: boolean;
-				timetables?: boolean;
-			};
-		};
+				id?: boolean,
+				subject?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						subjectId?: boolean,
+					}
+				},
+				presentators?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+					}
+				},
+				rooms?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						isAvailable?: boolean,
+					}
+				},
+				dayOfWeek?: boolean,
+				start?: boolean,
+				end?: boolean,
+				isCancelled?: boolean,
+				timetables?: boolean,
+			},
+		},
 	}): Promise<Partial<TimeTables>[]> {
 		return (await this.timetablesService.findOne(institutionsId, {
 			timetables: {
@@ -41,17 +58,34 @@ abstract class AbstractTimeTablesService {
 		name?: boolean;
 		appointments?: {
 			select: {
-				id?: boolean;
-				subject?: boolean;
-				presentators?: boolean;
-				rooms?: boolean;
-				dayOfWeek?: boolean;
-				start?: boolean;
-				end?: boolean;
-				isCancelled?: boolean;
-				timetables?: boolean;
-			};
-		};
+				id?: boolean,
+				subject?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						subjectId?: boolean,
+					}
+				},
+				presentators?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+					}
+				},
+				rooms?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						isAvailable?: boolean,
+					}
+				},
+				dayOfWeek?: boolean,
+				start?: boolean,
+				end?: boolean,
+				isCancelled?: boolean,
+				timetables?: boolean,
+			},
+		},
 	}): Promise<any> {
 		return (await this.timetablesService.findOne(institutionsId, {
 			timetables: {

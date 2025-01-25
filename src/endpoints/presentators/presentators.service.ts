@@ -2,12 +2,32 @@ import { Injectable } from '@nestjs/common';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PresentatorsService {
-	constructor(private institutionsService: InstitutionsService) { }
-	create(createPresentatorDto: CreatePresentatorDto) {
-		return 'This action adds a new presentator';
+	constructor(
+		//private readonly prisma: PrismaClient,
+		private readonly institutionsService: InstitutionsService
+	) { }
+	async create(institutionsId: string, createPresentatorDto: CreatePresentatorDto) {
+		/*
+		return await this.prisma.presentators.create({
+			data: {
+				name: createPresentatorDto.name,
+				institution: {
+					connect: {
+						id: institutionsId,
+					},
+				},
+				user: {
+					connect: {
+						email: createPresentatorDto.email,
+					}
+				}
+			},
+		});
+		*/
 	}
 
 	async findAll(institutionsId: string, select?: {
@@ -15,9 +35,26 @@ export class PresentatorsService {
 		appointments?: {
 			select: {
 				id?: boolean,
-				subject?: boolean,
-				presentators?: boolean,
-				rooms?: boolean,
+				subject?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						subjectId?: boolean,
+					}
+				},
+				presentators?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+					}
+				},
+				rooms?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						isAvailable?: boolean,
+					}
+				},
 				dayOfWeek?: boolean,
 				start?: boolean,
 				end?: boolean,
@@ -42,9 +79,26 @@ export class PresentatorsService {
 		appointments?: {
 			select: {
 				id?: boolean,
-				subject?: boolean,
-				presentators?: boolean,
-				rooms?: boolean,
+				subject?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						subjectId?: boolean,
+					}
+				},
+				presentators?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+					}
+				},
+				rooms?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						isAvailable?: boolean,
+					}
+				},
 				dayOfWeek?: boolean,
 				start?: boolean,
 				end?: boolean,
@@ -64,11 +118,26 @@ export class PresentatorsService {
 		})).presentators.find((presentator) => presentator.id === id);
 	}
 
-	update(id: string, updatePresentatorDto: UpdatePresentatorDto) {
-		return `This action updates a #${id} presentator`;
+	async update(id: string, updatePresentatorDto: UpdatePresentatorDto) {
+		/*
+		return await this.prisma.presentators.update({
+			where: {
+				id: id,
+			},
+			data: {
+				...updatePresentatorDto,
+			},
+		});
+		*/
 	}
 
-	remove(id: string) {
-		return `This action removes a #${id} presentator`;
+	async remove(id: string) {
+		/*
+		return await this.prisma.presentators.delete({
+			where: {
+				id: id,
+			}
+		});
+		*/
 	}
 }

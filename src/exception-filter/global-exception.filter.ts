@@ -1,4 +1,4 @@
-import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, Catch, ConflictException, ExceptionFilter, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Response } from 'express';
 
@@ -6,31 +6,33 @@ import { Response } from 'express';
 export class GlobalExceptionFilter implements ExceptionFilter {
 	catch(exception: any, host: ArgumentsHost) {
 		const response = host.switchToHttp().getResponse<Response>();
-		let responseObject = exception;
 
+		console.log(exception);
+		
 		if (exception instanceof PrismaClientKnownRequestError)
 		{
 			switch (exception.code)
 			{
 				case 'P2025':
-					responseObject = new NotFoundException;
+					exception = new NotFoundException;
+					break;
+				case 'P2002':
+					exception = new ConflictException("Already exists");
 					break;
 				default:
-					responseObject = new BadRequestException;
+					exception = new BadRequestException;
 					break;
 			}
 		}
 
-		console.log(exception);
-
-		if (typeof responseObject.getStatus !== 'function' || typeof responseObject.message !== 'string')
+		if (typeof exception.getStatus !== 'function' || exception.response.message == undefined)
 		{
-			responseObject = new InternalServerErrorException;
+			exception = new InternalServerErrorException;
 		}
 
-		response.status(responseObject.getStatus()).json({
-			statusCode: responseObject.getStatus(),
-			message: responseObject.message
+		response.status(exception.getStatus()).json({
+			statusCode: exception.getStatus(),
+			message: exception.response.message,
 		});
 	}
 }

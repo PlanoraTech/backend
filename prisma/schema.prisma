@@ -36,8 +36,7 @@ enum DayOfWeek {
 }
 
 enum Roles {
-    EMPLOYEE
-    STUDENT
+    USER
     PRESENTATOR
     PRINCIPAL
     EXECUTIVE
@@ -86,7 +85,7 @@ model Rooms {
 
 model TimeTables {
     id            String         @id @default(uuid())
-    name          String         
+    name          String
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
@@ -94,8 +93,8 @@ model TimeTables {
 
 model Appointments {
     id           String         @id @default(uuid())
-    subject      Subjects?      @relation(fields: [subjectId], references: [id])
-    subjectId    String?
+    subject      Subjects       @relation(fields: [subjectId], references: [id])
+    subjectId    String
     presentators Presentators[]
     rooms        Rooms[]
     dayOfWeek    DayOfWeek
@@ -109,7 +108,7 @@ model Users {
     id            String         @id @default(uuid())
     email         String         @unique
     password      String
-    role          Roles
+    role          Roles          @default(USER)
     institutions  Institutions[]
     presentator   Presentators?  @relation(fields: [presentatorId], references: [id])
     presentatorId String?        @unique
@@ -124,10 +123,11 @@ model Admins {
 }
 
 model Tokens {
-    id      String  @id @default(uuid())
+    id      String   @id @default(uuid())
     token   String
-    user    Users?  @relation(fields: [userId], references: [id])
+    expiry  DateTime @default(now())
+    user    Users?   @relation(fields: [userId], references: [id])
     userId  String?
-    admin   Admins? @relation(fields: [adminId], references: [id])
+    admin   Admins?  @relation(fields: [adminId], references: [id])
     adminId String?
 }

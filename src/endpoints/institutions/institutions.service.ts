@@ -5,9 +5,9 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class InstitutionsService {
-	constructor(private prisma: PrismaClient) { }
-	create(createInstitutionDto: CreateInstitutionDto) {
-		return 'This action adds a new institution';
+	constructor(private readonly prisma: PrismaClient) { }
+	async create(createInstitutionDto: CreateInstitutionDto) {
+		
 	}
 
 	async findAll(select?: {
@@ -16,34 +16,6 @@ export class InstitutionsService {
 		access?: boolean,
 		color?: boolean,
 		website?: boolean,
-		groups?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				timetables?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						groups?: boolean,
-						appointments?: {
-							select: {
-								id?: boolean,
-								subject?: boolean,
-								presentators?: boolean,
-								rooms?: boolean,
-								dayOfWeek?: boolean,
-								start?: boolean,
-								end?: boolean,
-								isCancelled?: boolean,
-								timetables?: boolean,
-							},
-						},
-						institution?: boolean,
-					},
-				},
-				institution?: boolean,
-			},
-		},
 		presentators?: {
 			select: {
 				id?: boolean,
@@ -51,9 +23,26 @@ export class InstitutionsService {
 				appointments?: {
 					select: {
 						id?: boolean,
-						subject?: boolean,
-						presentators?: boolean,
-						rooms?: boolean,
+						subject?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								subjectId?: boolean,
+							}
+						},
+						presentators?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+							}
+						},
+						rooms?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								isAvailable?: boolean,
+							}
+						},
 						dayOfWeek?: boolean,
 						start?: boolean,
 						end?: boolean,
@@ -70,7 +59,7 @@ export class InstitutionsService {
 				name?: boolean,
 				subjectId?: boolean,
 				appointments?: boolean,
-				institution?: boolean
+				institution?: boolean,
 			},
 		},
 		rooms?: {
@@ -81,9 +70,26 @@ export class InstitutionsService {
 				appointments?: {
 					select: {
 						id?: boolean,
-						subject?: boolean,
-						presentators?: boolean,
-						rooms?: boolean,
+						subject?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								subjectId?: boolean,
+							}
+						},
+						presentators?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+							}
+						},
+						rooms?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								isAvailable?: boolean,
+							}
+						},
 						dayOfWeek?: boolean,
 						start?: boolean,
 						end?: boolean,
@@ -98,13 +104,29 @@ export class InstitutionsService {
 			select: {
 				id?: boolean,
 				name?: boolean,
-				groups?: boolean,
 				appointments?: {
 					select: {
 						id?: boolean,
-						subject?: boolean,
-						presentators?: boolean,
-						rooms?: boolean,
+						subject?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								subjectId?: boolean,
+							}
+						},
+						presentators?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+							}
+						},
+						rooms?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								isAvailable?: boolean,
+							}
+						},
 						dayOfWeek?: boolean,
 						start?: boolean,
 						end?: boolean,
@@ -145,9 +167,26 @@ export class InstitutionsService {
 				appointments?: {
 					select: {
 						id?: boolean,
-						subject?: boolean,
-						presentators?: boolean,
-						rooms?: boolean,
+						subject?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								subjectId?: boolean,
+							}
+						},
+						presentators?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+							}
+						},
+						rooms?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								isAvailable?: boolean,
+							}
+						},
 						dayOfWeek?: boolean,
 						start?: boolean,
 						end?: boolean,
@@ -164,7 +203,7 @@ export class InstitutionsService {
 				name?: boolean,
 				subjectId?: boolean,
 				appointments?: boolean,
-				institution?: boolean
+				institution?: boolean,
 			},
 		},
 		rooms?: {
@@ -175,9 +214,26 @@ export class InstitutionsService {
 				appointments?: {
 					select: {
 						id?: boolean,
-						subject?: boolean,
-						presentators?: boolean,
-						rooms?: boolean,
+						subject?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								subjectId?: boolean,
+							}
+						},
+						presentators?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+							}
+						},
+						rooms?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								isAvailable?: boolean,
+							}
+						},
 						dayOfWeek?: boolean,
 						start?: boolean,
 						end?: boolean,
@@ -195,9 +251,26 @@ export class InstitutionsService {
 				appointments?: {
 					select: {
 						id?: boolean,
-						subject?: boolean,
-						presentators?: boolean,
-						rooms?: boolean,
+						subject?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								subjectId?: boolean,
+							}
+						},
+						presentators?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+							}
+						},
+						rooms?: {
+							select: {
+								id?: boolean,
+								name?: boolean,
+								isAvailable?: boolean,
+							}
+						},
 						dayOfWeek?: boolean,
 						start?: boolean,
 						end?: boolean,

@@ -5,7 +5,7 @@ import { InstitutionsService } from 'src/endpoints/institutions/institutions.ser
 
 @Injectable()
 export class SubjectsService {
-	constructor(private institutionsService: InstitutionsService) { }
+	constructor(private readonly institutionsService: InstitutionsService) { }
 	create(createSubjectDto: CreateSubjectDto) {
 		return 'This action adds a new subject';
 	}

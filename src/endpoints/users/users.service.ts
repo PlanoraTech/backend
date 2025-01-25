@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-	constructor(private prisma: PrismaClient) { }
+	constructor(private readonly prisma: PrismaClient) { }
 	create(createUserDto: CreateUserDto) {
 		return 'This action adds a new user';
 	}

@@ -5,7 +5,7 @@ import { InstitutionsService } from 'src/endpoints/institutions/institutions.ser
 
 @Injectable()
 export class RoomsService {
-	constructor(private institutionsService: InstitutionsService) { }
+	constructor(private readonly institutionsService: InstitutionsService) { }
 	create(createRoomDto: CreateRoomDto) {
 		return 'This action adds a new room';
 	}
@@ -16,9 +16,26 @@ export class RoomsService {
 		appointments?: {
 			select: {
 				id?: boolean,
-				subject?: boolean,
-				presentators?: boolean,
-				rooms?: boolean,
+				subject?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						subjectId?: boolean,
+					}
+				},
+				presentators?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+					}
+				},
+				rooms?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						isAvailable?: boolean,
+					}
+				},
 				dayOfWeek?: boolean,
 				start?: boolean,
 				end?: boolean,
@@ -44,9 +61,26 @@ export class RoomsService {
 		appointments?: {
 			select: {
 				id?: boolean,
-				subject?: boolean,
-				presentators?: boolean,
-				rooms?: boolean,
+				subject?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						subjectId?: boolean,
+					}
+				},
+				presentators?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+					}
+				},
+				rooms?: {
+					select: {
+						id?: boolean,
+						name?: boolean,
+						isAvailable?: boolean,
+					}
+				},
 				dayOfWeek?: boolean,
 				start?: boolean,
 				end?: boolean,
