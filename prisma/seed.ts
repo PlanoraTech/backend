@@ -76,9 +76,29 @@ async function seed() {
 	}
 
 	for (let i = 0; i < 100; i++) {
+		await prisma.events.create({
+			data: {
+				title: faker.lorem.word() + i,
+				date: faker.date.future(),
+			}
+		});
+	}
+
+	for (let i = 0; i < 100; i++) {
 		await prisma.timeTables.create({
 			data: {
 				name: faker.lorem.word() + i,
+				events: {
+					connect: {
+						id: await prisma.events.findMany({
+							select: {
+								id: true,
+							},
+						}).then((events) => {
+							return faker.helpers.arrayElements(events, 1)[0].id;
+						}),
+					},
+				},
 				institution: {
 					connect: {
 						id: await prisma.institutions.findMany({
@@ -95,6 +115,7 @@ async function seed() {
 	};
 
 	for (let i = 0; i < 1000; i++) {
+		let start = Number(faker.date.recent());
 		await prisma.appointments.create({
 			data: {
 				subject: {
@@ -142,8 +163,8 @@ async function seed() {
 					},
 				},
 				dayOfWeek: faker.helpers.arrayElements(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], 1)[0],
-				start: faker.date.recent(),
-				end: faker.date.future(),
+				start: new Date(start + i * 10),
+				end: new Date(start + i * 30),
 				isCancelled: faker.datatype.boolean(),
 			}
 		})

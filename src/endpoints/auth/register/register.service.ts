@@ -13,22 +13,9 @@ export class RegisterService {
       },
       data: {
         email: registerDto.email,
-        password: await SecretService.hashPassword(registerDto.password),
+        password: await SecretService.encryptPassword(registerDto.password),
       }
     });
-    return await this.prisma.tokens.create({
-      select: {
-        token: true,
-      },
-      data: {
-        token: SecretService.generateToken(),
-        expiry: new Date(Date.now() + 1000 * 60 * 60 * 24),
-        user: {
-          connect: {
-            id: user.id
-          }
-        }
-      }
-    });
+    return await SecretService.createToken(user.id);
   }
 }

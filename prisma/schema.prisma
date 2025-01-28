@@ -83,9 +83,17 @@ model Rooms {
     institutionId String
 }
 
+model Events {
+    id         String       @id @default(uuid())
+    title      String
+    date       DateTime
+    timetables TimeTables[]
+}
+
 model TimeTables {
     id            String         @id @default(uuid())
     name          String
+    events        Events[]
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String

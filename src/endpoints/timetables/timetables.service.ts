@@ -12,7 +12,14 @@ abstract class AbstractTimeTablesService {
 	}
 
 	async findAll(institutionsId: string, select?: {
-		name?: boolean;
+		name?: boolean,
+		events?: {
+			select: {
+				id?: boolean,
+				title?: boolean,
+				date?: boolean,
+			}
+		},
 		appointments?: {
 			select: {
 				id?: boolean,
@@ -55,7 +62,14 @@ abstract class AbstractTimeTablesService {
 	}
 
 	async findOne(institutionsId: string, id: string, select?: {
-		name?: boolean;
+		name?: boolean,
+		events?: {
+			select: {
+				id?: boolean,
+				title?: boolean,
+				date?: boolean,
+			}
+		},
 		appointments?: {
 			select: {
 				id?: boolean,

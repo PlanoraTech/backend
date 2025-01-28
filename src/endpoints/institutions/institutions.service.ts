@@ -104,6 +104,13 @@ export class InstitutionsService {
 			select: {
 				id?: boolean,
 				name?: boolean,
+				events?: {
+					select: {
+						id?: boolean,
+						title?: boolean,
+						date?: boolean,
+					}
+				},
 				appointments?: {
 					select: {
 						id?: boolean,
@@ -143,7 +150,7 @@ export class InstitutionsService {
 				email?: boolean,
 				role?: boolean,
 				appointments?: boolean,
-				institution?: boolean
+				institution?: boolean,
 			},
 		},
 	}) {
@@ -248,6 +255,13 @@ export class InstitutionsService {
 			select: {
 				id?: boolean,
 				name?: boolean,
+				events?: {
+					select: {
+						id?: boolean,
+						title?: boolean,
+						date?: boolean,
+					}
+				},
 				appointments?: {
 					select: {
 						id?: boolean,
@@ -287,7 +301,7 @@ export class InstitutionsService {
 				email?: boolean,
 				role?: boolean,
 				appointments?: boolean,
-				institution?: boolean
+				institution?: boolean,
 			},
 		},
 	}) {

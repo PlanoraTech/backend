@@ -16,6 +16,13 @@ export class TimeTablesController {
 	findAll(@Param('institutionsId') institutionsId: string) {
 		return this.timetablesService.findAll(institutionsId, {
 			name: true,
+			events: {
+				select: {
+					id: true,
+					title: true,
+					date: true,
+				}
+			},
 		});
 	}
 
@@ -23,6 +30,13 @@ export class TimeTablesController {
 	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
 		return this.timetablesService.findOne(institutionsId, id, {
 			name: true,
+			events: {
+				select: {
+					id: true,
+					title: true,
+					date: true,
+				}
+			},
 		});
 	}
 

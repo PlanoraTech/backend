@@ -8,6 +8,6 @@ export class LoginController {
 
   @Post()
   login(@Body() loginDto: LoginDto) {
-    return this.loginService.loginByToken(loginDto.token);
+    return (loginDto.token) ? this.loginService.loginByToken(loginDto.token) : this.loginService.loginByEmailAndPassword(loginDto.email, loginDto.password);
   }
 }
