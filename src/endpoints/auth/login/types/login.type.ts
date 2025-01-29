@@ -2,10 +2,15 @@ import { Prisma } from "@prisma/client";
 
 export type ExtendedLogin = Prisma.TokensGetPayload<{
     include: {
-        user: {
+        user?: {
             select: {
-                role?: boolean
-            }
-        }
-    }
+                role?: boolean,
+                institutions?: {
+                    select: {
+                        id?: true,
+                    },
+                },
+            },
+        },
+    },
 }>;
