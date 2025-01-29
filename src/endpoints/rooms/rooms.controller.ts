@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { ExtendedRooms } from './types/rooms.type';
 
 @Controller()
 export class RoomsController {
@@ -13,7 +14,7 @@ export class RoomsController {
 	}
 
 	@Get()
-	findAll(@Param('institutionsId') institutionsId: string) {
+	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<ExtendedRooms>[]> {
 		return this.roomsService.findAll(institutionsId, {
 			name: true,
 			isAvailable: true,
@@ -21,7 +22,7 @@ export class RoomsController {
 	}
 
 	@Get(':id')
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<ExtendedRooms>> {
 		return this.roomsService.findOne(institutionsId, id, {
 			name: true,
 			isAvailable: true,

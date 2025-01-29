@@ -6,6 +6,7 @@ import { PresentatorsService } from '../presentators/presentators.service';
 import { RoomsService } from '../rooms/rooms.service';
 import { InstitutionsService } from '../institutions/institutions.service';
 import { PrismaClient } from '@prisma/client';
+import { ExtendedAppointments } from './types/appointments.type';
 
 abstract class AppointmentsService {
 	constructor(private readonly appointmentsService: TimeTablesService | PresentatorsService | RoomsService) { };
@@ -39,7 +40,7 @@ abstract class AppointmentsService {
 		end?: boolean,
 		isCancelled?: boolean,
 		timetables?: boolean,
-	}) {
+	}): Promise<Partial<ExtendedAppointments>[]> {
 		return (await this.appointmentsService.findOne(institutionsId, appointmentsServiceId, {
 			appointments: {
 				select: {
@@ -76,7 +77,7 @@ abstract class AppointmentsService {
 		end?: boolean,
 		isCancelled?: boolean,
 		timetables?: boolean,
-	}) {
+	}): Promise<Partial<ExtendedAppointments>> {
 		return (await this.appointmentsService.findOne(institutionsId, appointmentsServiceId, {
 			appointments: {
 				select: {

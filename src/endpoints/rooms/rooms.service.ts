@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
+import { ExtendedRooms } from './types/rooms.type';
 
 @Injectable()
 export class RoomsService {
@@ -43,8 +44,7 @@ export class RoomsService {
 				timetables?: boolean,
 			},
 		},
-		institution?: boolean,
-	}) {
+	}): Promise<Partial<ExtendedRooms>[]> {
 		return (await this.institutionsService.findOne(institutionsId, {
 			rooms: {
 				select: {
@@ -88,8 +88,7 @@ export class RoomsService {
 				timetables?: boolean,
 			},
 		},
-		institution?: boolean,
-	}) {
+	}): Promise<Partial<ExtendedRooms>> {
 		return (await this.institutionsService.findOne(institutionsId, {
 			rooms: {
 				select: {

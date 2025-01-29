@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentsFromInstitutionsTimeTablesService, AppointmentsFromPresentatorsService, AppointmentsFromRoomsService } from './appointments.service';
+import { ExtendedAppointments } from './types/appointments.type';
 
 abstract class AppointmentsController {
 	constructor(private readonly appointmentsService: AppointmentsFromInstitutionsTimeTablesService | AppointmentsFromPresentatorsService | AppointmentsFromRoomsService) { }
@@ -12,7 +13,7 @@ abstract class AppointmentsController {
 	}
 
 	@Get()
-	findAll(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('presentatorsId') presentatorsId: string, @Param('roomsId') roomsId: string) {
+	findAll(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('presentatorsId') presentatorsId: string, @Param('roomsId') roomsId: string): Promise<Partial<ExtendedAppointments>[]> {
 		return this.appointmentsService.findAll(institutionsId, timetablesId || presentatorsId || roomsId, {
 			subject: {
 				select: {
@@ -42,7 +43,7 @@ abstract class AppointmentsController {
 	}
 
 	@Get(':id')
-	findOne(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('presentatorsId') presentatorsId: string, @Param('roomsId') roomsId: string, @Param('id') id: string) {
+	findOne(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('presentatorsId') presentatorsId: string, @Param('roomsId') roomsId: string, @Param('id') id: string): Promise<Partial<ExtendedAppointments>> {
 		return this.appointmentsService.findOne(institutionsId, timetablesId || presentatorsId || roomsId, id, {
 			subject: {
 				select: {

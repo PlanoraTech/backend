@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PresentatorsService } from './presentators.service';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
+import { ExtendedPresentators } from './types/presentators.type';
 
 @Controller()
 export class PresentatorsController {
@@ -13,14 +14,14 @@ export class PresentatorsController {
 	}
 
 	@Get()
-	findAll(@Param('institutionsId') institutionsId: string) {
+	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<ExtendedPresentators>[]> {
 		return this.presentatorsService.findAll(institutionsId, {
 			name: true,
 		});
 	}
 
 	@Get(':id')
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<ExtendedPresentators>> {
 		return this.presentatorsService.findOne(institutionsId, id, {
 			name: true,
 		});

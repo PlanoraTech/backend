@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
-import { PrismaClient, TimeTables } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { InstitutionsService } from '../institutions/institutions.service';
+import { ExtendedTimeTables } from './types/timetables.type';
 
 abstract class AbstractTimeTablesService {
 	constructor(private readonly timetablesService: InstitutionsService) { }
@@ -50,7 +51,7 @@ abstract class AbstractTimeTablesService {
 				timetables?: boolean,
 			},
 		},
-	}): Promise<Partial<TimeTables>[]> {
+	}): Promise<Partial<ExtendedTimeTables>[]> {
 		return (await this.timetablesService.findOne(institutionsId, {
 			timetables: {
 				select: {
@@ -100,7 +101,7 @@ abstract class AbstractTimeTablesService {
 				timetables?: boolean,
 			},
 		},
-	}): Promise<any> {
+	}): Promise<Partial<ExtendedTimeTables>> {
 		return (await this.timetablesService.findOne(institutionsId, {
 			timetables: {
 				select: {

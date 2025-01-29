@@ -3,6 +3,7 @@ import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
 import { PrismaClient } from '@prisma/client';
+import { ExtendedPresentators } from './types/presentators.type';
 
 @Injectable()
 export class PresentatorsService {
@@ -62,8 +63,7 @@ export class PresentatorsService {
 				timetables?: boolean,
 			},
 		},
-		institution?: boolean,
-	}) {
+	}): Promise<Partial<ExtendedPresentators>[]> {
 		return (await this.institutionsService.findOne(institutionsId, {
 			presentators: {
 				select: {
@@ -106,8 +106,7 @@ export class PresentatorsService {
 				timetables?: boolean,
 			},
 		},
-		institution?: boolean,
-	}) {
+	}): Promise<Partial<ExtendedPresentators>> {
 		return (await this.institutionsService.findOne(institutionsId, {
 			presentators: {
 				select: {

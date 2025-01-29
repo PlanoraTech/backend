@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { PrismaClient } from '@prisma/client';
+import { ExtendedInstitutions } from './types/institutions.type';
 
 @Injectable()
 export class InstitutionsService {
@@ -50,7 +51,6 @@ export class InstitutionsService {
 						timetables?: boolean,
 					},
 				},
-				institution?: boolean,
 			},
 		},
 		subjects?: {
@@ -59,7 +59,6 @@ export class InstitutionsService {
 				name?: boolean,
 				subjectId?: boolean,
 				appointments?: boolean,
-				institution?: boolean,
 			},
 		},
 		rooms?: {
@@ -97,7 +96,6 @@ export class InstitutionsService {
 						timetables?: boolean,
 					},
 				},
-				institution?: boolean,
 			},
 		},
 		timetables?: {
@@ -141,7 +139,6 @@ export class InstitutionsService {
 						timetables?: boolean,
 					},
 				},
-				institution?: boolean,
 			},
 		},
 		users?: {
@@ -150,10 +147,9 @@ export class InstitutionsService {
 				email?: boolean,
 				role?: boolean,
 				appointments?: boolean,
-				institution?: boolean,
 			},
 		},
-	}) {
+	}): Promise<Partial<ExtendedInstitutions>[]> {
 		return this.prisma.institutions.findMany({
 			select: {
 				id: true,
@@ -201,7 +197,6 @@ export class InstitutionsService {
 						timetables?: boolean,
 					},
 				},
-				institution?: boolean,
 			},
 		},
 		subjects?: {
@@ -210,7 +205,6 @@ export class InstitutionsService {
 				name?: boolean,
 				subjectId?: boolean,
 				appointments?: boolean,
-				institution?: boolean,
 			},
 		},
 		rooms?: {
@@ -248,7 +242,6 @@ export class InstitutionsService {
 						timetables?: boolean,
 					},
 				},
-				institution?: boolean,
 			},
 		},
 		timetables?: {
@@ -292,7 +285,6 @@ export class InstitutionsService {
 						timetables?: boolean,
 					},
 				},
-				institution?: boolean,
 			},
 		},
 		users?: {
@@ -301,10 +293,9 @@ export class InstitutionsService {
 				email?: boolean,
 				role?: boolean,
 				appointments?: boolean,
-				institution?: boolean,
 			},
 		},
-	}) {
+	}): Promise<Partial<ExtendedInstitutions>> {
 		let institution = await this.prisma.institutions.findUniqueOrThrow({
 			select: {
 				id: true,

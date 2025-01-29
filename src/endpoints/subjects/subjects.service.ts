@@ -14,7 +14,6 @@ export class SubjectsService {
 		name?: boolean,
 		subjectId?: boolean,
 		appointments?: boolean,
-		institution?: boolean,
 	}) {
 		return (await this.institutionsService.findOne(institutionsId, {
 			subjects: {
@@ -30,7 +29,6 @@ export class SubjectsService {
 		name?: boolean,
 		subjectId?: boolean,
 		appointments?: boolean,
-		institution?: boolean,
 	}) {
 		return (await this.institutionsService.findOne(institutionsId, {
 			subjects: {
