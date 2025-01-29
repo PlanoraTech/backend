@@ -150,7 +150,7 @@ export class InstitutionsService {
 			},
 		},
 	}): Promise<Partial<ExtendedInstitutions>[]> {
-		return this.prisma.institutions.findMany({
+		return await this.prisma.institutions.findMany({
 			select: {
 				id: true,
 				...select,
@@ -306,11 +306,11 @@ export class InstitutionsService {
 				id,
 			},
 		});
-		if (institution.access != "PRIVATE") {
-			return institution;
-		}
-		else {
-			throw new ForbiddenException("You have to log in to see this institution");
+		switch (institution.access) {
+			case "PRIVATE":
+				throw new ForbiddenException("You have to log in to see this institution");
+			case "PUBLIC":
+				return institution;
 		}
 	}
 

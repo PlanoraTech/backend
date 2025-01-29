@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Tokens } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class SecretService {
     static async comparePassword(givenPassword: string, hash: string): Promise<boolean> {
         return await compare(givenPassword, hash);
     }
-    static async createToken(userId: string) {
+    static async createToken(userId: string): Promise<Partial<Tokens>> {
         return await this.prisma.tokens.create({
             select: {
                 token: true,
@@ -31,10 +31,11 @@ export class SecretService {
             }
         });
     }
-    static async getActiveToken(userId: string) {
+    static async getActiveToken(userId: string): Promise<Partial<Tokens>> {
         return await this.prisma.tokens.findFirstOrThrow({
             select: {
                 token: true,
+                expiry: true,
             },
             where: {
                 userId: userId,
