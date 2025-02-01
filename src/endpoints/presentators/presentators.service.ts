@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
-import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
 import { PrismaClient } from '@prisma/client';
 import { ExtendedPresentators } from './types/presentators.type';
 
 @Injectable()
 export class PresentatorsService {
-	constructor(
-		//private readonly prisma: PrismaClient,
-		private readonly institutionsService: InstitutionsService
-	) { }
+	constructor(private readonly prisma: PrismaClient) { }
 	async create(institutionsId: string, createPresentatorDto: CreatePresentatorDto) {
-		/*
 		return await this.prisma.presentators.create({
 			data: {
 				name: createPresentatorDto.name,
@@ -28,7 +23,6 @@ export class PresentatorsService {
 				}
 			},
 		});
-		*/
 	}
 
 	async findAll(institutionsId: string, select?: {
@@ -45,8 +39,13 @@ export class PresentatorsService {
 				},
 				presentators?: {
 					select: {
-						id?: boolean,
-						name?: boolean,
+						id: boolean,
+						presentator: {
+							select: {
+								name: boolean,
+							}
+						},
+						isSubstituted: boolean,
 					}
 				},
 				rooms?: {
@@ -64,14 +63,15 @@ export class PresentatorsService {
 			},
 		},
 	}): Promise<Partial<ExtendedPresentators>[]> {
-		return (await this.institutionsService.findOne(institutionsId, {
-			presentators: {
-				select: {
-					id: true,
-					...select,
-				}
+		return await this.prisma.presentators.findMany({
+			select: {
+				id: true,
+				...select,
 			},
-		})).presentators;
+			where: {
+				institutionId: institutionsId,
+			},
+		});
 	}
 
 	async findOne(institutionsId: string, id: string, select?: {
@@ -88,8 +88,13 @@ export class PresentatorsService {
 				},
 				presentators?: {
 					select: {
-						id?: boolean,
-						name?: boolean,
+						id: boolean,
+						presentator: {
+							select: {
+								name: boolean,
+							}
+						},
+						isSubstituted: boolean,
 					}
 				},
 				rooms?: {
@@ -107,36 +112,36 @@ export class PresentatorsService {
 			},
 		},
 	}): Promise<Partial<ExtendedPresentators>> {
-		return (await this.institutionsService.findOne(institutionsId, {
-			presentators: {
-				select: {
-					id: true,
-					...select,
-				}
+		return await this.prisma.presentators.findUniqueOrThrow({
+			select: {
+				id: true,
+				...select,
 			},
-		})).presentators.find((presentator) => presentator.id === id);
+			where: {
+				id: id,
+				institutionId: institutionsId,
+			},
+		});
 	}
 
-	async update(id: string, updatePresentatorDto: UpdatePresentatorDto) {
-		/*
+	async update(institutionsId: string, id: string, updatePresentatorDto: UpdatePresentatorDto) {
 		return await this.prisma.presentators.update({
 			where: {
 				id: id,
+				institutionId: institutionsId,
 			},
 			data: {
 				...updatePresentatorDto,
 			},
 		});
-		*/
 	}
 
-	async remove(id: string) {
-		/*
+	async remove(institutionsId: string, id: string) {
 		return await this.prisma.presentators.delete({
 			where: {
 				id: id,
+				institutionId: institutionsId,
 			}
 		});
-		*/
 	}
 }

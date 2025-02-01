@@ -1,13 +1,14 @@
-import { ArgumentsHost, BadRequestException, Catch, ConflictException, ExceptionFilter, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, Catch, ConflictException, ExceptionFilter, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { Response } from 'express';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+	constructor(private readonly logger: Logger) { }
 	catch(exception: any, host: ArgumentsHost) {
 		const response = host.switchToHttp().getResponse<Response>();
 
-		console.log(exception);
+		this.logger.error(exception, 'GlobalExceptionFilter');
 
 		if (exception instanceof PrismaClientValidationError) {
 			exception = new BadRequestException("Something is missing from your request");
@@ -19,7 +20,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 					exception = new NotFoundException;
 					break;
 				case 'P2002':
-					exception = new ConflictException("Already exists");
+					exception = new ConflictException;
 					break;
 				default:
 					exception = new BadRequestException;

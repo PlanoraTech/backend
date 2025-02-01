@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient, Tokens } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
@@ -32,7 +32,7 @@ export class SecretService {
         });
     }
     static async getActiveToken(userId: string): Promise<Partial<Tokens>> {
-        return await this.prisma.tokens.findFirstOrThrow({
+        return await this.prisma.tokens.findFirst({
             select: {
                 token: true,
                 expiry: true,
@@ -43,10 +43,9 @@ export class SecretService {
                     gt: new Date(),
                 },
             }
-        });
+        })
     }
-    static async seamlessAuth(token: string): Promise<boolean>
-    {
+    static async seamlessAuth(token: string): Promise<boolean> {
         await this.prisma.tokens.findFirstOrThrow({
             select: {
                 expiry: true,
@@ -57,7 +56,19 @@ export class SecretService {
                     gt: new Date(),
                 },
             }
-        }) 
+        }).catch(() => {
+            throw new NotFoundException("Invalid token");
+        })
         return true;
+    }
+    static async getUserIdByToken(token: string): Promise<string> {
+        return (await this.prisma.tokens.findFirstOrThrow({
+            select: {
+                userId: true,
+            },
+            where: {
+                token: token,
+            }
+        })).userId;
     }
 }

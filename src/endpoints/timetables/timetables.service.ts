@@ -2,14 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
 import { PrismaClient } from '@prisma/client';
-import { InstitutionsService } from '../institutions/institutions.service';
 import { ExtendedTimeTables } from './types/timetables.type';
 
-abstract class AbstractTimeTablesService {
-	constructor(private readonly timetablesService: InstitutionsService) { }
+@Injectable()
+export class TimeTablesService {
+	constructor(private readonly prisma: PrismaClient) { }
 
-	create(createTimetableDto: CreateTimeTableDto): string {
-		throw new Error('Method not implemented.');
+	async create(institutionsId: string, createTimetableDto: CreateTimeTableDto): Promise<Partial<ExtendedTimeTables>> {
+		return await this.prisma.timeTables.create({
+			select: {
+				id: true,
+			},
+			data: {
+				institutionId: institutionsId,
+				...createTimetableDto,
+			},
+		});
 	}
 
 	async findAll(institutionsId: string, select?: {
@@ -33,8 +41,13 @@ abstract class AbstractTimeTablesService {
 				},
 				presentators?: {
 					select: {
-						id?: boolean,
-						name?: boolean,
+						id: boolean,
+						presentator: {
+							select: {
+								name: boolean,
+							}
+						},
+						isSubstituted: boolean,
 					}
 				},
 				rooms?: {
@@ -52,14 +65,15 @@ abstract class AbstractTimeTablesService {
 			},
 		},
 	}): Promise<Partial<ExtendedTimeTables>[]> {
-		return (await this.timetablesService.findOne(institutionsId, {
-			timetables: {
-				select: {
-					id: true,
-					...select,
-				},
+		return await this.prisma.timeTables.findMany({
+			select: {
+				id: true,
+				...select,
 			},
-		})).timetables;
+			where: {
+				institutionId: institutionsId,
+			},
+		});
 	}
 
 	async findOne(institutionsId: string, id: string, select?: {
@@ -83,8 +97,13 @@ abstract class AbstractTimeTablesService {
 				},
 				presentators?: {
 					select: {
-						id?: boolean,
-						name?: boolean,
+						id: boolean,
+						presentator: {
+							select: {
+								name: boolean,
+							}
+						},
+						isSubstituted: boolean,
 					}
 				},
 				rooms?: {
@@ -102,28 +121,51 @@ abstract class AbstractTimeTablesService {
 			},
 		},
 	}): Promise<Partial<ExtendedTimeTables>> {
-		return (await this.timetablesService.findOne(institutionsId, {
-			timetables: {
+		return await this.prisma.timeTables.findUniqueOrThrow({
+			select: {
+				id: true,
+				...select,
+			},
+			where: {
+				id: id,
+				institutionId: institutionsId,
+			},
+		});
+	}
+
+	async update(institutionsId: string, id: string, updateTimetableDto: UpdateTimeTableDto): Promise<Partial<ExtendedTimeTables>> {
+		return await this.prisma.timeTables.update({
+			select: {
+				id: true,
+			},
+			data: updateTimetableDto,
+			where: {
+				id: id,
+				institutionId: institutionsId,
+			},
+		});
+	}
+
+	async remove(institutionsId: string, id: string): Promise<void> {
+		await this.prisma.$transaction([
+			this.prisma.appointments.deleteMany({
+				where: {
+					timetables: {
+						some: {
+							id: id,
+						},
+					},
+				},
+			}),
+			this.prisma.timeTables.delete({
 				select: {
 					id: true,
-					...select,
 				},
-			},
-		})).timetables.find((timetable) => timetable.id === id);
-	}
-
-	update(id: string, updateTimetableDto: UpdateTimeTableDto): string {
-		return `This action updates a #${id} timetable`;
-	}
-
-	remove(id: string): string {
-		return `This action removes a #${id} timetable`;
-	}
-}
-
-@Injectable()
-export class TimeTablesService extends AbstractTimeTablesService {
-	constructor() {
-		super(new InstitutionsService(new PrismaClient));
+				where: {
+					id: id,
+					institutionId: institutionsId,
+				},
+			}),
+		])
 	}
 }

@@ -1,20 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { InstitutionsService } from './institutions.service';
-import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { ExtendedInstitutions } from './types/institutions.type';
+import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Institutions } from '@prisma/client';
 
 @Controller()
 export class InstitutionsController {
 	constructor(private readonly institutionsService: InstitutionsService) { }
 
+	/*
 	@Post()
+	@Access(AccessTypes.ADMIN)
 	create(@Body() createInstitutionDto: CreateInstitutionDto) {
 		return this.institutionsService.create(createInstitutionDto);
 	}
+	*/
 
 	@Get()
-	findAll(): Promise<Partial<ExtendedInstitutions>[]> {
+	findAll(): Promise<Partial<Institutions>[]> {
 		return this.institutionsService.findAll({
 			name: true,
 			type: true,
@@ -24,8 +27,9 @@ export class InstitutionsController {
 		});
 	}
 
-	@Get(':id')
-	findOne(@Param('id') id: string): Promise<Partial<ExtendedInstitutions>> {
+	@Get(':institutionsId')
+	@Access(AccessTypes.RESTRICTED)
+	findOne(@Param('institutionsId') id: string): Promise<Partial<Institutions>> {
 		return this.institutionsService.findOne(id, {
 			name: true,
 			type: true,
@@ -35,12 +39,16 @@ export class InstitutionsController {
 	}
 
 	@Patch(':id')
+	@Access(AccessTypes.PRIVATE)
 	update(@Param('id') id: string, @Body() updateInstitutionDto: UpdateInstitutionDto) {
 		return this.institutionsService.update(id, updateInstitutionDto);
 	}
 
+	/*
 	@Delete(':id')
+	@Access(AccessTypes.ADMIN)
 	remove(@Param('id') id: string) {
 		return this.institutionsService.remove(id);
 	}
+	*/
 }

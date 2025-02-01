@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { PrismaClient, Tokens } from '@prisma/client';
 import { SecretService } from '../secret/secret.service';
@@ -15,6 +15,8 @@ export class RegisterService {
         email: registerDto.email,
         password: await SecretService.encryptPassword(registerDto.password),
       }
+    }).catch(() => {
+      throw new ConflictException('User already exists')
     });
     return await SecretService.createToken(user.id);
   }

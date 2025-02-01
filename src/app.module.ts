@@ -9,6 +9,7 @@ import { AppointmentsModule } from './endpoints/appointments/appointments.module
 import { UsersModule } from './endpoints/users/users.module';
 import { LoginModule } from './endpoints/auth/login/login.module';
 import { RegisterModule } from './endpoints/auth/register/register.module';
+import { ProfileModule } from './endpoints/profile/profile.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RegisterModule } from './endpoints/auth/register/register.module';
     UsersModule,
     LoginModule,
     RegisterModule,
+    ProfileModule,
     RouterModule.register([
       {
         path: 'institutions',

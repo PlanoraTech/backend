@@ -3,17 +3,20 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentsFromInstitutionsTimeTablesService, AppointmentsFromPresentatorsService, AppointmentsFromRoomsService } from './appointments.service';
 import { ExtendedAppointments } from './types/appointments.type';
+import { Access, AccessTypes } from 'src/decorators/access.decorator';
 
 abstract class AppointmentsController {
 	constructor(private readonly appointmentsService: AppointmentsFromInstitutionsTimeTablesService | AppointmentsFromPresentatorsService | AppointmentsFromRoomsService) { }
 
 	@Post()
+	@Access(AccessTypes.PRIVATE)
 	create(@Body() createAppointmentDto: CreateAppointmentDto) {
 		return this.appointmentsService.create(createAppointmentDto);
 	}
 
 	@Get()
-	findAll(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('presentatorsId') presentatorsId: string, @Param('roomsId') roomsId: string): Promise<Partial<ExtendedAppointments>[]> {
+	@Access(AccessTypes.RESTRICTED)
+	findAll(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('presentatorsId') presentatorsId: string, @Param('roomsId') roomsId: string) {
 		return this.appointmentsService.findAll(institutionsId, timetablesId || presentatorsId || roomsId, {
 			subject: {
 				select: {
@@ -25,8 +28,13 @@ abstract class AppointmentsController {
 			presentators: {
 				select: {
 					id: true,
-					name: true,
-				},
+					presentator: {
+						select: {
+							name: true,
+						}
+					},
+					isSubstituted: true,
+				}
 			},
 			rooms: {
 				select: {
@@ -43,6 +51,7 @@ abstract class AppointmentsController {
 	}
 
 	@Get(':id')
+	@Access(AccessTypes.RESTRICTED)
 	findOne(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('presentatorsId') presentatorsId: string, @Param('roomsId') roomsId: string, @Param('id') id: string): Promise<Partial<ExtendedAppointments>> {
 		return this.appointmentsService.findOne(institutionsId, timetablesId || presentatorsId || roomsId, id, {
 			subject: {
@@ -55,8 +64,13 @@ abstract class AppointmentsController {
 			presentators: {
 				select: {
 					id: true,
-					name: true,
-				},
+					presentator: {
+						select: {
+							name: true,
+						}
+					},
+					isSubstituted: true,
+				}
 			},
 			rooms: {
 				select: {
@@ -73,11 +87,13 @@ abstract class AppointmentsController {
 	}
 
 	@Patch(':id')
+	@Access(AccessTypes.PRIVATE)
 	update(@Param('id') id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
 		return this.appointmentsService.update(id, updateAppointmentDto);
 	}
 
 	@Delete(':id')
+	@Access(AccessTypes.PRIVATE)
 	remove(@Param('id') id: string) {
 		return this.appointmentsService.remove(id);
 	}

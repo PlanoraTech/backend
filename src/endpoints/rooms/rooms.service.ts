@@ -1,14 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
 import { ExtendedRooms } from './types/rooms.type';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class RoomsService {
-	constructor(private readonly institutionsService: InstitutionsService) { }
-	create(createRoomDto: CreateRoomDto) {
-		return 'This action adds a new room';
+	constructor(private readonly prisma: PrismaClient) { }
+	async create(institutionsId: string, createRoomDto: CreateRoomDto) {
+		return await this.prisma.rooms.create({
+			select: {
+				id: true,
+			},
+			data: {
+				...createRoomDto,
+				isAvailable: true,
+				institution: {
+					connect: {
+						id: institutionsId,
+					}
+				},
+			},
+		});
 	}
 
 	async findAll(institutionsId: string, select?: {
@@ -26,8 +39,13 @@ export class RoomsService {
 				},
 				presentators?: {
 					select: {
-						id?: boolean,
-						name?: boolean,
+						id: boolean,
+						presentator: {
+							select: {
+								name: boolean,
+							}
+						},
+						isSubstituted: boolean,
 					}
 				},
 				rooms?: {
@@ -45,14 +63,15 @@ export class RoomsService {
 			},
 		},
 	}): Promise<Partial<ExtendedRooms>[]> {
-		return (await this.institutionsService.findOne(institutionsId, {
-			rooms: {
-				select: {
-					id: true,
-					...select,
-				},
+		return await this.prisma.rooms.findMany({
+			select: {
+				id: true,
+				...select,
 			},
-		})).rooms;
+			where: {
+				institutionId: institutionsId,
+			},
+		});
 	}
 
 	async findOne(institutionsId: string, id: string, select?: {
@@ -70,8 +89,13 @@ export class RoomsService {
 				},
 				presentators?: {
 					select: {
-						id?: boolean,
-						name?: boolean,
+						id: boolean,
+						presentator: {
+							select: {
+								name: boolean,
+							}
+						},
+						isSubstituted: boolean,
 					}
 				},
 				rooms?: {
@@ -89,21 +113,42 @@ export class RoomsService {
 			},
 		},
 	}): Promise<Partial<ExtendedRooms>> {
-		return (await this.institutionsService.findOne(institutionsId, {
-			rooms: {
-				select: {
-					id: true,
-					...select,
-				},
+		return await this.prisma.rooms.findUniqueOrThrow({
+			select: {
+				id: true,
+				...select,
 			},
-		})).rooms.find((room) => room.id === id);
+			where: {
+				id: id,
+				institutionId: institutionsId,
+			},
+		});
 	}
 
-	update(id: number, updateRoomDto: UpdateRoomDto) {
-		return `This action updates a #${id} room`;
+	async update(institutionsId: string, id: string, updateRoomDto: UpdateRoomDto) {
+		return await this.prisma.rooms.update({
+			select: {
+				id: true,
+			},
+			data: {
+				...updateRoomDto,
+			},
+			where: {
+				id: id,
+				institutionId: institutionsId,
+			},
+		});
 	}
 
-	remove(id: number) {
-		return `This action removes a #${id} room`;
+	async remove(institutionsId: string, id: string) {
+		return await this.prisma.rooms.delete({
+			select: {
+				id: true,
+			},
+			where: {
+				id: id,
+				institutionId: institutionsId,
+			},
+		});
 	}
 }

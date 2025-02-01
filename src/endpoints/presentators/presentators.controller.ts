@@ -3,17 +3,20 @@ import { PresentatorsService } from './presentators.service';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 import { ExtendedPresentators } from './types/presentators.type';
+import { Access, AccessTypes } from 'src/decorators/access.decorator';
 
 @Controller()
 export class PresentatorsController {
 	constructor(private readonly presentatorsService: PresentatorsService) { }
 
 	@Post()
+	@Access(AccessTypes.PRIVATE)
 	create(@Param('institutionsId') institutionsId: string, @Body() createPresentatorDto: CreatePresentatorDto) {
 		return this.presentatorsService.create(institutionsId, createPresentatorDto);
 	}
 
 	@Get()
+	@Access(AccessTypes.RESTRICTED)
 	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<ExtendedPresentators>[]> {
 		return this.presentatorsService.findAll(institutionsId, {
 			name: true,
@@ -21,6 +24,7 @@ export class PresentatorsController {
 	}
 
 	@Get(':id')
+	@Access(AccessTypes.RESTRICTED)
 	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<ExtendedPresentators>> {
 		return this.presentatorsService.findOne(institutionsId, id, {
 			name: true,
@@ -28,12 +32,14 @@ export class PresentatorsController {
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto) {
-		return this.presentatorsService.update(id, updatePresentatorDto);
+	@Access(AccessTypes.PRIVATE)
+	update(@Param('institutionsId') institutionsId: string, @Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto) {
+		return this.presentatorsService.update(institutionsId, id, updatePresentatorDto);
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.presentatorsService.remove(id);
+	@Access(AccessTypes.PRIVATE)
+	remove(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+		return this.presentatorsService.remove(institutionsId, id);
 	}
 }

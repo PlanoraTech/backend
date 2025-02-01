@@ -7,7 +7,7 @@ async function seed() {
 	for (let i = 0; i < 30; i++) {
 		await prisma.institutions.create({
 			data: {
-				name: faker.company.name(),
+				name: faker.company.name() + i,
 				type: faker.helpers.arrayElements(["SCHOOL", "UNIVERSITY", "COMPANY"], 1)[0],
 				access: faker.helpers.arrayElements(["PUBLIC", "PRIVATE"], 1)[0],
 				color: faker.internet.color(),
@@ -19,7 +19,7 @@ async function seed() {
 	for (let i = 0; i < 500; i++) {
 		await prisma.presentators.create({
 			data: {
-				name: faker.person.fullName(),
+				name: faker.person.fullName() + i,
 				institution: {
 					connect: {
 						id: await prisma.institutions.findMany({
@@ -116,7 +116,7 @@ async function seed() {
 
 	for (let i = 0; i < 1000; i++) {
 		let start = Number(faker.date.recent());
-		await prisma.appointments.create({
+		let appointment = await prisma.appointments.create({
 			data: {
 				subject: {
 					connect: {
@@ -126,17 +126,6 @@ async function seed() {
 							},
 						}).then((subjects) => {
 							return faker.helpers.arrayElements(subjects, 1)[0].id;
-						}),
-					},
-				},
-				presentators: {
-					connect: {
-						id: await prisma.presentators.findMany({
-							select: {
-								id: true,
-							},
-						}).then((presentators) => {
-							return faker.helpers.arrayElements(presentators, 1)[0].id;
 						}),
 					},
 				},
@@ -168,8 +157,28 @@ async function seed() {
 				isCancelled: faker.datatype.boolean(),
 			}
 		})
+		await prisma.presentatorsToAppointments.create({
+			data: {
+				presentator: {
+					connect: {
+						id: await prisma.presentators.findMany({
+							select: {
+								id: true,
+							},
+						}).then((presentators) => {
+							return faker.helpers.arrayElements(presentators, 1)[0].id;
+						}),
+					}
+				},
+				appointment: {
+					connect: {
+						id: appointment.id
+					}
+				},
+				isSubstituted: false,
+			}
+		});
 	}
-
 }
 
 seed()

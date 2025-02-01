@@ -1,34 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UserDto } from './dto/user.dto';
+import { Access, AccessTypes } from 'src/decorators/access.decorator';
 
 @Controller()
 export class UsersController {
 	constructor(private readonly usersService: UsersService) { }
 
 	@Post()
-	create(@Body() createUserDto: CreateUserDto) {
-		return this.usersService.create(createUserDto);
+	@Access(AccessTypes.PRIVATE)
+	create(@Param('institutionsId') institutionsId: string, @Body() userDto: UserDto) {
+		return this.usersService.add(institutionsId, userDto);
 	}
 
 	@Get()
-	findAll() {
-		return this.usersService.findAllUsers();
+	@Access(AccessTypes.PRIVATE)
+	findAll(@Param('institutionsId') institutionsId: string) {
+		return this.usersService.findAll(institutionsId, {
+			email: true,
+			role: true,
+		});
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.usersService.findOneUser(id);
-	}
-
-	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-		return this.usersService.update(id, updateUserDto);
+	@Access(AccessTypes.PRIVATE)
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+		return this.usersService.findOne(institutionsId, id, {
+			email: true,
+			role: true,
+		});
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.usersService.remove(id);
+	@Access(AccessTypes.PRIVATE)
+	remove(@Param('institutionsId') institutionsId: string, @Body() userDto: UserDto): Promise<void> {
+		return this.usersService.remove(institutionsId, userDto);
 	}
 }

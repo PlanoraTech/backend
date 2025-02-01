@@ -3,17 +3,20 @@ import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ExtendedRooms } from './types/rooms.type';
+import { Access, AccessTypes } from 'src/decorators/access.decorator';
 
 @Controller()
 export class RoomsController {
 	constructor(private readonly roomsService: RoomsService) { }
 
 	@Post()
-	create(@Body() createRoomDto: CreateRoomDto) {
-		return this.roomsService.create(createRoomDto);
+	@Access(AccessTypes.PRIVATE)
+	create(@Param('institutionsId') institutionsId: string, @Body() createRoomDto: CreateRoomDto) {
+		return this.roomsService.create(institutionsId, createRoomDto);
 	}
 
 	@Get()
+	@Access(AccessTypes.RESTRICTED)
 	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<ExtendedRooms>[]> {
 		return this.roomsService.findAll(institutionsId, {
 			name: true,
@@ -22,6 +25,7 @@ export class RoomsController {
 	}
 
 	@Get(':id')
+	@Access(AccessTypes.RESTRICTED)
 	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<ExtendedRooms>> {
 		return this.roomsService.findOne(institutionsId, id, {
 			name: true,
@@ -30,12 +34,14 @@ export class RoomsController {
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-		return this.roomsService.update(+id, updateRoomDto);
+	@Access(AccessTypes.PRIVATE)
+	update(@Param('institutionsId') institutionsId: string, @Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
+		return this.roomsService.update(institutionsId, id, updateRoomDto);
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.roomsService.remove(+id);
+	@Access(AccessTypes.PRIVATE)
+	remove(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+		return this.roomsService.remove(institutionsId, id);
 	}
 }

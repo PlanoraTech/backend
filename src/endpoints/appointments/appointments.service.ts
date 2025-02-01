@@ -4,7 +4,6 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { TimeTablesService } from '../timetables/timetables.service';
 import { PresentatorsService } from '../presentators/presentators.service';
 import { RoomsService } from '../rooms/rooms.service';
-import { InstitutionsService } from '../institutions/institutions.service';
 import { PrismaClient } from '@prisma/client';
 import { ExtendedAppointments } from './types/appointments.type';
 
@@ -24,10 +23,15 @@ abstract class AppointmentsService {
 		},
 		presentators?: {
 			select: {
-				id?: boolean,
-				name?: boolean,
+				id: boolean,
+				presentator: {
+					select: {
+						name: boolean,
+					}
+				},
+				isSubstituted: boolean,
 			}
-		},
+		}
 		rooms?: {
 			select: {
 				id?: boolean,
@@ -61,10 +65,15 @@ abstract class AppointmentsService {
 		},
 		presentators?: {
 			select: {
-				id?: boolean,
-				name?: boolean,
+				id: boolean,
+				presentator: {
+					select: {
+						name: boolean,
+					}
+				},
+				isSubstituted: boolean,
 			}
-		},
+		}
 		rooms?: {
 			select: {
 				id?: boolean,
@@ -93,27 +102,27 @@ abstract class AppointmentsService {
 	}
 
 	async remove(id: string) {
-		throw new Error('Method not implemented.');
+		
 	}
 }
 
 @Injectable()
 export class AppointmentsFromInstitutionsTimeTablesService extends AppointmentsService {
 	constructor() {
-		super(new TimeTablesService);
+		super(new TimeTablesService(new PrismaClient));
 	}
 }
 
 @Injectable()
 export class AppointmentsFromPresentatorsService extends AppointmentsService {
 	constructor() {
-		super(new PresentatorsService(new InstitutionsService(new PrismaClient)));
+		super(new PresentatorsService(new PrismaClient));
 	}
 }
 
 @Injectable()
 export class AppointmentsFromRoomsService extends AppointmentsService {
 	constructor() {
-		super(new RoomsService(new InstitutionsService(new PrismaClient)));
+		super(new RoomsService(new PrismaClient));
 	}
 }

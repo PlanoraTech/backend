@@ -1,42 +1,130 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaClient } from '@prisma/client';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { UserDto } from './dto/user.dto';
+import { PrismaClient, Roles, Users } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
+	private static readonly prisma: PrismaClient = new PrismaClient();
 	constructor(private readonly prisma: PrismaClient) { }
-	create(createUserDto: CreateUserDto) {
-		return 'This action adds a new user';
-	}
 
-	async findAllUsers() {
-		return `This action returns all users`;
-	}
-
-	async findOneUser(id: string, select?: {
-		id?: boolean,
-		email?: boolean,
-		role?: boolean,
-		institutions?: boolean,
-		tokens?: boolean,
-	}) {
-		return await this.prisma.users.findUniqueOrThrow({
+	static async getIfInstitutionIsAssignedToAUserByToken(token: string, institutionsId: string): Promise<boolean> {
+		await this.prisma.users.findFirstOrThrow({
 			select: {
-				...select,
+				institutions: {
+					select: {
+						id: true,
+					},
+				},
+			},
+			where: {
+				institutions: {
+					some: {
+						id: institutionsId,
+					},
+				},
+				tokens: {
+					some: {
+						token: token,
+					},
+				},
+			},
+		}).catch(() => {
+			throw new ForbiddenException("You do not have permission to access this information");
+		});
+		return true;
+	}
+
+	static async getIfRoleIsAssignedToAUserByToken(token: string, role: Roles): Promise<boolean> {
+		await this.prisma.users.findFirstOrThrow({
+			select: {
 				role: true,
 			},
 			where: {
-				id,
+				role: role,
+				tokens: {
+					some: {
+						token: token,
+					},
+				},
+			},
+		}).catch(() => {
+			throw new ForbiddenException("You do not have permission to access this information");
+		});
+		return true;
+	}
+
+	async add(institutionsId: string, userDto: UserDto) {
+		return await this.prisma.users.update({
+			select: {
+				email: true,
+			},
+			data: {
+				institutions: {
+					connect: {
+						id: institutionsId,
+					},
+				},
+			},
+			where: {
+				email: userDto.email,
+			},
+		});
+	}
+
+	async findAll(institutionsId: string, select?: {
+		email?: boolean,
+		role?: boolean,
+	}): Promise<Partial<Users>[]> {
+		return await this.prisma.users.findMany({
+			select: {
+				role: true,
+				...select,
+			},
+			where: {
+				institutions: {
+					some: {
+						id: institutionsId,
+					},
+				},
 			},
 		})
 	}
 
-	update(id: string, updateUserDto: UpdateUserDto) {
-		return `This action updates a #${id} user`;
+	async findOne(institutionsId: string, id: string, select?: {
+		email?: boolean,
+		role?: boolean,
+	}): Promise<Partial<Users>> {
+		return await this.prisma.users.findUniqueOrThrow({
+			select: {
+				id: true,
+				...select,
+			},
+			where: {
+				id: id,
+				institutions: {
+					some: {
+						id: institutionsId,
+					},
+				},
+			},
+		})
 	}
 
-	remove(id: string) {
-		return `This action removes a #${id} user`;
+	async remove(institutionsId: string, userDto: UserDto): Promise<void> {
+		await this.prisma.users.update({
+			select: {
+				email: true,
+			},
+			data: {
+				institutions: {
+					disconnect: {
+						id: institutionsId,
+					},
+				},
+			},
+			where: {
+				email: userDto.email,
+			},
+		});
 	}
 }

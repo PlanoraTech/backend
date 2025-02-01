@@ -1,15 +1,26 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateInstitutionDto } from './dto/create-institution.dto';
+import { Injectable } from '@nestjs/common';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { PrismaClient } from '@prisma/client';
-import { ExtendedInstitutions } from './types/institutions.type';
+import { AccessType, Institutions, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class InstitutionsService {
+	private static readonly prisma: PrismaClient = new PrismaClient();
 	constructor(private readonly prisma: PrismaClient) { }
-	async create(createInstitutionDto: CreateInstitutionDto) {
-		
+
+	static async getInstitutionAccessById(id: string): Promise<AccessType> {
+		return (await this.prisma.institutions.findUniqueOrThrow({
+			select: {
+				access: true,
+			},
+			where: {
+				id,
+			},
+		})).access;
 	}
+
+	/*
+	async create(createInstitutionDto: CreateInstitutionDto) {}
+	*/
 
 	async findAll(select?: {
 		name?: boolean,
@@ -17,139 +28,7 @@ export class InstitutionsService {
 		access?: boolean,
 		color?: boolean,
 		website?: boolean,
-		presentators?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				appointments?: {
-					select: {
-						id?: boolean,
-						subject?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								subjectId?: boolean,
-							}
-						},
-						presentators?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-							}
-						},
-						rooms?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								isAvailable?: boolean,
-							}
-						},
-						dayOfWeek?: boolean,
-						start?: boolean,
-						end?: boolean,
-						isCancelled?: boolean,
-						timetables?: boolean,
-					},
-				},
-			},
-		},
-		subjects?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				subjectId?: boolean,
-				appointments?: boolean,
-			},
-		},
-		rooms?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				isAvailable?: boolean,
-				appointments?: {
-					select: {
-						id?: boolean,
-						subject?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								subjectId?: boolean,
-							}
-						},
-						presentators?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-							}
-						},
-						rooms?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								isAvailable?: boolean,
-							}
-						},
-						dayOfWeek?: boolean,
-						start?: boolean,
-						end?: boolean,
-						isCancelled?: boolean,
-						timetables?: boolean,
-					},
-				},
-			},
-		},
-		timetables?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				events?: {
-					select: {
-						id?: boolean,
-						title?: boolean,
-						date?: boolean,
-					}
-				},
-				appointments?: {
-					select: {
-						id?: boolean,
-						subject?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								subjectId?: boolean,
-							}
-						},
-						presentators?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-							}
-						},
-						rooms?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								isAvailable?: boolean,
-							}
-						},
-						dayOfWeek?: boolean,
-						start?: boolean,
-						end?: boolean,
-						isCancelled?: boolean,
-						timetables?: boolean,
-					},
-				},
-			},
-		},
-		users?: {
-			select: {
-				id?: boolean,
-				email?: boolean,
-				role?: boolean,
-				appointments?: boolean,
-			},
-		},
-	}): Promise<Partial<ExtendedInstitutions>[]> {
+	}): Promise<Partial<Institutions>[]> {
 		return await this.prisma.institutions.findMany({
 			select: {
 				id: true,
@@ -163,140 +42,8 @@ export class InstitutionsService {
 		type?: boolean,
 		color?: boolean,
 		website?: boolean,
-		presentators?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				appointments?: {
-					select: {
-						id?: boolean,
-						subject?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								subjectId?: boolean,
-							}
-						},
-						presentators?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-							}
-						},
-						rooms?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								isAvailable?: boolean,
-							}
-						},
-						dayOfWeek?: boolean,
-						start?: boolean,
-						end?: boolean,
-						isCancelled?: boolean,
-						timetables?: boolean,
-					},
-				},
-			},
-		},
-		subjects?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				subjectId?: boolean,
-				appointments?: boolean,
-			},
-		},
-		rooms?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				isAvailable?: boolean,
-				appointments?: {
-					select: {
-						id?: boolean,
-						subject?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								subjectId?: boolean,
-							}
-						},
-						presentators?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-							}
-						},
-						rooms?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								isAvailable?: boolean,
-							}
-						},
-						dayOfWeek?: boolean,
-						start?: boolean,
-						end?: boolean,
-						isCancelled?: boolean,
-						timetables?: boolean,
-					},
-				},
-			},
-		},
-		timetables?: {
-			select: {
-				id?: boolean,
-				name?: boolean,
-				events?: {
-					select: {
-						id?: boolean,
-						title?: boolean,
-						date?: boolean,
-					}
-				},
-				appointments?: {
-					select: {
-						id?: boolean,
-						subject?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								subjectId?: boolean,
-							}
-						},
-						presentators?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-							}
-						},
-						rooms?: {
-							select: {
-								id?: boolean,
-								name?: boolean,
-								isAvailable?: boolean,
-							}
-						},
-						dayOfWeek?: boolean,
-						start?: boolean,
-						end?: boolean,
-						isCancelled?: boolean,
-						timetables?: boolean,
-					},
-				},
-			},
-		},
-		users?: {
-			select: {
-				id?: boolean,
-				email?: boolean,
-				role?: boolean,
-				appointments?: boolean,
-			},
-		},
-	}): Promise<Partial<ExtendedInstitutions>> {
-		let institution = await this.prisma.institutions.findUniqueOrThrow({
+	}): Promise<Partial<Institutions>> {
+		return await this.prisma.institutions.findUniqueOrThrow({
 			select: {
 				id: true,
 				access: true,
@@ -306,19 +53,27 @@ export class InstitutionsService {
 				id,
 			},
 		});
-		switch (institution.access) {
-			case "PRIVATE":
-				throw new ForbiddenException("You have to log in to see this institution");
-			case "PUBLIC":
-				return institution;
-		}
 	}
 
-	update(id: string, updateInstitutionDto: UpdateInstitutionDto) {
-		return `This action updates a #${id} institution`;
+	async update(id: string, updateInstitutionDto: UpdateInstitutionDto) {
+		return await this.prisma.institutions.update({
+			select: {
+				name: true,
+				type: true,
+				access: true,
+				color: true,
+				website: true,
+			},
+			data: {
+				...updateInstitutionDto,
+			},
+			where: {
+				id,
+			},
+		});
 	}
 
-	remove(id: string) {
-		return `This action removes a #${id} institution`;
-	}
+	/*
+	async remove(id: string) {}
+	*/
 }
