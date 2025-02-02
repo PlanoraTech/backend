@@ -129,6 +129,17 @@ async function seed() {
 						}),
 					},
 				},
+				presentators: {
+					connect: {
+						id: await prisma.presentators.findMany({
+							select: {
+								id: true,
+							},
+						}).then((presentators) => {
+							return faker.helpers.arrayElements(presentators, 1)[0].id;
+						}),
+					},
+				},
 				rooms: {
 					connect: {
 						id: await prisma.rooms.findMany({
@@ -157,27 +168,6 @@ async function seed() {
 				isCancelled: faker.datatype.boolean(),
 			}
 		})
-		await prisma.presentatorsToAppointments.create({
-			data: {
-				presentator: {
-					connect: {
-						id: await prisma.presentators.findMany({
-							select: {
-								id: true,
-							},
-						}).then((presentators) => {
-							return faker.helpers.arrayElements(presentators, 1)[0].id;
-						}),
-					}
-				},
-				appointment: {
-					connect: {
-						id: appointment.id
-					}
-				},
-				isSubstituted: false,
-			}
-		});
 	}
 }
 

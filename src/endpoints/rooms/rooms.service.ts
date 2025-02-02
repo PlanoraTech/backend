@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ExtendedRooms } from './types/rooms.type';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Rooms } from '@prisma/client';
 
 @Injectable()
 export class RoomsService {
@@ -27,42 +27,7 @@ export class RoomsService {
 	async findAll(institutionsId: string, select?: {
 		name?: boolean,
 		isAvailable?: boolean,
-		appointments?: {
-			select: {
-				id?: boolean,
-				subject?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						subjectId?: boolean,
-					}
-				},
-				presentators?: {
-					select: {
-						id: boolean,
-						presentator: {
-							select: {
-								name: boolean,
-							}
-						},
-						isSubstituted: boolean,
-					}
-				},
-				rooms?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						isAvailable?: boolean,
-					}
-				},
-				dayOfWeek?: boolean,
-				start?: boolean,
-				end?: boolean,
-				isCancelled?: boolean,
-				timetables?: boolean,
-			},
-		},
-	}): Promise<Partial<ExtendedRooms>[]> {
+	}): Promise<Partial<Rooms>[]> {
 		return await this.prisma.rooms.findMany({
 			select: {
 				id: true,
@@ -89,13 +54,9 @@ export class RoomsService {
 				},
 				presentators?: {
 					select: {
-						id: boolean,
-						presentator: {
-							select: {
-								name: boolean,
-							}
-						},
-						isSubstituted: boolean,
+						id?: boolean,
+						name?: boolean,
+						isSubstituted?: boolean,
 					}
 				},
 				rooms?: {

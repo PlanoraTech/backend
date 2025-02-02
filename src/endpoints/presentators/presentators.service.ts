@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
-import { PrismaClient } from '@prisma/client';
+import { Presentators, PrismaClient } from '@prisma/client';
 import { ExtendedPresentators } from './types/presentators.type';
 
 @Injectable()
@@ -27,42 +27,7 @@ export class PresentatorsService {
 
 	async findAll(institutionsId: string, select?: {
 		name?: boolean,
-		appointments?: {
-			select: {
-				id?: boolean,
-				subject?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						subjectId?: boolean,
-					}
-				},
-				presentators?: {
-					select: {
-						id: boolean,
-						presentator: {
-							select: {
-								name: boolean,
-							}
-						},
-						isSubstituted: boolean,
-					}
-				},
-				rooms?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						isAvailable?: boolean,
-					}
-				},
-				dayOfWeek?: boolean,
-				start?: boolean,
-				end?: boolean,
-				isCancelled?: boolean,
-				timetables?: boolean,
-			},
-		},
-	}): Promise<Partial<ExtendedPresentators>[]> {
+	}): Promise<Partial<Presentators>[]> {
 		return await this.prisma.presentators.findMany({
 			select: {
 				id: true,
@@ -88,13 +53,9 @@ export class PresentatorsService {
 				},
 				presentators?: {
 					select: {
-						id: boolean,
-						presentator: {
-							select: {
-								name: boolean,
-							}
-						},
-						isSubstituted: boolean,
+						id?: boolean,
+						name?: boolean,
+						isSubstituted?: boolean,
 					}
 				},
 				rooms?: {

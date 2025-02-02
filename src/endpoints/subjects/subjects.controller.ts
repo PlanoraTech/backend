@@ -3,6 +3,7 @@ import { SubjectsService } from './subjects.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Subjects } from '@prisma/client';
 
 @Controller()
 export class SubjectsController {
@@ -16,7 +17,7 @@ export class SubjectsController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string) {
+	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<Subjects>[]> {
 		return this.subjectsService.findAll(institutionsId, {
 			name: true,
 			subjectId: true,
@@ -25,7 +26,7 @@ export class SubjectsController {
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<Subjects>> {
 		return this.subjectsService.findOne(institutionsId, id, {
 			name: true,
 			subjectId: true,

@@ -22,15 +22,6 @@ export class UsersController {
 		});
 	}
 
-	@Get(':id')
-	@Access(AccessTypes.PRIVATE)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-		return this.usersService.findOne(institutionsId, id, {
-			email: true,
-			role: true,
-		});
-	}
-
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
 	remove(@Param('institutionsId') institutionsId: string, @Body() userDto: UserDto): Promise<void> {

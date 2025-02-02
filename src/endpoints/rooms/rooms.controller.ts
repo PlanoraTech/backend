@@ -4,6 +4,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ExtendedRooms } from './types/rooms.type';
 import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Rooms } from '@prisma/client';
 
 @Controller()
 export class RoomsController {
@@ -17,7 +18,7 @@ export class RoomsController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<ExtendedRooms>[]> {
+	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<Rooms>[]> {
 		return this.roomsService.findAll(institutionsId, {
 			name: true,
 			isAvailable: true,

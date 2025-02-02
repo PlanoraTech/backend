@@ -4,6 +4,7 @@ import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 import { ExtendedPresentators } from './types/presentators.type';
 import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Presentators } from '@prisma/client';
 
 @Controller()
 export class PresentatorsController {
@@ -17,7 +18,7 @@ export class PresentatorsController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<ExtendedPresentators>[]> {
+	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<Presentators>[]> {
 		return this.presentatorsService.findAll(institutionsId, {
 			name: true,
 		});
@@ -25,7 +26,7 @@ export class PresentatorsController {
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<ExtendedPresentators>> {
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<Presentators>> {
 		return this.presentatorsService.findOne(institutionsId, id, {
 			name: true,
 		});

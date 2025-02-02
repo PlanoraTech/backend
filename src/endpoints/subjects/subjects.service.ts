@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Subjects } from '@prisma/client';
 
 @Injectable()
 export class SubjectsService {
@@ -18,7 +18,7 @@ export class SubjectsService {
 	async findAll(institutionsId: string, select?: {
 		name?: boolean,
 		subjectId?: boolean,
-	}) {
+	}): Promise<Partial<Subjects>[]> {
 		return await this.prisma.subjects.findMany({
 			select: {
 				id: true,
@@ -33,7 +33,7 @@ export class SubjectsService {
 	async findOne(institutionsId: string, id: string, select?: {
 		name?: boolean,
 		subjectId?: boolean,
-	}) {
+	}): Promise<Partial<Subjects>> {
 		return await this.prisma.subjects.findFirst({
 			select: {
 				id: true,

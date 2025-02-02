@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, TimeTables } from '@prisma/client';
 import { ExtendedTimeTables } from './types/timetables.type';
 
 @Injectable()
@@ -29,42 +29,7 @@ export class TimeTablesService {
 				date?: boolean,
 			}
 		},
-		appointments?: {
-			select: {
-				id?: boolean,
-				subject?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						subjectId?: boolean,
-					}
-				},
-				presentators?: {
-					select: {
-						id: boolean,
-						presentator: {
-							select: {
-								name: boolean,
-							}
-						},
-						isSubstituted: boolean,
-					}
-				},
-				rooms?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						isAvailable?: boolean,
-					}
-				},
-				dayOfWeek?: boolean,
-				start?: boolean,
-				end?: boolean,
-				isCancelled?: boolean,
-				timetables?: boolean,
-			},
-		},
-	}): Promise<Partial<ExtendedTimeTables>[]> {
+	}): Promise<Partial<TimeTables>[]> {
 		return await this.prisma.timeTables.findMany({
 			select: {
 				id: true,
@@ -97,13 +62,9 @@ export class TimeTablesService {
 				},
 				presentators?: {
 					select: {
-						id: boolean,
-						presentator: {
-							select: {
-								name: boolean,
-							}
-						},
-						isSubstituted: boolean,
+						id?: boolean,
+						name?: boolean,
+						isSubstituted?: boolean,
 					}
 				},
 				rooms?: {

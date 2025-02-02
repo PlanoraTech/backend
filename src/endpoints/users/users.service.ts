@@ -90,26 +90,6 @@ export class UsersService {
 		})
 	}
 
-	async findOne(institutionsId: string, id: string, select?: {
-		email?: boolean,
-		role?: boolean,
-	}): Promise<Partial<Users>> {
-		return await this.prisma.users.findUniqueOrThrow({
-			select: {
-				id: true,
-				...select,
-			},
-			where: {
-				id: id,
-				institutions: {
-					some: {
-						id: institutionsId,
-					},
-				},
-			},
-		})
-	}
-
 	async remove(institutionsId: string, userDto: UserDto): Promise<void> {
 		await this.prisma.users.update({
 			select: {

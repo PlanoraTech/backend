@@ -4,8 +4,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { TimeTablesService } from '../timetables/timetables.service';
 import { PresentatorsService } from '../presentators/presentators.service';
 import { RoomsService } from '../rooms/rooms.service';
-import { PrismaClient } from '@prisma/client';
-import { ExtendedAppointments } from './types/appointments.type';
+import { Appointments, PrismaClient } from '@prisma/client';
 
 abstract class AppointmentsService {
 	constructor(private readonly appointmentsService: TimeTablesService | PresentatorsService | RoomsService) { };
@@ -23,15 +22,11 @@ abstract class AppointmentsService {
 		},
 		presentators?: {
 			select: {
-				id: boolean,
-				presentator: {
-					select: {
-						name: boolean,
-					}
-				},
-				isSubstituted: boolean,
+				id?: boolean,
+				name?: boolean,
+				isSubstituted?: boolean,
 			}
-		}
+		},
 		rooms?: {
 			select: {
 				id?: boolean,
@@ -44,7 +39,7 @@ abstract class AppointmentsService {
 		end?: boolean,
 		isCancelled?: boolean,
 		timetables?: boolean,
-	}): Promise<Partial<ExtendedAppointments>[]> {
+	}): Promise<Partial<Appointments>[]> {
 		return (await this.appointmentsService.findOne(institutionsId, appointmentsServiceId, {
 			appointments: {
 				select: {
@@ -65,15 +60,11 @@ abstract class AppointmentsService {
 		},
 		presentators?: {
 			select: {
-				id: boolean,
-				presentator: {
-					select: {
-						name: boolean,
-					}
-				},
-				isSubstituted: boolean,
+				id?: boolean,
+				name?: boolean,
+				isSubstituted?: boolean,
 			}
-		}
+		},
 		rooms?: {
 			select: {
 				id?: boolean,
@@ -86,7 +77,7 @@ abstract class AppointmentsService {
 		end?: boolean,
 		isCancelled?: boolean,
 		timetables?: boolean,
-	}): Promise<Partial<ExtendedAppointments>> {
+	}): Promise<Partial<Appointments>> {
 		return (await this.appointmentsService.findOne(institutionsId, appointmentsServiceId, {
 			appointments: {
 				select: {

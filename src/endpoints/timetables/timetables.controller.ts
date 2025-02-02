@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
 import { TimeTablesService } from './timetables.service';
-import { ExtendedTimeTables } from './types/timetables.type';
 import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { TimeTables } from '@prisma/client';
 
 @Controller()
 export class TimeTablesController {
@@ -17,7 +17,7 @@ export class TimeTablesController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<ExtendedTimeTables>[]> {
+	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<TimeTables>[]> {
 		return this.timetablesService.findAll(institutionsId, {
 			name: true,
 			events: {
@@ -32,7 +32,7 @@ export class TimeTablesController {
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<ExtendedTimeTables>> {
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<TimeTables>> {
 		return this.timetablesService.findOne(institutionsId, id, {
 			name: true,
 			events: {
