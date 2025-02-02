@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaClient, Tokens } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
@@ -21,13 +21,20 @@ export class SecretService {
                 expiry: true,
             },
             data: {
-                token: SecretService.generateToken(),
+                token: this.generateToken(),
                 expiry: new Date(Date.now() + 1000 * 60 * 60 * 24),
                 user: {
                     connect: {
                         id: userId,
                     }
                 }
+            }
+        }).catch((error) => {
+            switch (error.code) {
+                case "P2002":
+                    return this.createToken(userId);
+                default:
+                    throw new InternalServerErrorException;
             }
         });
     }
@@ -46,7 +53,7 @@ export class SecretService {
         })
     }
     static async seamlessAuth(token: string): Promise<boolean> {
-        await this.prisma.tokens.findFirstOrThrow({
+        await this.prisma.tokens.findUniqueOrThrow({
             select: {
                 expiry: true,
             },
@@ -62,7 +69,7 @@ export class SecretService {
         return true;
     }
     static async getUserIdByToken(token: string): Promise<string> {
-        return (await this.prisma.tokens.findFirstOrThrow({
+        return (await this.prisma.tokens.findUniqueOrThrow({
             select: {
                 userId: true,
             },
