@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient, Tokens } from '@prisma/client';
-import { SecretService } from '../secret/secret.service';
+import { SecretService, TokenExpiry } from '../secret/secret.service';
 import { ExtendedLogin } from './types/login.type';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class LoginService {
     });
   }
 
-  async loginByEmailAndPassword(email: string, password: string): Promise<Partial<ExtendedLogin>> {
+  async loginByEmailAndPassword(email: string, password: string, tokenExpiry?: TokenExpiry): Promise<Partial<ExtendedLogin>> {
     let user = await this.prisma.users.findUniqueOrThrow({
       select: {
         id: true,
@@ -48,7 +48,7 @@ export class LoginService {
     });
     switch (await SecretService.comparePassword(password, user.password)) {
       case true:
-        let token: Partial<Tokens> = (await SecretService.getActiveToken(user.id)) ?? (await SecretService.createToken(user.id));
+        let token: Partial<Tokens> = (await SecretService.getActiveToken(user.id)) ?? (await SecretService.createToken(user.id, tokenExpiry));
         return {
           user: {
             role: user.role,
@@ -57,7 +57,7 @@ export class LoginService {
           token: token.token,
           expiry: token.expiry,
         };
-      case false:
+      default:
         throw new NotFoundException;
     };
   }

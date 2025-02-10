@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { ExtendedRooms } from './types/rooms.type';
 import { PrismaClient, Rooms } from '@prisma/client';
+
+interface RoomsSelect {
+	name?: boolean,
+}
 
 @Injectable()
 export class RoomsService {
@@ -14,7 +17,6 @@ export class RoomsService {
 			},
 			data: {
 				...createRoomDto,
-				isAvailable: true,
 				institution: {
 					connect: {
 						id: institutionsId,
@@ -24,10 +26,7 @@ export class RoomsService {
 		});
 	}
 
-	async findAll(institutionsId: string, select?: {
-		name?: boolean,
-		isAvailable?: boolean,
-	}): Promise<Partial<Rooms>[]> {
+	async findAll(institutionsId: string, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
 		return await this.prisma.rooms.findMany({
 			select: {
 				id: true,
@@ -39,41 +38,7 @@ export class RoomsService {
 		});
 	}
 
-	async findOne(institutionsId: string, id: string, select?: {
-		name?: boolean,
-		isAvailable?: boolean,
-		appointments?: {
-			select: {
-				id?: boolean,
-				subject?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						subjectId?: boolean,
-					}
-				},
-				presentators?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						isSubstituted?: boolean,
-					}
-				},
-				rooms?: {
-					select: {
-						id?: boolean,
-						name?: boolean,
-						isAvailable?: boolean,
-					}
-				},
-				dayOfWeek?: boolean,
-				start?: boolean,
-				end?: boolean,
-				isCancelled?: boolean,
-				timetables?: boolean,
-			},
-		},
-	}): Promise<Partial<ExtendedRooms>> {
+	async findOne(institutionsId: string, id: string, select?: RoomsSelect): Promise<Partial<Rooms>> {
 		return await this.prisma.rooms.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -82,6 +47,31 @@ export class RoomsService {
 			where: {
 				id: id,
 				institutionId: institutionsId,
+			},
+		});
+	}
+
+	async findAvailableRooms(institutionsId: string, date: Date, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
+		return await this.prisma.rooms.findMany({
+			select: {
+				id: true,
+				...select,
+			},
+			where: {
+				institutionId: institutionsId,
+				appointments: {
+					some: {
+						start: {
+							lte: date,
+						},
+						end: {
+							gte: date,
+						},
+					},
+					none: {
+						isCancelled: false,
+					}
+				}
 			},
 		});
 	}

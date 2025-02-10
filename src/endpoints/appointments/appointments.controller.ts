@@ -3,16 +3,10 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentsFromInstitutionsTimeTablesService, AppointmentsFromPresentatorsService, AppointmentsFromRoomsService } from './appointments.service';
 import { Access, AccessTypes } from 'src/decorators/access.decorator';
-import { Appointments } from '@prisma/client';
+import { Appointments, PrismaClient } from '@prisma/client';
 
 abstract class AppointmentsController {
 	constructor(private readonly appointmentsService: AppointmentsFromInstitutionsTimeTablesService | AppointmentsFromPresentatorsService | AppointmentsFromRoomsService) { }
-
-	@Post()
-	@Access(AccessTypes.PRIVATE)
-	create(@Body() createAppointmentDto: CreateAppointmentDto) {
-		return this.appointmentsService.create(createAppointmentDto);
-	}
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
@@ -27,15 +21,19 @@ abstract class AppointmentsController {
 			},
 			presentators: {
 				select: {
-					id: true,
-					name: true,
+					presentator: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+					isSubstituted: true,
 				}
 			},
 			rooms: {
 				select: {
 					id: true,
 					name: true,
-					isAvailable: true,
 				},
 			},
 			dayOfWeek: true,
@@ -58,15 +56,19 @@ abstract class AppointmentsController {
 			},
 			presentators: {
 				select: {
-					id: true,
-					name: true,
+					presentator: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+					isSubstituted: true,
 				}
 			},
 			rooms: {
 				select: {
 					id: true,
 					name: true,
-					isAvailable: true,
 				},
 			},
 			dayOfWeek: true,
@@ -75,18 +77,6 @@ abstract class AppointmentsController {
 			isCancelled: true,
 		});
 	}
-
-	@Patch(':id')
-	@Access(AccessTypes.PRIVATE)
-	update(@Param('id') id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
-		return this.appointmentsService.update(id, updateAppointmentDto);
-	}
-
-	@Delete(':id')
-	@Access(AccessTypes.PRIVATE)
-	remove(@Param('id') id: string) {
-		return this.appointmentsService.remove(id);
-	}
 }
 
 
@@ -94,8 +84,26 @@ abstract class AppointmentsController {
 	'institutions/:institutionsId/timetables/:timetablesId/appointments',
 ])
 export class AppointmentsFromTimeTablesController extends AppointmentsController {
-	constructor() {
-		super(new AppointmentsFromInstitutionsTimeTablesService);
+	constructor(private readonly timetableService: AppointmentsFromInstitutionsTimeTablesService) {
+		super(new AppointmentsFromInstitutionsTimeTablesService(new PrismaClient));
+	}
+
+	@Post()
+	@Access(AccessTypes.PRIVATE)
+	create(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Body() createAppointmentDto: CreateAppointmentDto) {
+		return this.timetableService.create(institutionsId, timetablesId, createAppointmentDto);
+	}
+
+	@Patch(':id')
+	@Access(AccessTypes.PRIVATE)
+	update(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('id') id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
+		return this.timetableService.update(institutionsId, timetablesId, id, updateAppointmentDto);
+	}
+
+	@Delete(':id')
+	@Access(AccessTypes.PRIVATE)
+	remove(@Param('institutionsId') institutionsId: string, @Param('timetablesId') timetablesId: string, @Param('id') id: string) {
+		return this.timetableService.remove(institutionsId, timetablesId, id);
 	}
 }
 
@@ -104,7 +112,7 @@ export class AppointmentsFromTimeTablesController extends AppointmentsController
 ])
 export class AppointmentsFromPresentatorsController extends AppointmentsController {
 	constructor() {
-		super(new AppointmentsFromPresentatorsService);
+		super(new AppointmentsFromPresentatorsService(new PrismaClient));
 	}
 }
 
@@ -113,6 +121,6 @@ export class AppointmentsFromPresentatorsController extends AppointmentsControll
 ])
 export class AppointmentsFromRoomsController extends AppointmentsController {
 	constructor() {
-		super(new AppointmentsFromRoomsService);
+		super(new AppointmentsFromRoomsService(new PrismaClient));
 	}
 }

@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { ExtendedRooms } from './types/rooms.type';
 import { Access, AccessTypes } from 'src/decorators/access.decorator';
 import { Rooms } from '@prisma/client';
 
@@ -21,16 +20,14 @@ export class RoomsController {
 	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<Rooms>[]> {
 		return this.roomsService.findAll(institutionsId, {
 			name: true,
-			isAvailable: true,
 		});
 	}
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<ExtendedRooms>> {
+	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<Rooms>> {
 		return this.roomsService.findOne(institutionsId, id, {
 			name: true,
-			isAvailable: true,
 		});
 	}
 

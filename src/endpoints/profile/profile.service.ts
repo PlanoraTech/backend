@@ -8,17 +8,14 @@ export class ProfileService {
   constructor(private readonly prisma: PrismaClient) { }
 
   async get(token: string): Promise<Partial<Users>> {
-    return await this.prisma.users.findFirstOrThrow({
+    let userId = await SecretService.getUserIdByToken(token);
+    return await this.prisma.users.findUniqueOrThrow({
       select: {
         email: true,
         role: true,
       },
       where: {
-        tokens: {
-          some: {
-            token: token,
-          },
-        },
+        id: userId,
       },
     });
   }

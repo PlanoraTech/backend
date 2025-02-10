@@ -2,6 +2,12 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { PrismaClient, Tokens } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
+export enum TokenExpiry {
+    DAY = 1000 * 60 * 60 * 24,
+    MONTH = 1000 * 60 * 60 * 24 * 30,
+    NEVER = 1000 * 60 * 60 * 24 * 365 * 100,
+} 
+
 @Injectable()
 export class SecretService {
     private static readonly prisma: PrismaClient = new PrismaClient();
@@ -14,7 +20,7 @@ export class SecretService {
     static async comparePassword(givenPassword: string, hash: string): Promise<boolean> {
         return await compare(givenPassword, hash);
     }
-    static async createToken(userId: string): Promise<Partial<Tokens>> {
+    static async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<Partial<Tokens>> {
         return await this.prisma.tokens.create({
             select: {
                 token: true,
@@ -22,7 +28,7 @@ export class SecretService {
             },
             data: {
                 token: this.generateToken(),
-                expiry: new Date(Date.now() + 1000 * 60 * 60 * 24),
+                expiry: new Date(Date.now() + tokenExpiry),
                 user: {
                     connect: {
                         id: userId,
@@ -32,7 +38,7 @@ export class SecretService {
         }).catch((error) => {
             switch (error.code) {
                 case "P2002":
-                    return this.createToken(userId);
+                    return this.createToken(userId, tokenExpiry);
                 default:
                     throw new InternalServerErrorException;
             }

@@ -59,7 +59,6 @@ async function seed() {
 		await prisma.rooms.create({
 			data: {
 				name: faker.commerce.department() + i,
-				isAvailable: faker.datatype.boolean(),
 				institution: {
 					connect: {
 						id: await prisma.institutions.findMany({
@@ -129,17 +128,6 @@ async function seed() {
 						}),
 					},
 				},
-				presentators: {
-					connect: {
-						id: await prisma.presentators.findMany({
-							select: {
-								id: true,
-							},
-						}).then((presentators) => {
-							return faker.helpers.arrayElements(presentators, 1)[0].id;
-						}),
-					},
-				},
 				rooms: {
 					connect: {
 						id: await prisma.rooms.findMany({
@@ -168,6 +156,30 @@ async function seed() {
 				isCancelled: faker.datatype.boolean(),
 			}
 		})
+		for (let i = 0; i < 5; i++)
+		{
+			await prisma.presentatorsToAppointments.create({
+				data: {
+					appointment: {
+						connect: {
+							id: appointment.id,
+						},
+					},
+					presentator: {
+						connect: {
+							id: await prisma.presentators.findMany({
+								select: {
+									id: true,
+								},
+							}).then((presentators) => {
+								return faker.helpers.arrayElements(presentators, 1)[0].id;
+							}),
+						},
+					},
+					isSubstituted: faker.datatype.boolean(),
+				}
+			})
+		}
 	}
 }
 
@@ -177,6 +189,4 @@ seed()
 	})
 	.catch(async (e) => {
 		console.error(e)
-		await prisma.$disconnect()
-		process.exit(1)
 	});

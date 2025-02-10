@@ -56,17 +56,17 @@ model Institutions {
 }
 
 model Presentators {
-    id            String         @id @default(uuid())
-    name          String         @unique
-    appointments  Appointments[]
-    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    id            String                       @id @default(uuid())
+    name          String                       @unique
+    appointments  PresentatorsToAppointments[]
+    institution   Institutions                 @relation(fields: [institutionId], references: [id])
     institutionId String
     user          Users?
 }
 
 model Subjects {
     id            String         @id @default(uuid())
-    name          String         @unique
+    name          String
     subjectId     String
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
@@ -75,8 +75,7 @@ model Subjects {
 
 model Rooms {
     id            String         @id @default(uuid())
-    name          String         @unique
-    isAvailable   Boolean
+    name          String
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
@@ -99,16 +98,26 @@ model TimeTables {
 }
 
 model Appointments {
-    id           String         @id @default(uuid())
-    subject      Subjects       @relation(fields: [subjectId], references: [id])
+    id           String                       @id @default(uuid())
+    subject      Subjects                     @relation(fields: [subjectId], references: [id])
     subjectId    String
-    presentators Presentators[]
+    presentators PresentatorsToAppointments[]
     rooms        Rooms[]
     dayOfWeek    DayOfWeek
     start        DateTime
     end          DateTime
     isCancelled  Boolean
     timetables   TimeTables[]
+}
+
+model PresentatorsToAppointments {
+    presentator   Presentators @relation(fields: [presentatorId], references: [id])
+    presentatorId String
+    appointment   Appointments @relation(fields: [appointmentId], references: [id])
+    appointmentId String
+    isSubstituted Boolean
+
+    @@id([presentatorId, appointmentId])
 }
 
 model Users {

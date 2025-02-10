@@ -3,6 +3,11 @@ import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { PrismaClient, Subjects } from '@prisma/client';
 
+interface SubjectsSelect {
+	name?: boolean,
+	subjectId?: boolean,
+}
+
 @Injectable()
 export class SubjectsService {
 	constructor(private readonly prisma: PrismaClient) { }
@@ -15,10 +20,7 @@ export class SubjectsService {
 		});
 	}
 
-	async findAll(institutionsId: string, select?: {
-		name?: boolean,
-		subjectId?: boolean,
-	}): Promise<Partial<Subjects>[]> {
+	async findAll(institutionsId: string, select?: SubjectsSelect): Promise<Partial<Subjects>[]> {
 		return await this.prisma.subjects.findMany({
 			select: {
 				id: true,
@@ -30,11 +32,8 @@ export class SubjectsService {
 		});
 	}
 
-	async findOne(institutionsId: string, id: string, select?: {
-		name?: boolean,
-		subjectId?: boolean,
-	}): Promise<Partial<Subjects>> {
-		return await this.prisma.subjects.findFirst({
+	async findOne(institutionsId: string, id: string, select?: SubjectsSelect): Promise<Partial<Subjects>> {
+		return await this.prisma.subjects.findUniqueOrThrow({
 			select: {
 				id: true,
 				...select,
