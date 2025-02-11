@@ -27,9 +27,9 @@ export class InstitutionsController {
 		});
 	}
 
-	@Get(':institutionsId')
+	@Get(':institutionId')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') id: string): Promise<Partial<Institutions>> {
+	findOne(@Param('institutionId') id: string): Promise<Partial<Institutions>> {
 		return this.institutionsService.findOne(id, {
 			name: true,
 			type: true,

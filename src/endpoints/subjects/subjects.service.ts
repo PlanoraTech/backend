@@ -11,28 +11,28 @@ interface SubjectsSelect {
 @Injectable()
 export class SubjectsService {
 	constructor(private readonly prisma: PrismaClient) { }
-	async create(institutionsId: string, createSubjectDto: CreateSubjectDto) {
+	async create(institutionId: string, createSubjectDto: CreateSubjectDto) {
 		return await this.prisma.subjects.create({
 			data: {
 				...createSubjectDto,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findAll(institutionsId: string, select?: SubjectsSelect): Promise<Partial<Subjects>[]> {
+	async findAll(institutionId: string, select?: SubjectsSelect): Promise<Partial<Subjects>[]> {
 		return await this.prisma.subjects.findMany({
 			select: {
 				id: true,
 				...select,
 			},
 			where: {
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findOne(institutionsId: string, id: string, select?: SubjectsSelect): Promise<Partial<Subjects>> {
+	async findOne(institutionId: string, id: string, select?: SubjectsSelect): Promise<Partial<Subjects>> {
 		return await this.prisma.subjects.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -40,12 +40,12 @@ export class SubjectsService {
 			},
 			where: {
 				id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async update(institutionsId: string, id: string, updateSubjectDto: UpdateSubjectDto) {
+	async update(institutionId: string, id: string, updateSubjectDto: UpdateSubjectDto) {
 		return await this.prisma.subjects.update({
 			select: {
 				name: true,
@@ -55,16 +55,16 @@ export class SubjectsService {
 			},
 			where: {
 				id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async remove(institutionsId: string, id: string) {
+	async remove(institutionId: string, id: string) {
 		return await this.prisma.subjects.delete({
 			where: {
 				id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}

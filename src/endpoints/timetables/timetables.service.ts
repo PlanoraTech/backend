@@ -18,31 +18,31 @@ interface TimeTablesSelect {
 export class TimeTablesService {
 	constructor(private readonly prisma: PrismaClient) { }
 
-	async create(institutionsId: string, createTimetableDto: CreateTimeTableDto) {
+	async create(institutionId: string, createTimetableDto: CreateTimeTableDto) {
 		return await this.prisma.timeTables.create({
 			select: {
 				id: true,
 			},
 			data: {
-				institutionId: institutionsId,
+				institutionId: institutionId,
 				...createTimetableDto,
 			},
 		});
 	}
 
-	async findAll(institutionsId: string, select?: TimeTablesSelect): Promise<Partial<TimeTables>[]> {
+	async findAll(institutionId: string, select?: TimeTablesSelect): Promise<Partial<TimeTables>[]> {
 		return await this.prisma.timeTables.findMany({
 			select: {
 				id: true,
 				...select,
 			},
 			where: {
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findOne(institutionsId: string, id: string, select?: TimeTablesSelect): Promise<Partial<TimeTables>> {
+	async findOne(institutionId: string, id: string, select?: TimeTablesSelect): Promise<Partial<TimeTables>> {
 		return await this.prisma.timeTables.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -50,12 +50,12 @@ export class TimeTablesService {
 			},
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async update(institutionsId: string, id: string, updateTimetableDto: UpdateTimeTableDto): Promise<Partial<TimeTables>> {
+	async update(institutionId: string, id: string, updateTimetableDto: UpdateTimeTableDto): Promise<Partial<TimeTables>> {
 		return await this.prisma.timeTables.update({
 			select: {
 				id: true,
@@ -63,12 +63,12 @@ export class TimeTablesService {
 			data: updateTimetableDto,
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async remove(institutionsId: string, id: string): Promise<void> {
+	async remove(institutionId: string, id: string): Promise<void> {
 		await this.prisma.$transaction([
 			this.prisma.appointments.deleteMany({
 				where: {
@@ -85,7 +85,7 @@ export class TimeTablesService {
 				},
 				where: {
 					id: id,
-					institutionId: institutionsId,
+					institutionId: institutionId,
 				},
 			}),
 		])

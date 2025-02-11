@@ -29,55 +29,22 @@ interface AppointmentsSelect {
 			name?: boolean,
 		}
 	},
-	dayOfWeek?: boolean,
 	start?: boolean,
 	end?: boolean,
 	isCancelled?: boolean,
 	timetables?: boolean,
 }
 
-@Injectable()
-export class AppointmentsFromInstitutionsTimeTablesService {
-	constructor(private readonly prisma: PrismaClient) { }
-	async create(institutionsId: string, timetablesId: string, createAppointmentDto: CreateAppointmentDto) {
-		/*
-		await this.prisma.$transaction([
-			this.prisma.appointments.create({
-				data: {
-					start: createAppointmentDto.start,
-					end: createAppointmentDto.end,
-					dayOfWeek: createAppointmentDto.dayOfWeek,
-					isCancelled: createAppointmentDto.isCancelled,
-					timetables: {
-						connect: {
-							id: timetablesId,
-							institutionId: institutionsId,
-						},
-					},
-					subject: {
-						connect: {
-							id: createAppointmentDto.subject.id,
-							institutionId: institutionsId,
-						},
-					},
-				},
-			}),
-			this.prisma.presentatorsToAppointments.createMany({
-				data: createAppointmentDto.presentators.map((presentator) => ({
-					presentator: {
-						connect: {
-							id: presentator.id,
-							institutionsId: institutionsId,
-						},
-					},
-					isSubstituted: presentator.isSubstituted,
-				})),
-			}),
-		]);
-		*/
-	}
+interface DataServiceIds {
+	timetableId?: string,
+	presentatorId?: string,
+	roomId?: string,
+}
 
-	async findAll(institutionsId: string, timetablesId: string, select?: AppointmentsSelect): Promise<Partial<Appointments>[]> {
+abstract class AppointmentsService {
+	constructor(protected readonly prisma: PrismaClient) { }
+
+	async findAll(institutionId: string, dataServiceIds: DataServiceIds, select?: AppointmentsSelect): Promise<Partial<Appointments>[]> {
 		let appointments = await this.prisma.appointments.findMany({
 			select: {
 				id: true,
@@ -86,12 +53,26 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 			where: {
 				timetables: {
 					some: {
-						id: timetablesId,
-						institutionId: institutionsId,
+						id: dataServiceIds.timetableId,
+						institutionId: institutionId,
+					}
+				},
+				rooms: {
+					some: {
+						id: dataServiceIds.roomId,
+						institutionId: institutionId,
+					}
+				},
+				presentators: {
+					some: {
+						presentator: {
+							id: dataServiceIds.presentatorId,
+							institutionId: institutionId,
+						}
 					}
 				},
 			},
-		});
+		})
 		return appointments.map((appointment) => ({
 			...appointment,
 			presentators: appointment.presentators.map((presentator) => ({
@@ -100,9 +81,9 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 				isSubstituted: presentator.isSubstituted,
 			})),
 		}))
-	}
+	};
 
-	async findOne(institutionsId: string, appointmentsServiceId: string, id: string, select?: AppointmentsSelect) {
+	async findOne(institutionId: string, dataServiceIds: DataServiceIds, id: string, select?: AppointmentsSelect) {
 		let appointment = await this.prisma.appointments.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -111,8 +92,22 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 			where: {
 				timetables: {
 					some: {
-						id: appointmentsServiceId,
-						institutionId: institutionsId,
+						id: dataServiceIds.timetableId,
+						institutionId: institutionId,
+					}
+				},
+				rooms: {
+					some: {
+						id: dataServiceIds.roomId,
+						institutionId: institutionId,
+					}
+				},
+				presentators: {
+					some: {
+						presentator: {
+							id: dataServiceIds.presentatorId,
+							institutionId: institutionId,
+						}
 					}
 				},
 				id: id,
@@ -126,26 +121,69 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 				isSubstituted: presentator.isSubstituted,
 			})),
 		}
+	};
+}
+
+@Injectable()
+export class AppointmentsFromInstitutionsTimeTablesService extends AppointmentsService {
+	constructor() {
+		super(new PrismaClient);
+	}
+	async create(institutionId: string, timetableId: string, createAppointmentDto: CreateAppointmentDto) {
+		let appointment = await this.prisma.appointments.create({
+			data: {
+				start: createAppointmentDto.start,
+				end: createAppointmentDto.end,
+				isCancelled: createAppointmentDto.isCancelled,
+				timetables: {
+					connect: {
+						id: timetableId,
+						institutionId: institutionId,
+					},
+				},
+				subject: {
+					connect: {
+						id: createAppointmentDto.subject.id,
+						institutionId: institutionId,
+					},
+				},
+			},
+		});
+		createAppointmentDto.presentators.map((presentator) => this.prisma.presentatorsToAppointments.create({
+			data: {
+				appointment: {
+					connect: {
+						id: appointment.id,
+					}
+				},
+				presentator: {
+					connect: {
+						id: presentator.id,
+						institutionId: institutionId,
+					}
+				},
+				isSubstituted: presentator.isSubstituted,
+			}
+		}));
 	}
 
-	async update(institutionsId: string, timetablesId: string, id: string, updateAppointmentDto: UpdateAppointmentDto) {
+	async update(institutionId: string, timetableId: string, id: string, updateAppointmentDto: UpdateAppointmentDto) {
 		await this.prisma.$transaction([
 			this.prisma.appointments.update({
 				data: {
 					start: updateAppointmentDto.start,
 					end: updateAppointmentDto.end,
-					dayOfWeek: updateAppointmentDto.dayOfWeek,
 					isCancelled: updateAppointmentDto.isCancelled,
 					timetables: {
 						connect: {
-							id: timetablesId,
-							institutionId: institutionsId,
+							id: timetableId,
+							institutionId: institutionId,
 						},
 					},
 					subject: {
 						connect: {
 							id: updateAppointmentDto.subject.id,
-							institutionId: institutionsId,
+							institutionId: institutionId,
 						},
 					},
 				},
@@ -159,8 +197,8 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 						id: id,
 						timetables: {
 							some: {
-								id: timetablesId,
-								institutionId: institutionsId,
+								id: timetableId,
+								institutionId: institutionId,
 							}
 						}
 					}
@@ -169,7 +207,7 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 					presentator: {
 						connect: {
 							id: presentator.id,
-							institutionsId: institutionsId,
+							institutionId: institutionId,
 						}
 					},
 					isSubstituted: presentator.isSubstituted,
@@ -177,13 +215,13 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 			})
 		])
 	}
-	async remove(institutionsId: string, timetablesId: string, id: string) {
+	async remove(institutionId: string, timetableId: string, id: string) {
 		await this.prisma.appointments.delete({
 			where: {
 				timetables: {
 					some: {
-						id: timetablesId,
-						institutionId: institutionsId,
+						id: timetableId,
+						institutionId: institutionId,
 					}
 				},
 				id: id,
@@ -193,117 +231,15 @@ export class AppointmentsFromInstitutionsTimeTablesService {
 }
 
 @Injectable()
-export class AppointmentsFromPresentatorsService {
-	constructor(private readonly prisma: PrismaClient) { }
-
-	async findAll(institutionsId: string, presentatorsId: string, select?: AppointmentsSelect) {
-		let appointments = await this.prisma.appointments.findMany({
-			select: {
-				id: true,
-				...select,
-			},
-			where: {
-				presentators: {
-					some: {
-						presentator: {
-							id: presentatorsId,
-							institutionId: institutionsId,
-						}
-					}
-				},
-			}
-		});
-		return appointments.map((appointment) => ({
-			...appointment,
-			presentators: appointment.presentators.map((presentator) => ({
-				id: presentator.presentator.id,
-				name: presentator.presentator.name,
-				isSubstituted: presentator.isSubstituted,
-			})),
-		}))
-	}
-
-	async findOne(institutionsId: string, presentatorsId: string, id: string, select?: AppointmentsSelect) {
-		let appointment = await this.prisma.appointments.findUniqueOrThrow({
-			select: {
-				id: true,
-				...select,
-			},
-			where: {
-				presentators: {
-					some: {
-						presentator: {
-							id: presentatorsId,
-							institutionId: institutionsId,
-						}
-					}
-				},
-				id: id,
-			}
-		});
-		return {
-			...appointment,
-			presentators: appointment.presentators.map((presentator) => ({
-				id: presentator.presentator.id,
-				name: presentator.presentator.name,
-				isSubstituted: presentator.isSubstituted,
-			})),
-		}
+export class AppointmentsFromPresentatorsService extends AppointmentsService {
+	constructor() {
+		super(new PrismaClient);
 	}
 }
 
 @Injectable()
-export class AppointmentsFromRoomsService {
-	constructor(private readonly prisma: PrismaClient) { }
-
-	async findAll(institutionsId: string, roomsId: string, select?: AppointmentsSelect) {
-		let appointments = await this.prisma.appointments.findMany({
-			select: {
-				id: true,
-				...select,
-			},
-			where: {
-				rooms: {
-					some: {
-						id: roomsId,
-						institutionId: institutionsId,
-					}
-				}
-			}
-		});
-		return appointments.map((appointment) => ({
-			...appointment,
-			presentators: appointment.presentators.map((presentator) => ({
-				id: presentator.presentator.id,
-				name: presentator.presentator.name,
-				isSubstituted: presentator.isSubstituted,
-			})),
-		}))
-	}
-
-	async findOne(institutionsId: string, roomsId: string, id: string, select?: AppointmentsSelect) {
-		let appointment = await this.prisma.appointments.findUniqueOrThrow({
-			select: {
-				id: true,
-				...select,
-			},
-			where: {
-				rooms: {
-					some: {
-						id: roomsId,
-						institutionId: institutionsId,
-					}
-				},
-				id: id,
-			}
-		});
-		return {
-			...appointment,
-			presentators: appointment.presentators.map((presentator) => ({
-				id: presentator.presentator.id,
-				name: presentator.presentator.name,
-				isSubstituted: presentator.isSubstituted,
-			})),
-		}
+export class AppointmentsFromRoomsService extends AppointmentsService {
+	constructor() {
+		super(new PrismaClient)
 	}
 }

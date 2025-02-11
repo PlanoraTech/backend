@@ -11,35 +11,35 @@ export class RoomsController {
 
 	@Post()
 	@Access(AccessTypes.PRIVATE)
-	create(@Param('institutionsId') institutionsId: string, @Body() createRoomDto: CreateRoomDto) {
-		return this.roomsService.create(institutionsId, createRoomDto);
+	create(@Param('institutionId') institutionId: string, @Body() createRoomDto: CreateRoomDto) {
+		return this.roomsService.create(institutionId, createRoomDto);
 	}
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<Rooms>[]> {
-		return this.roomsService.findAll(institutionsId, {
+	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Rooms>[]> {
+		return this.roomsService.findAll(institutionId, {
 			name: true,
 		});
 	}
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<Rooms>> {
-		return this.roomsService.findOne(institutionsId, id, {
+	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<Rooms>> {
+		return this.roomsService.findOne(institutionId, id, {
 			name: true,
 		});
 	}
 
 	@Patch(':id')
 	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionsId') institutionsId: string, @Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-		return this.roomsService.update(institutionsId, id, updateRoomDto);
+	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
+		return this.roomsService.update(institutionId, id, updateRoomDto);
 	}
 
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
-	remove(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-		return this.roomsService.remove(institutionsId, id);
+	remove(@Param('institutionId') institutionId: string, @Param('id') id: string) {
+		return this.roomsService.remove(institutionId, id);
 	}
 }

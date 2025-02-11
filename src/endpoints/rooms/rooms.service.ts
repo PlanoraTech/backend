@@ -10,7 +10,7 @@ interface RoomsSelect {
 @Injectable()
 export class RoomsService {
 	constructor(private readonly prisma: PrismaClient) { }
-	async create(institutionsId: string, createRoomDto: CreateRoomDto) {
+	async create(institutionId: string, createRoomDto: CreateRoomDto) {
 		return await this.prisma.rooms.create({
 			select: {
 				id: true,
@@ -19,26 +19,26 @@ export class RoomsService {
 				...createRoomDto,
 				institution: {
 					connect: {
-						id: institutionsId,
+						id: institutionId,
 					}
 				},
 			},
 		});
 	}
 
-	async findAll(institutionsId: string, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
+	async findAll(institutionId: string, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
 		return await this.prisma.rooms.findMany({
 			select: {
 				id: true,
 				...select,
 			},
 			where: {
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findOne(institutionsId: string, id: string, select?: RoomsSelect): Promise<Partial<Rooms>> {
+	async findOne(institutionId: string, id: string, select?: RoomsSelect): Promise<Partial<Rooms>> {
 		return await this.prisma.rooms.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -46,19 +46,19 @@ export class RoomsService {
 			},
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findAvailableRooms(institutionsId: string, date: Date, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
+	async findAvailableRooms(institutionId: string, date: Date, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
 		return await this.prisma.rooms.findMany({
 			select: {
 				id: true,
 				...select,
 			},
 			where: {
-				institutionId: institutionsId,
+				institutionId: institutionId,
 				appointments: {
 					some: {
 						start: {
@@ -76,7 +76,7 @@ export class RoomsService {
 		});
 	}
 
-	async update(institutionsId: string, id: string, updateRoomDto: UpdateRoomDto) {
+	async update(institutionId: string, id: string, updateRoomDto: UpdateRoomDto) {
 		return await this.prisma.rooms.update({
 			select: {
 				id: true,
@@ -86,19 +86,19 @@ export class RoomsService {
 			},
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async remove(institutionsId: string, id: string) {
+	async remove(institutionId: string, id: string) {
 		return await this.prisma.rooms.delete({
 			select: {
 				id: true,
 			},
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}

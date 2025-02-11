@@ -11,35 +11,35 @@ export class PresentatorsController {
 
 	@Post()
 	@Access(AccessTypes.PRIVATE)
-	create(@Param('institutionsId') institutionsId: string, @Body() createPresentatorDto: CreatePresentatorDto) {
-		return this.presentatorsService.create(institutionsId, createPresentatorDto);
+	create(@Param('institutionId') institutionId: string, @Body() createPresentatorDto: CreatePresentatorDto) {
+		return this.presentatorsService.create(institutionId, createPresentatorDto);
 	}
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<Presentators>[]> {
-		return this.presentatorsService.findAll(institutionsId, {
+	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Presentators>[]> {
+		return this.presentatorsService.findAll(institutionId, {
 			name: true,
 		});
 	}
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<Presentators>> {
-		return this.presentatorsService.findOne(institutionsId, id, {
+	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<Presentators>> {
+		return this.presentatorsService.findOne(institutionId, id, {
 			name: true,
 		});
 	}
 
 	@Patch(':id')
 	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionsId') institutionsId: string, @Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto) {
-		return this.presentatorsService.update(institutionsId, id, updatePresentatorDto);
+	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto) {
+		return this.presentatorsService.update(institutionId, id, updatePresentatorDto);
 	}
 
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
-	remove(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-		return this.presentatorsService.remove(institutionsId, id);
+	remove(@Param('institutionId') institutionId: string, @Param('id') id: string) {
+		return this.presentatorsService.remove(institutionId, id);
 	}
 }

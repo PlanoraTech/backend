@@ -10,13 +10,13 @@ interface PresentatorsSelect {
 @Injectable()
 export class PresentatorsService {
 	constructor(private readonly prisma: PrismaClient) { }
-	async create(institutionsId: string, createPresentatorDto: CreatePresentatorDto) {
+	async create(institutionId: string, createPresentatorDto: CreatePresentatorDto) {
 		return await this.prisma.presentators.create({
 			data: {
 				name: createPresentatorDto.name,
 				institution: {
 					connect: {
-						id: institutionsId,
+						id: institutionId,
 					},
 				},
 				user: {
@@ -28,19 +28,19 @@ export class PresentatorsService {
 		});
 	}
 
-	async findAll(institutionsId: string, select?: PresentatorsSelect): Promise<Partial<Presentators>[]> {
+	async findAll(institutionId: string, select?: PresentatorsSelect): Promise<Partial<Presentators>[]> {
 		return await this.prisma.presentators.findMany({
 			select: {
 				id: true,
 				...select,
 			},
 			where: {
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findOne(institutionsId: string, id: string, select?: PresentatorsSelect): Promise<Partial<Presentators>> {
+	async findOne(institutionId: string, id: string, select?: PresentatorsSelect): Promise<Partial<Presentators>> {
 		return await this.prisma.presentators.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -48,16 +48,16 @@ export class PresentatorsService {
 			},
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async update(institutionsId: string, id: string, updatePresentatorDto: UpdatePresentatorDto) {
+	async update(institutionId: string, id: string, updatePresentatorDto: UpdatePresentatorDto) {
 		return await this.prisma.presentators.update({
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 			data: {
 				...updatePresentatorDto,
@@ -65,11 +65,11 @@ export class PresentatorsService {
 		});
 	}
 
-	async remove(institutionsId: string, id: string) {
+	async remove(institutionId: string, id: string) {
 		return await this.prisma.presentators.delete({
 			where: {
 				id: id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			}
 		});
 	}

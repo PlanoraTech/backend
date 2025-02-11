@@ -29,23 +29,23 @@ import { ProfileModule } from './endpoints/profile/profile.module';
         module: InstitutionsModule,
         children: [
           {
-            path: ':institutionsId/presentators',
+            path: ':institutionId/presentators',
             module: PresentatorsModule,
           },
           {
-            path: ':institutionsId/subjects',
+            path: ':institutionId/subjects',
             module: SubjectsModule,
           },
           {
-            path: ':institutionsId/rooms',
+            path: ':institutionId/rooms',
             module: RoomsModule,
           },
           {
-            path: ':institutionsId/timetables',
+            path: ':institutionId/timetables',
             module: TimeTablesModule,
           },
           {
-            path: ':institutionsId/users',
+            path: ':institutionId/users',
             module: UsersModule,
           },
         ]
