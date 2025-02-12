@@ -11,8 +11,11 @@ interface SubjectsSelect {
 @Injectable()
 export class SubjectsService {
 	constructor(private readonly prisma: PrismaClient) { }
-	async create(institutionId: string, createSubjectDto: CreateSubjectDto) {
-		return await this.prisma.subjects.create({
+	async create(institutionId: string, createSubjectDto: CreateSubjectDto): Promise<void> {
+		await this.prisma.subjects.create({
+			select: {
+				id: true,
+			},
 			data: {
 				...createSubjectDto,
 				institutionId: institutionId,
@@ -45,10 +48,10 @@ export class SubjectsService {
 		});
 	}
 
-	async update(institutionId: string, id: string, updateSubjectDto: UpdateSubjectDto) {
-		return await this.prisma.subjects.update({
+	async update(institutionId: string, id: string, updateSubjectDto: UpdateSubjectDto): Promise<void> {
+		await this.prisma.subjects.update({
 			select: {
-				name: true,
+				id: true,
 			},
 			data: {
 				...updateSubjectDto,
@@ -60,8 +63,11 @@ export class SubjectsService {
 		});
 	}
 
-	async remove(institutionId: string, id: string) {
-		return await this.prisma.subjects.delete({
+	async remove(institutionId: string, id: string): Promise<void> {
+		await this.prisma.subjects.delete({
+			select: {
+				id: true,
+			},
 			where: {
 				id,
 				institutionId: institutionId,

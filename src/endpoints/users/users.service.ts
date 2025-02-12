@@ -53,8 +53,8 @@ export class UsersService {
 		return true;
 	}
 
-	async add(institutionId: string, userDto: UserDto) {
-		return await this.prisma.users.update({
+	async add(institutionId: string, userDto: UserDto): Promise<void> {
+		await this.prisma.users.update({
 			select: {
 				email: true,
 			},

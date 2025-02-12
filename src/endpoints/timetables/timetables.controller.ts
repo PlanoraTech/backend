@@ -11,7 +11,7 @@ export class TimeTablesController {
 
 	@Post()
 	@Access(AccessTypes.PRIVATE)
-	create(@Param('institutionId') institutionId: string, @Body() createTimetableDto: CreateTimeTableDto) {
+	create(@Param('institutionId') institutionId: string, @Body() createTimetableDto: CreateTimeTableDto): Promise<void> {
 		return this.timetablesService.create(institutionId, createTimetableDto);
 	}
 
@@ -47,13 +47,13 @@ export class TimeTablesController {
 
 	@Patch(':id')
 	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateTimetableDto: UpdateTimeTableDto) {
+	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateTimetableDto: UpdateTimeTableDto): Promise<void> {
 		return this.timetablesService.update(institutionId, id, updateTimetableDto);
 	}
 
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
-	remove(@Param('institutionId') institutionId: string, @Param('id') id: string) {
+	remove(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<void> {
 		return this.timetablesService.remove(institutionId, id);
 	}
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { Appointments, PrismaClient } from '@prisma/client';
+import { DataServiceIds } from 'src/interfaces/DataServiceIds';
 
 interface AppointmentsSelect {
 	id?: boolean,
@@ -35,13 +36,8 @@ interface AppointmentsSelect {
 	timetables?: boolean,
 }
 
-interface DataServiceIds {
-	timetableId?: string,
-	presentatorId?: string,
-	roomId?: string,
-}
-
-abstract class AppointmentsService {
+@Injectable()
+export class AppointmentsService {
 	constructor(protected readonly prisma: PrismaClient) { }
 
 	async findAll(institutionId: string, dataServiceIds: DataServiceIds, select?: AppointmentsSelect): Promise<Partial<Appointments>[]> {
@@ -125,12 +121,12 @@ abstract class AppointmentsService {
 }
 
 @Injectable()
-export class AppointmentsFromInstitutionsTimeTablesService extends AppointmentsService {
+export class AppointmentsFromTimeTablesService extends AppointmentsService {
 	constructor() {
 		super(new PrismaClient);
 	}
-	async create(institutionId: string, timetableId: string, createAppointmentDto: CreateAppointmentDto) {
-		let appointment = await this.prisma.appointments.create({
+	async create(institutionId: string, timetableId: string, createAppointmentDto: CreateAppointmentDto): Promise<void> {
+		await this.prisma.appointments.create({
 			data: {
 				start: createAppointmentDto.start,
 				end: createAppointmentDto.end,
@@ -143,80 +139,46 @@ export class AppointmentsFromInstitutionsTimeTablesService extends AppointmentsS
 				},
 				subject: {
 					connect: {
-						id: createAppointmentDto.subject.id,
+						id: createAppointmentDto.subjectId,
 						institutionId: institutionId,
 					},
 				},
 			},
 		});
-		createAppointmentDto.presentators.map((presentator) => this.prisma.presentatorsToAppointments.create({
-			data: {
-				appointment: {
-					connect: {
-						id: appointment.id,
-					}
-				},
-				presentator: {
-					connect: {
-						id: presentator.id,
-						institutionId: institutionId,
-					}
-				},
-				isSubstituted: presentator.isSubstituted,
-			}
-		}));
 	}
 
-	async update(institutionId: string, timetableId: string, id: string, updateAppointmentDto: UpdateAppointmentDto) {
-		await this.prisma.$transaction([
-			this.prisma.appointments.update({
-				data: {
-					start: updateAppointmentDto.start,
-					end: updateAppointmentDto.end,
-					isCancelled: updateAppointmentDto.isCancelled,
-					timetables: {
-						connect: {
-							id: timetableId,
-							institutionId: institutionId,
-						},
-					},
-					subject: {
-						connect: {
-							id: updateAppointmentDto.subject.id,
-							institutionId: institutionId,
-						},
+	async update(institutionId: string, timetableId: string, id: string, updateAppointmentDto: UpdateAppointmentDto): Promise<void> {
+		await this.prisma.appointments.update({
+			select: {
+				id: true,
+			},
+			data: {
+				start: updateAppointmentDto.start,
+				end: updateAppointmentDto.end,
+				isCancelled: updateAppointmentDto.isCancelled,
+				timetables: {
+					connect: {
+						id: timetableId,
+						institutionId: institutionId,
 					},
 				},
-				where: {
-					id: id,
-				}
-			}),
-			this.prisma.presentatorsToAppointments.updateMany({
-				where: {
-					appointment: {
-						id: id,
-						timetables: {
-							some: {
-								id: timetableId,
-								institutionId: institutionId,
-							}
-						}
-					}
-				},
-				data: updateAppointmentDto.presentators.map((presentator) => ({
-					presentator: {
-						connect: {
-							id: presentator.id,
-							institutionId: institutionId,
-						}
+				subject: {
+					connect: {
+						id: updateAppointmentDto.subjectId,
+						institutionId: institutionId,
 					},
-					isSubstituted: presentator.isSubstituted,
-				}))
-			})
-		])
+				},
+			},
+			where: {
+				id: id,
+			}
+		});
 	}
-	async remove(institutionId: string, timetableId: string, id: string) {
+	async remove(institutionId: string, timetableId: string, id: string): Promise<void> {
 		await this.prisma.appointments.delete({
+			select: {
+				id: true,
+			},
 			where: {
 				timetables: {
 					some: {
@@ -227,19 +189,5 @@ export class AppointmentsFromInstitutionsTimeTablesService extends AppointmentsS
 				id: id,
 			},
 		});
-	}
-}
-
-@Injectable()
-export class AppointmentsFromPresentatorsService extends AppointmentsService {
-	constructor() {
-		super(new PrismaClient);
-	}
-}
-
-@Injectable()
-export class AppointmentsFromRoomsService extends AppointmentsService {
-	constructor() {
-		super(new PrismaClient)
 	}
 }

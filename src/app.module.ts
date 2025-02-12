@@ -29,7 +29,7 @@ import { ProfileModule } from './endpoints/profile/profile.module';
         module: InstitutionsModule,
         children: [
           {
-            path: ':institutionId/presentators',
+            path: ':institutionId',
             module: PresentatorsModule,
           },
           {
@@ -37,7 +37,7 @@ import { ProfileModule } from './endpoints/profile/profile.module';
             module: SubjectsModule,
           },
           {
-            path: ':institutionId/rooms',
+            path: ':institutionId',
             module: RoomsModule,
           },
           {

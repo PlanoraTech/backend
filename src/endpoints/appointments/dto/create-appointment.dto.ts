@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsDate, IsObject } from "class-validator";
+import { IsBoolean, IsDate, IsString } from "class-validator";
 
 export class CreateAppointmentDto {
     @IsDate()
@@ -10,19 +10,6 @@ export class CreateAppointmentDto {
     @IsBoolean()
     isCancelled: boolean;
 
-    @IsObject()
-    subject: {
-        id: string,
-    };
-
-    @IsArray()
-    presentators: {
-        id: string,
-        isSubstituted: boolean,
-    }[];
-
-    @IsArray()
-    rooms: {
-        id: string,
-    }[];
+    @IsString()
+    subjectId: string;
 }

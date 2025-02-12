@@ -5,7 +5,5 @@ export class CreatePresentatorDto {
     @IsNotEmpty()
     name: string;
     
-    @IsString()
-    @IsNotEmpty()
     email?: string;
 }

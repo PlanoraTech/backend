@@ -18,8 +18,8 @@ interface TimeTablesSelect {
 export class TimeTablesService {
 	constructor(private readonly prisma: PrismaClient) { }
 
-	async create(institutionId: string, createTimetableDto: CreateTimeTableDto) {
-		return await this.prisma.timeTables.create({
+	async create(institutionId: string, createTimetableDto: CreateTimeTableDto): Promise<void> {
+		await this.prisma.timeTables.create({
 			select: {
 				id: true,
 			},
@@ -55,8 +55,8 @@ export class TimeTablesService {
 		});
 	}
 
-	async update(institutionId: string, id: string, updateTimetableDto: UpdateTimeTableDto): Promise<Partial<TimeTables>> {
-		return await this.prisma.timeTables.update({
+	async update(institutionId: string, id: string, updateTimetableDto: UpdateTimeTableDto): Promise<void> {
+		await this.prisma.timeTables.update({
 			select: {
 				id: true,
 			},

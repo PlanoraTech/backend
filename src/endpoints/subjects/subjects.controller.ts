@@ -11,7 +11,7 @@ export class SubjectsController {
 
 	@Post()
 	@Access(AccessTypes.PRIVATE)
-	create(@Param('institutionId') institutionId: string, @Body() createSubjectDto: CreateSubjectDto) {
+	create(@Param('institutionId') institutionId: string, @Body() createSubjectDto: CreateSubjectDto): Promise<void> {
 		return this.subjectsService.create(institutionId, createSubjectDto);
 	}
 
@@ -35,13 +35,13 @@ export class SubjectsController {
 
 	@Patch(':id')
 	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto) {
+	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto): Promise<void> {
 		return this.subjectsService.update(institutionId, id, updateSubjectDto);
 	}
 
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
-	remove(@Param('institutionId') institutionId: string, @Param('id') id: string) {
+	remove(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<void> {
 		return this.subjectsService.remove(institutionId, id);
 	}
 }

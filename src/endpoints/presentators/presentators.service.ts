@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 import { Presentators, PrismaClient } from '@prisma/client';
+import { DataServiceIds } from 'src/interfaces/DataServiceIds';
 
 interface PresentatorsSelect {
 	name?: boolean,
@@ -10,8 +11,8 @@ interface PresentatorsSelect {
 @Injectable()
 export class PresentatorsService {
 	constructor(private readonly prisma: PrismaClient) { }
-	async create(institutionId: string, createPresentatorDto: CreatePresentatorDto) {
-		return await this.prisma.presentators.create({
+	async create(institutionId: string, createPresentatorDto: CreatePresentatorDto): Promise<void> {
+		await this.prisma.presentators.create({
 			data: {
 				name: createPresentatorDto.name,
 				institution: {
@@ -19,11 +20,13 @@ export class PresentatorsService {
 						id: institutionId,
 					},
 				},
+				/*
 				user: {
 					connect: {
 						email: createPresentatorDto.email,
 					}
-				}
+				},
+				*/
 			},
 		});
 	}
@@ -53,23 +56,152 @@ export class PresentatorsService {
 		});
 	}
 
-	async update(institutionId: string, id: string, updatePresentatorDto: UpdatePresentatorDto) {
-		return await this.prisma.presentators.update({
+	async update(institutionId: string, id: string, updatePresentatorDto: UpdatePresentatorDto): Promise<void> {
+		await this.prisma.presentators.update({
+			select: {
+				id: true,
+			},
 			where: {
 				id: id,
 				institutionId: institutionId,
 			},
 			data: {
-				...updatePresentatorDto,
+				name: updatePresentatorDto.name,
+				user: {
+					connect: {
+						email: updatePresentatorDto.email,
+					}
+				},
 			},
 		});
 	}
 
-	async remove(institutionId: string, id: string) {
-		return await this.prisma.presentators.delete({
+	async remove(institutionId: string, id: string): Promise<void> {
+		await this.prisma.presentators.delete({
+			select: {
+				id: true,
+			},
 			where: {
 				id: id,
 				institutionId: institutionId,
+			}
+		});
+	}
+}
+
+@Injectable()
+export class PresentatorsFromAppointmentsService {
+	constructor(private readonly prisma: PrismaClient) { }
+	async add(institutionId: string, dataServiceIds: DataServiceIds, presentatorId: string): Promise<void> {
+		await this.prisma.appointments.update({
+			data: {
+				presentators: {
+					connect: {
+						presentatorId_appointmentId: {
+							presentatorId: presentatorId,
+							appointmentId: dataServiceIds.appointmentId,
+						}
+					}
+				}
+			},
+			where: {
+				id: dataServiceIds.appointmentId,
+				timetables: {
+					some: {
+						id: dataServiceIds.timetableId,
+						institutionId: institutionId,
+					}
+				},
+				rooms: {
+					some: {
+						id: dataServiceIds.roomId,
+						institutionId: institutionId,
+					}
+				},
+				presentators: {
+					some: {
+						presentator: {
+							id: dataServiceIds.presentatorId,
+							institutionId: institutionId,
+						}
+					}
+				},
+			}
+		});
+	}
+
+	async findAll(institutionId: string, dataServiceIds: DataServiceIds, select?: PresentatorsSelect): Promise<Partial<Presentators>[]> {
+		return await this.prisma.presentators.findMany({
+			select: {
+				id: true,
+				...select,
+			},
+			where: {
+				appointments: {
+					some: {
+						appointment: {
+							id: dataServiceIds.appointmentId,
+							timetables: {
+								some: {
+									id: dataServiceIds.timetableId,
+									institutionId: institutionId,
+								}
+							},
+							rooms: {
+								some: {
+									id: dataServiceIds.roomId,
+									institutionId: institutionId,
+								}
+							},
+							presentators: {
+								some: {
+									presentator: {
+										id: dataServiceIds.presentatorId,
+										institutionId: institutionId,
+									}
+								}
+							}
+						}
+					}
+				},
+			},
+		});
+	}
+
+	async remove(institutionId: string, dataServiceIds: DataServiceIds, presentatorId: string): Promise<void> {
+		await this.prisma.appointments.update({
+			data: {
+				presentators: {
+					disconnect: {
+						presentatorId_appointmentId: {
+							presentatorId: presentatorId,
+							appointmentId: dataServiceIds.appointmentId,
+						}
+					}
+				}
+			},
+			where: {
+				id: dataServiceIds.appointmentId,
+				timetables: {
+					some: {
+						id: dataServiceIds.timetableId,
+						institutionId: institutionId,
+					}
+				},
+				rooms: {
+					some: {
+						id: dataServiceIds.roomId,
+						institutionId: institutionId,
+					}
+				},
+				presentators: {
+					some: {
+						presentator: {
+							id: dataServiceIds.presentatorId,
+							institutionId: institutionId,
+						}
+					}
+				},
 			}
 		});
 	}

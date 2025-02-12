@@ -13,12 +13,12 @@ export class ProfileController {
   }
 
   @Patch()
-  update(@Query('token') token: string, @Body() updateProfileDto: UpdateProfileDto) {
+  update(@Query('token') token: string, @Body() updateProfileDto: UpdateProfileDto): Promise<void> {
     return this.profileService.updatePassword(token, updateProfileDto);
   }
 
   @Delete()
-  remove(@Query('token') token: string) {
+  remove(@Query('token') token: string): Promise<void> {
     return this.profileService.remove(token);
   }
 }
