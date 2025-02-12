@@ -7,7 +7,7 @@ export class UsersService {
 	private static readonly prisma: PrismaClient = new PrismaClient();
 	constructor(private readonly prisma: PrismaClient) { }
 
-	static async getIfInstitutionIsAssignedToAUserByToken(token: string, institutionsId: string): Promise<boolean> {
+	static async getIfInstitutionIsAssignedToAUserByToken(token: string, institutionId: string): Promise<boolean> {
 		await this.prisma.users.findFirstOrThrow({
 			select: {
 				institutions: {
@@ -19,7 +19,7 @@ export class UsersService {
 			where: {
 				institutions: {
 					some: {
-						id: institutionsId,
+						id: institutionId,
 					},
 				},
 				tokens: {
@@ -53,15 +53,15 @@ export class UsersService {
 		return true;
 	}
 
-	async add(institutionsId: string, userDto: UserDto) {
-		return await this.prisma.users.update({
+	async add(institutionId: string, userDto: UserDto): Promise<void> {
+		await this.prisma.users.update({
 			select: {
 				email: true,
 			},
 			data: {
 				institutions: {
 					connect: {
-						id: institutionsId,
+						id: institutionId,
 					},
 				},
 			},
@@ -71,7 +71,7 @@ export class UsersService {
 		});
 	}
 
-	async findAll(institutionsId: string, select?: {
+	async findAll(institutionId: string, select?: {
 		email?: boolean,
 		role?: boolean,
 	}): Promise<Partial<Users>[]> {
@@ -83,14 +83,14 @@ export class UsersService {
 			where: {
 				institutions: {
 					some: {
-						id: institutionsId,
+						id: institutionId,
 					},
 				},
 			},
 		})
 	}
 
-	async remove(institutionsId: string, userDto: UserDto): Promise<void> {
+	async remove(institutionId: string, userDto: UserDto): Promise<void> {
 		await this.prisma.users.update({
 			select: {
 				email: true,
@@ -98,7 +98,7 @@ export class UsersService {
 			data: {
 				institutions: {
 					disconnect: {
-						id: institutionsId,
+						id: institutionId,
 					},
 				},
 			},

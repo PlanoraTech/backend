@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
 import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Users } from '@prisma/client';
 
 @Controller()
 export class UsersController {
@@ -9,14 +10,14 @@ export class UsersController {
 
 	@Post()
 	@Access(AccessTypes.PRIVATE)
-	create(@Param('institutionsId') institutionsId: string, @Body() userDto: UserDto) {
-		return this.usersService.add(institutionsId, userDto);
+	create(@Param('institutionId') institutionId: string, @Body() userDto: UserDto): Promise<void> {
+		return this.usersService.add(institutionId, userDto);
 	}
 
 	@Get()
 	@Access(AccessTypes.PRIVATE)
-	findAll(@Param('institutionsId') institutionsId: string) {
-		return this.usersService.findAll(institutionsId, {
+	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Users>[]> {
+		return this.usersService.findAll(institutionId, {
 			email: true,
 			role: true,
 		});
@@ -24,7 +25,7 @@ export class UsersController {
 
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
-	remove(@Param('institutionsId') institutionsId: string, @Body() userDto: UserDto): Promise<void> {
-		return this.usersService.remove(institutionsId, userDto);
+	remove(@Param('institutionId') institutionId: string, @Body() userDto: UserDto): Promise<void> {
+		return this.usersService.remove(institutionId, userDto);
 	}
 }

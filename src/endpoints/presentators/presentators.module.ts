@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PresentatorsService } from './presentators.service';
-import { PresentatorsController } from './presentators.controller';
 import { PrismaClient } from '@prisma/client';
-import { InstitutionsService } from 'src/endpoints/institutions/institutions.service';
+import { PresentatorsFromAppointmentsService, PresentatorsService } from './presentators.service';
+import { PresentatorsController, PresentatorsFromAppointmentsController } from './presentators.controller';
 
 @Module({
-	controllers: [PresentatorsController],
-	providers: [PresentatorsService, InstitutionsService, PrismaClient],
+	controllers: [PresentatorsFromAppointmentsController, PresentatorsController],
+	providers: [PresentatorsFromAppointmentsService, PresentatorsService, PrismaClient],
 })
 export class PresentatorsModule { }

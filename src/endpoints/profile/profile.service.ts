@@ -20,7 +20,7 @@ export class ProfileService {
     });
   }
 
-  async updatePassword(token: string, updateProfileDto: UpdateProfileDto): Promise<boolean> {
+  async updatePassword(token: string, updateProfileDto: UpdateProfileDto): Promise<void> {
     let userId = await SecretService.getUserIdByToken(token);
     await this.prisma.users.update({
       select: {
@@ -33,10 +33,9 @@ export class ProfileService {
         id: userId,
       },
     });
-    return true;
   }
 
-  async remove(token: string): Promise<boolean> {
+  async remove(token: string): Promise<void> {
     let userId = await SecretService.getUserIdByToken(token);
     await this.prisma.users.delete({
       select: {
@@ -46,6 +45,5 @@ export class ProfileService {
         id: userId,
       },
     });
-    return true;
   }
 }

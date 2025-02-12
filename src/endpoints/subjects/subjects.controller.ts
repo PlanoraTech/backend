@@ -11,14 +11,14 @@ export class SubjectsController {
 
 	@Post()
 	@Access(AccessTypes.PRIVATE)
-	create(@Param('institutionsId') institutionsId: string, @Body() createSubjectDto: CreateSubjectDto) {
-		return this.subjectsService.create(institutionsId, createSubjectDto);
+	create(@Param('institutionId') institutionId: string, @Body() createSubjectDto: CreateSubjectDto): Promise<void> {
+		return this.subjectsService.create(institutionId, createSubjectDto);
 	}
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<Subjects>[]> {
-		return this.subjectsService.findAll(institutionsId, {
+	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Subjects>[]> {
+		return this.subjectsService.findAll(institutionId, {
 			name: true,
 			subjectId: true,
 		});
@@ -26,8 +26,8 @@ export class SubjectsController {
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<Subjects>> {
-		return this.subjectsService.findOne(institutionsId, id, {
+	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<Subjects>> {
+		return this.subjectsService.findOne(institutionId, id, {
 			name: true,
 			subjectId: true,
 		});
@@ -35,13 +35,13 @@ export class SubjectsController {
 
 	@Patch(':id')
 	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionsId') institutionsId: string, @Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto) {
-		return this.subjectsService.update(institutionsId, id, updateSubjectDto);
+	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto): Promise<void> {
+		return this.subjectsService.update(institutionId, id, updateSubjectDto);
 	}
 
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
-	remove(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-		return this.subjectsService.remove(institutionsId, id);
+	remove(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<void> {
+		return this.subjectsService.remove(institutionId, id);
 	}
 }

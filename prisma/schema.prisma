@@ -25,16 +25,6 @@ enum AccessType {
     PRIVATE
 }
 
-enum DayOfWeek {
-    MONDAY
-    TUESDAY
-    WEDNESDAY
-    THURSDAY
-    FRIDAY
-    SATURDAY
-    SUNDAY
-}
-
 enum Roles {
     USER
     PRESENTATOR
@@ -103,7 +93,6 @@ model Appointments {
     subjectId    String
     presentators PresentatorsToAppointments[]
     rooms        Rooms[]
-    dayOfWeek    DayOfWeek
     start        DateTime
     end          DateTime
     isCancelled  Boolean

@@ -19,13 +19,13 @@ export class AccessGuard implements CanActivate {
         let request: Request = context.switchToHttp().getRequest();
         switch (access) {
             case AccessTypes.RESTRICTED:
-                switch (await InstitutionsService.getInstitutionAccessById(request.params.institutionsId)) {
+                switch (await InstitutionsService.getInstitutionAccessById(request.params.institutionId)) {
                     case AccessType.PUBLIC:
                         return true;
                     case AccessType.PRIVATE:
                         switch (await SecretService.seamlessAuth(request.query.token as string)) {
                             case true:
-                                switch (await UsersService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionsId)) {
+                                switch (await UsersService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
                                     case true:
                                         return true;
                                     default:
@@ -42,7 +42,7 @@ export class AccessGuard implements CanActivate {
                     case true:
                         switch (await UsersService.getIfRoleIsAssignedToAUserByToken(request.query.token as string, Roles.DIRECTOR)) {
                             case true:
-                                switch (await UsersService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionsId)) {
+                                switch (await UsersService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
                                     case true:
                                         return true;
                                     default:

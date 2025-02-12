@@ -19,7 +19,7 @@ export class InstitutionsService {
 	}
 
 	/*
-	async create(createInstitutionDto: CreateInstitutionDto) {}
+	async create(createInstitutionDto: CreateInstitutionDto): Promise<void> {}
 	*/
 
 	async findAll(select?: {
@@ -55,14 +55,10 @@ export class InstitutionsService {
 		});
 	}
 
-	async update(id: string, updateInstitutionDto: UpdateInstitutionDto) {
-		return await this.prisma.institutions.update({
+	async update(id: string, updateInstitutionDto: UpdateInstitutionDto): Promise<void> {
+		await this.prisma.institutions.update({
 			select: {
-				name: true,
-				type: true,
-				access: true,
-				color: true,
-				website: true,
+				id: true,
 			},
 			data: {
 				...updateInstitutionDto,
@@ -74,6 +70,6 @@ export class InstitutionsService {
 	}
 
 	/*
-	async remove(id: string) {}
+	async remove(id: string): Promise<void> {}
 	*/
 }

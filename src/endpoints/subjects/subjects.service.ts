@@ -11,28 +11,31 @@ interface SubjectsSelect {
 @Injectable()
 export class SubjectsService {
 	constructor(private readonly prisma: PrismaClient) { }
-	async create(institutionsId: string, createSubjectDto: CreateSubjectDto) {
-		return await this.prisma.subjects.create({
+	async create(institutionId: string, createSubjectDto: CreateSubjectDto): Promise<void> {
+		await this.prisma.subjects.create({
+			select: {
+				id: true,
+			},
 			data: {
 				...createSubjectDto,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findAll(institutionsId: string, select?: SubjectsSelect): Promise<Partial<Subjects>[]> {
+	async findAll(institutionId: string, select?: SubjectsSelect): Promise<Partial<Subjects>[]> {
 		return await this.prisma.subjects.findMany({
 			select: {
 				id: true,
 				...select,
 			},
 			where: {
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async findOne(institutionsId: string, id: string, select?: SubjectsSelect): Promise<Partial<Subjects>> {
+	async findOne(institutionId: string, id: string, select?: SubjectsSelect): Promise<Partial<Subjects>> {
 		return await this.prisma.subjects.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -40,31 +43,34 @@ export class SubjectsService {
 			},
 			where: {
 				id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async update(institutionsId: string, id: string, updateSubjectDto: UpdateSubjectDto) {
-		return await this.prisma.subjects.update({
+	async update(institutionId: string, id: string, updateSubjectDto: UpdateSubjectDto): Promise<void> {
+		await this.prisma.subjects.update({
 			select: {
-				name: true,
+				id: true,
 			},
 			data: {
 				...updateSubjectDto,
 			},
 			where: {
 				id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}
 
-	async remove(institutionsId: string, id: string) {
-		return await this.prisma.subjects.delete({
+	async remove(institutionId: string, id: string): Promise<void> {
+		await this.prisma.subjects.delete({
+			select: {
+				id: true,
+			},
 			where: {
 				id,
-				institutionId: institutionsId,
+				institutionId: institutionId,
 			},
 		});
 	}

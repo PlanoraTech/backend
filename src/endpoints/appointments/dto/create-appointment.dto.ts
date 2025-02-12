@@ -1,14 +1,15 @@
-import { DayOfWeek, Subjects } from "@prisma/client";
+import { IsBoolean, IsDate, IsString } from "class-validator";
 
 export class CreateAppointmentDto {
+    @IsDate()
     start: Date;
+
+    @IsDate()
     end: Date;
-    dayOfWeek: DayOfWeek;
+
+    @IsBoolean()
     isCancelled: boolean;
-    subject: Subjects;
-    presentators: {
-        id: string,
-        name: string,
-        isSubstituted: boolean,
-    }[];
+
+    @IsString()
+    subjectId: string;
 }

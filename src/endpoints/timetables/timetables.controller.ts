@@ -11,14 +11,14 @@ export class TimeTablesController {
 
 	@Post()
 	@Access(AccessTypes.PRIVATE)
-	create(@Param('institutionsId') institutionsId: string, @Body() createTimetableDto: CreateTimeTableDto) {
-		return this.timetablesService.create(institutionsId, createTimetableDto);
+	create(@Param('institutionId') institutionId: string, @Body() createTimetableDto: CreateTimeTableDto): Promise<void> {
+		return this.timetablesService.create(institutionId, createTimetableDto);
 	}
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionsId') institutionsId: string): Promise<Partial<TimeTables>[]> {
-		return this.timetablesService.findAll(institutionsId, {
+	findAll(@Param('institutionId') institutionId: string): Promise<Partial<TimeTables>[]> {
+		return this.timetablesService.findAll(institutionId, {
 			name: true,
 			events: {
 				select: {
@@ -32,8 +32,8 @@ export class TimeTablesController {
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionsId') institutionsId: string, @Param('id') id: string): Promise<Partial<TimeTables>> {
-		return this.timetablesService.findOne(institutionsId, id, {
+	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<TimeTables>> {
+		return this.timetablesService.findOne(institutionId, id, {
 			name: true,
 			events: {
 				select: {
@@ -47,13 +47,13 @@ export class TimeTablesController {
 
 	@Patch(':id')
 	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionsId') institutionsId: string, @Param('id') id: string, @Body() updateTimetableDto: UpdateTimeTableDto) {
-		return this.timetablesService.update(institutionsId, id, updateTimetableDto);
+	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateTimetableDto: UpdateTimeTableDto): Promise<void> {
+		return this.timetablesService.update(institutionId, id, updateTimetableDto);
 	}
 
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
-	remove(@Param('institutionsId') institutionsId: string, @Param('id') id: string) {
-		return this.timetablesService.remove(institutionsId, id);
+	remove(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<void> {
+		return this.timetablesService.remove(institutionId, id);
 	}
 }
