@@ -48,31 +48,6 @@ export class RoomsService {
 		});
 	}
 
-	async findAvailableRooms(institutionId: string, date: Date, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
-		return await this.prisma.rooms.findMany({
-			select: {
-				id: true,
-				...select,
-			},
-			where: {
-				institutionId: institutionId,
-				appointments: {
-					some: {
-						start: {
-							lte: date,
-						},
-						end: {
-							gte: date,
-						},
-					},
-					none: {
-						isCancelled: false,
-					}
-				}
-			},
-		});
-	}
-
 	async update(institutionId: string, id: string, updateRoomDto: UpdateRoomDto): Promise<void> {
 		await this.prisma.rooms.update({
 			select: {
@@ -111,8 +86,8 @@ export class RoomsFromAppointmentsService {
 					connect: {
 						id: roomId,
 						institutionId: institutionId,
-					}
-				}
+					},
+				},
 			},
 			where: {
 				id: dataServiceIds.appointmentId,
@@ -120,23 +95,27 @@ export class RoomsFromAppointmentsService {
 					some: {
 						id: dataServiceIds.timetableId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				rooms: {
 					some: {
 						id: dataServiceIds.roomId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				presentators: {
 					some: {
 						presentator: {
 							id: dataServiceIds.presentatorId,
-							institutionId: institutionId,
-						}
-					}
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
 				},
-			}
+			},
 		});
 	}
 
@@ -154,23 +133,85 @@ export class RoomsFromAppointmentsService {
 							some: {
 								id: dataServiceIds.timetableId,
 								institutionId: institutionId,
-							}
+							},
 						},
 						rooms: {
 							some: {
 								id: dataServiceIds.roomId,
 								institutionId: institutionId,
-							}
+							},
 						},
 						presentators: {
 							some: {
 								presentator: {
 									id: dataServiceIds.presentatorId,
-									institutionId: institutionId,
-								}
-							}
-						}
-					}
+									institutions: {
+										some: {
+											id: institutionId,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	}
+
+	async findAvailableRooms(institutionId: string, dataServiceIds: DataServiceIds, select?: RoomsSelect): Promise<Partial<Rooms>[]> {
+		let appointment = await this.prisma.appointments.findUniqueOrThrow({
+			select: {
+				start: true,
+				end: true,
+			},
+			where: {
+				id: dataServiceIds.appointmentId,
+				timetables: {
+					some: {
+						id: dataServiceIds.timetableId,
+						institutionId: institutionId,
+					},
+				},
+				rooms: {
+					some: {
+						id: dataServiceIds.roomId,
+						institutionId: institutionId,
+					},
+				},
+				presentators: {
+					some: {
+						presentator: {
+							id: dataServiceIds.presentatorId,
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+		return await this.prisma.rooms.findMany({
+			select: {
+				id: true,
+				...select,
+			},
+			where: {
+				institutionId: institutionId,
+				appointments: {
+					some: {
+						start: {
+							lte: appointment.start,
+						},
+						end: {
+							gte: appointment.end,
+						},
+					},
+					none: {
+						isCancelled: false,
+					},
 				},
 			},
 		});
@@ -183,8 +224,8 @@ export class RoomsFromAppointmentsService {
 					disconnect: {
 						id: roomId,
 						institutionId: institutionId,
-					}
-				}
+					},
+				},
 			},
 			where: {
 				id: dataServiceIds.appointmentId,
@@ -192,7 +233,7 @@ export class RoomsFromAppointmentsService {
 					some: {
 						id: dataServiceIds.timetableId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				rooms: {
 					some: {
@@ -204,11 +245,15 @@ export class RoomsFromAppointmentsService {
 					some: {
 						presentator: {
 							id: dataServiceIds.presentatorId,
-							institutionId: institutionId,
-						}
-					}
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
 				},
-			}
+			},
 		});
 	}
 }
