@@ -15,7 +15,7 @@ export class PresentatorsService {
 		await this.prisma.presentators.create({
 			data: {
 				name: createPresentatorDto.name,
-				institution: {
+				institutions: {
 					connect: {
 						id: institutionId,
 					},
@@ -38,7 +38,11 @@ export class PresentatorsService {
 				...select,
 			},
 			where: {
-				institutionId: institutionId,
+				institutions: {
+					some: {
+						id: institutionId,
+					},
+				},
 			},
 		});
 	}
@@ -51,7 +55,11 @@ export class PresentatorsService {
 			},
 			where: {
 				id: id,
-				institutionId: institutionId,
+				institutions: {
+					some: {
+						id: institutionId,
+					},
+				},
 			},
 		});
 	}
@@ -63,14 +71,17 @@ export class PresentatorsService {
 			},
 			where: {
 				id: id,
-				institutionId: institutionId,
+				institutions: {
+					some: {
+						id: institutionId,
+					},
+				},
 			},
 			data: {
-				name: updatePresentatorDto.name,
 				user: {
 					connect: {
 						email: updatePresentatorDto.email,
-					}
+					},
 				},
 			},
 		});
@@ -83,8 +94,12 @@ export class PresentatorsService {
 			},
 			where: {
 				id: id,
-				institutionId: institutionId,
-			}
+				institutions: {
+					some: {
+						id: institutionId,
+					},
+				},
+			},
 		});
 	}
 }
@@ -100,9 +115,9 @@ export class PresentatorsFromAppointmentsService {
 						presentatorId_appointmentId: {
 							presentatorId: presentatorId,
 							appointmentId: dataServiceIds.appointmentId,
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			where: {
 				id: dataServiceIds.appointmentId,
@@ -110,23 +125,27 @@ export class PresentatorsFromAppointmentsService {
 					some: {
 						id: dataServiceIds.timetableId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				rooms: {
 					some: {
 						id: dataServiceIds.roomId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				presentators: {
 					some: {
 						presentator: {
 							id: dataServiceIds.presentatorId,
-							institutionId: institutionId,
-						}
-					}
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
 				},
-			}
+			},
 		});
 	}
 
@@ -145,24 +164,28 @@ export class PresentatorsFromAppointmentsService {
 								some: {
 									id: dataServiceIds.timetableId,
 									institutionId: institutionId,
-								}
+								},
 							},
 							rooms: {
 								some: {
 									id: dataServiceIds.roomId,
 									institutionId: institutionId,
-								}
+								},
 							},
 							presentators: {
 								some: {
 									presentator: {
 										id: dataServiceIds.presentatorId,
-										institutionId: institutionId,
-									}
-								}
-							}
-						}
-					}
+										institutions: {
+											some: {
+												id: institutionId,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		});
@@ -176,9 +199,9 @@ export class PresentatorsFromAppointmentsService {
 						presentatorId_appointmentId: {
 							presentatorId: presentatorId,
 							appointmentId: dataServiceIds.appointmentId,
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			where: {
 				id: dataServiceIds.appointmentId,
@@ -186,23 +209,27 @@ export class PresentatorsFromAppointmentsService {
 					some: {
 						id: dataServiceIds.timetableId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				rooms: {
 					some: {
 						id: dataServiceIds.roomId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				presentators: {
 					some: {
 						presentator: {
 							id: dataServiceIds.presentatorId,
-							institutionId: institutionId,
-						}
-					}
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
 				},
-			}
+			},
 		});
 	}
 }

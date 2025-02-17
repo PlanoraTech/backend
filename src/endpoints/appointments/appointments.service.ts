@@ -33,7 +33,11 @@ interface AppointmentsSelect {
 	start?: boolean,
 	end?: boolean,
 	isCancelled?: boolean,
-	timetables?: boolean,
+	timetables?: {
+		select: {
+			id?: boolean,
+		}
+	},
 }
 
 @Injectable()
@@ -51,21 +55,25 @@ export class AppointmentsService {
 					some: {
 						id: dataServiceIds.timetableId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				rooms: {
 					some: {
 						id: dataServiceIds.roomId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				presentators: {
 					some: {
 						presentator: {
 							id: dataServiceIds.presentatorId,
-							institutionId: institutionId,
-						}
-					}
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
 				},
 			},
 		})
@@ -90,21 +98,25 @@ export class AppointmentsService {
 					some: {
 						id: dataServiceIds.timetableId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				rooms: {
 					some: {
 						id: dataServiceIds.roomId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				presentators: {
 					some: {
 						presentator: {
 							id: dataServiceIds.presentatorId,
-							institutionId: institutionId,
-						}
-					}
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
 				},
 				id: id,
 			},
@@ -171,9 +183,10 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
 			},
 			where: {
 				id: id,
-			}
+			},
 		});
 	}
+	
 	async remove(institutionId: string, timetableId: string, id: string): Promise<void> {
 		await this.prisma.appointments.delete({
 			select: {
@@ -184,7 +197,7 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
 					some: {
 						id: timetableId,
 						institutionId: institutionId,
-					}
+					},
 				},
 				id: id,
 			},
