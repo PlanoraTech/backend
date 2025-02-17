@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
 import { TimeTablesService } from './timetables.service';
-import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Access, AccessTypes } from '../../decorators/access.decorator';
 import { TimeTables } from '@prisma/client';
 
 @Controller()
@@ -20,13 +20,6 @@ export class TimeTablesController {
 	findAll(@Param('institutionId') institutionId: string): Promise<Partial<TimeTables>[]> {
 		return this.timetablesService.findAll(institutionId, {
 			name: true,
-			events: {
-				select: {
-					id: true,
-					title: true,
-					date: true,
-				}
-			},
 		});
 	}
 
@@ -35,13 +28,6 @@ export class TimeTablesController {
 	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<TimeTables>> {
 		return this.timetablesService.findOne(institutionId, id, {
 			name: true,
-			events: {
-				select: {
-					id: true,
-					title: true,
-					date: true,
-				}
-			},
 		});
 	}
 
