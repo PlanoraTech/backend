@@ -5,13 +5,6 @@ import { PrismaClient, TimeTables } from '@prisma/client';
 
 interface TimeTablesSelect {
 	name?: boolean,
-	events?: {
-		select: {
-			id?: boolean,
-			title?: boolean,
-			date?: boolean,
-		}
-	},
 }
 
 @Injectable()
@@ -75,6 +68,7 @@ export class TimeTablesService {
 					timetables: {
 						some: {
 							id: id,
+							institutionId: institutionId,
 						},
 					},
 				},

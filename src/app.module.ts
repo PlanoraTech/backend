@@ -10,6 +10,7 @@ import { UsersModule } from './endpoints/users/users.module';
 import { LoginModule } from './endpoints/auth/login/login.module';
 import { RegisterModule } from './endpoints/auth/register/register.module';
 import { ProfileModule } from './endpoints/profile/profile.module';
+import { EventsModule } from './endpoints/events/events.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProfileModule } from './endpoints/profile/profile.module';
     SubjectsModule,
     RoomsModule,
     TimeTablesModule,
+    EventsModule,
     AppointmentsModule,
     UsersModule,
     LoginModule,
@@ -39,6 +41,10 @@ import { ProfileModule } from './endpoints/profile/profile.module';
           {
             path: ':institutionId',
             module: RoomsModule,
+          },
+          {
+            path: ':institutionId/events',
+            module: EventsModule,
           },
           {
             path: ':institutionId/timetables',

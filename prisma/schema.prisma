@@ -42,22 +42,22 @@ model Institutions {
     subjects     Subjects[]
     rooms        Rooms[]
     timetables   TimeTables[]
+    events       Events[]
     users        Users[]
 }
 
 model Presentators {
-    id            String                       @id @default(uuid())
-    name          String                       @unique
-    appointments  PresentatorsToAppointments[]
-    institution   Institutions                 @relation(fields: [institutionId], references: [id])
-    institutionId String
-    user          Users?
+    id           String                       @id @default(uuid())
+    name         String                       @unique
+    appointments PresentatorsToAppointments[]
+    institutions Institutions[]
+    user         Users?
 }
 
 model Subjects {
     id            String         @id @default(uuid())
     name          String
-    subjectId     String
+    subjectId     String         @unique
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
@@ -72,16 +72,16 @@ model Rooms {
 }
 
 model Events {
-    id         String       @id @default(uuid())
-    title      String
-    date       DateTime
-    timetables TimeTables[]
+    id            String       @id @default(uuid())
+    title         String
+    date          DateTime
+    institution   Institutions @relation(fields: [institutionId], references: [id])
+    institutionId String
 }
 
 model TimeTables {
     id            String         @id @default(uuid())
     name          String
-    events        Events[]
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
