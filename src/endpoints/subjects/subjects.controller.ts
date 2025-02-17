@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SubjectsService } from './subjects.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
-import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Access, AccessTypes } from '../../decorators/access.decorator';
 import { Subjects } from '@prisma/client';
 
 @Controller()

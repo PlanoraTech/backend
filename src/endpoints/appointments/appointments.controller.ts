@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
-import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Access, AccessTypes } from '../../decorators/access.decorator';
 import { Appointments, PrismaClient } from '@prisma/client';
 
 @Controller([
@@ -88,7 +88,6 @@ export class AppointmentsController {
 		});
 	}
 }
-
 
 @Controller([
 	'institutions/:institutionId/timetables/:timetableId/appointments',

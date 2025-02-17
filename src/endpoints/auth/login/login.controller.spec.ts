@@ -5,7 +5,6 @@ import { PrismaClient } from '@prisma/client';
 
 describe('LoginController', () => {
   let controller: LoginController;
-  let prisma: PrismaClient;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,7 +13,6 @@ describe('LoginController', () => {
     }).compile();
 
     controller = module.get<LoginController>(LoginController);
-    prisma = module.get<PrismaClient>(PrismaClient);
   });
 
   it('should be defined', () => {

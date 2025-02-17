@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { InstitutionsService } from './institutions.service';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { Access, AccessTypes } from 'src/decorators/access.decorator';
+import { Access, AccessTypes } from '../../decorators/access.decorator';
 import { Institutions } from '@prisma/client';
 
 @Controller()
