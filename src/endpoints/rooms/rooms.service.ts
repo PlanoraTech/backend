@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
+import { Rooms } from '@prisma/client';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { PrismaClient, Rooms } from '@prisma/client';
 import { DataServiceIds } from 'src/interfaces/DataServiceIds';
 
 interface RoomsSelect {
@@ -10,7 +11,8 @@ interface RoomsSelect {
 
 @Injectable()
 export class RoomsService {
-	constructor(private readonly prisma: PrismaClient) { }
+	constructor(private readonly prisma: PrismaService) { }
+
 	async create(institutionId: string, createRoomDto: CreateRoomDto): Promise<void> {
 		await this.prisma.rooms.create({
 			select: {
@@ -78,7 +80,8 @@ export class RoomsService {
 
 @Injectable()
 export class RoomsFromAppointmentsService {
-	constructor(private readonly prisma: PrismaClient) { }
+	constructor(private readonly prisma: PrismaService) { }
+	
 	async add(institutionId: string, dataServiceIds: DataServiceIds, roomId: string): Promise<void> {
 		await this.prisma.appointments.update({
 			data: {

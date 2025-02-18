@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from 'prisma/prisma.service';
 import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
 import { AppointmentsController, AppointmentsFromTimeTablesController } from './appointments.controller';
 
 @Module({
 	controllers: [AppointmentsFromTimeTablesController, AppointmentsController],
-	providers: [AppointmentsFromTimeTablesService, AppointmentsService, PrismaClient],
+	providers: [AppointmentsFromTimeTablesService, AppointmentsService, PrismaService],
 })
 export class AppointmentsModule { }

@@ -1,22 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
+import { Institutions } from '@prisma/client';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { AccessType, Institutions, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class InstitutionsService {
-	private static readonly prisma: PrismaClient = new PrismaClient();
-	constructor(private readonly prisma: PrismaClient) { }
-
-	static async getInstitutionAccessById(id: string): Promise<AccessType> {
-		return (await this.prisma.institutions.findUniqueOrThrow({
-			select: {
-				access: true,
-			},
-			where: {
-				id,
-			},
-		})).access;
-	}
+	constructor(private readonly prisma: PrismaService) { }
 
 	/*
 	async create(createInstitutionDto: CreateInstitutionDto): Promise<void> {}

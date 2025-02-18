@@ -1,16 +1,17 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { PrismaClient, Tokens } from '@prisma/client';
+import { Injectable, InternalServerErrorException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
+import { AccessType, Roles, Tokens } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
 export enum TokenExpiry {
     DAY = 1000 * 60 * 60 * 24,
     MONTH = 1000 * 60 * 60 * 24 * 30,
     NEVER = 1000 * 60 * 60 * 24 * 365 * 100,
-} 
+}
 
 @Injectable()
 export class SecretService {
-    private static readonly prisma: PrismaClient = new PrismaClient();
+    private static readonly prisma: PrismaService = new PrismaService();
     private static generateToken(): string {
         return crypto.randomUUID();
     }
@@ -84,4 +85,61 @@ export class SecretService {
             }
         })).userId;
     }
+
+    static async getIfInstitutionIsAssignedToAUserByToken(token: string, institutionId: string): Promise<boolean> {
+        await this.prisma.users.findFirstOrThrow({
+            select: {
+                institutions: {
+                    select: {
+                        id: true,
+                    },
+                },
+            },
+            where: {
+                institutions: {
+                    some: {
+                        id: institutionId,
+                    },
+                },
+                tokens: {
+                    some: {
+                        token: token,
+                    },
+                },
+            },
+        }).catch(() => {
+            throw new ForbiddenException("You do not have permission to access this information");
+        });
+        return true;
+    }
+
+    static async getIfRoleIsAssignedToAUserByToken(token: string, role: Roles): Promise<boolean> {
+        await this.prisma.users.findFirstOrThrow({
+            select: {
+                role: true,
+            },
+            where: {
+                role: role,
+                tokens: {
+                    some: {
+                        token: token,
+                    },
+                },
+            },
+        }).catch(() => {
+            throw new ForbiddenException("You do not have permission to access this information");
+        });
+        return true;
+    }
+
+    static async getInstitutionAccessById(id: string): Promise<AccessType> {
+		return (await this.prisma.institutions.findUniqueOrThrow({
+			select: {
+				access: true,
+			},
+			where: {
+				id,
+			},
+		})).access;
+	}
 }
