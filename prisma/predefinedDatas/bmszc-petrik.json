@@ -1,0 +1,1175 @@
+{
+    "period": "year",
+    "name": "BMSZC Petrik Lajos Technikum",
+    "type": "SCHOOL",
+    "access": "PUBLIC",
+    "color": "#ff0000",
+    "website": "https://petrik.hu",
+    "presentators": [
+        {
+            "name": "Babusa Tamás Gyula"
+        },
+        {
+            "name": "Bagóné Tóth Katalin"
+        },
+        {
+            "name": "Bálint György"
+        },
+        {
+            "name": "Balogh Botond"
+        },
+        {
+            "name": "Balogh Zoltán"
+        },
+        {
+            "name": "Barabás Gergő"
+        },
+        {
+            "name": "Bátki Ottilia"
+        },
+        {
+            "name": "Bende Gyöngyi Zsuzsanna"
+        },
+        {
+            "name": "Benyó Judit Borbála"
+        },
+        {
+            "name": "Béresné Bodó Noémi Klementina"
+        },
+        {
+            "name": "Dr. Berkesné Okos Melinda"
+        },
+        {
+            "name": "Bogdán Marianna"
+        },
+        {
+            "name": "Bozóki Judit"
+        },
+        {
+            "name": "Bődi István"
+        },
+        {
+            "name": "Budaházi Bence Nándor"
+        },
+        {
+            "name": "Czikkely Imre"
+        },
+        {
+            "name": "Czinkóczi Tamás"
+        },
+        {
+            "name": "Csák Szilárd Csongor"
+        },
+        {
+            "name": "Csutak Zsolt"
+        },
+        {
+            "name": "Darányi Katalin"
+        },
+        {
+            "name": "De Rose Lynn"
+        },
+        {
+            "name": "Demkó Erika"
+        },
+        {
+            "name": "Domján Edit Dóra"
+        },
+        {
+            "name": "Duschák Zsuzsanna"
+        },
+        {
+            "name": "Elekesné Sallai Mónika Angéla"
+        },
+        {
+            "name": "Fandel Richárd Gábor"
+        },
+        {
+            "name": "Ferencei Boglárka"
+        },
+        {
+            "name": "Forgó Zsuzsanna"
+        },
+        {
+            "name": "Fortuna Zsuzsanna"
+        },
+        {
+            "name": "Frank Attila"
+        },
+        {
+            "name": "Gál-Berey Csilla"
+        },
+        {
+            "name": "Gőgh Zsolt"
+        },
+        {
+            "name": "Guth Gabriella Éva"
+        },
+        {
+            "name": "Hajagos Máté"
+        },
+        {
+            "name": "Halász Gábor"
+        },
+        {
+            "name": "Hertelendi Gábor"
+        },
+        {
+            "name": "Horváth Gyöngyi"
+        },
+        {
+            "name": "Horváth Norbert"
+        },
+        {
+            "name": "Horváth Zoltán"
+        },
+        {
+            "name": "Jabelkó-Tolnai Csilla Anna"
+        },
+        {
+            "name": "Kállóné Husi Zsuzsanna"
+        },
+        {
+            "name": "Karsai Gergő"
+        },
+        {
+            "name": "Kasparek Péter"
+        },
+        {
+            "name": "Király Zalán"
+        },
+        {
+            "name": "Koczka István"
+        },
+        {
+            "name": "Kollár Zsuzsanna"
+        },
+        {
+            "name": "Kovács Olivér"
+        },
+        {
+            "name": "Kovács Zoltán"
+        },
+        {
+            "name": "Kovácsné Antal Éva"
+        },
+        {
+            "name": "Kugyelláné Schmidtka Ágnes"
+        },
+        {
+            "name": "Laman Richárd"
+        },
+        {
+            "name": "Latabár Endre Péter"
+        },
+        {
+            "name": "Lénárdné Bárdossy Ágota"
+        },
+        {
+            "name": "Dr. Lois Izabella"
+        },
+        {
+            "name": "Lovas Margaret Anikó"
+        },
+        {
+            "name": "Madarász Ákos"
+        },
+        {
+            "name": "Márta Jószef István"
+        },
+        {
+            "name": "Dr. Máté Marianna"
+        },
+        {
+            "name": "Merényi Miklós"
+        },
+        {
+            "name": "Mészáros Tamás"
+        },
+        {
+            "name": "Nagy Judit"
+        },
+        {
+            "name": "Nagyné Németh Ildikó Andrea"
+        },
+        {
+            "name": "Dr. Nagyné Székely Emőke"
+        },
+        {
+            "name": "Nyisztorné Kozma Amália Éva"
+        },
+        {
+            "name": "Omischl-Németh Eszter"
+        },
+        {
+            "name": "Pappné Debreczeni Ildikó"
+        },
+        {
+            "name": "Pál Csenge"
+        },
+        {
+            "name": "Penksza Károlyné"
+        },
+        {
+            "name": "Petri Judit"
+        },
+        {
+            "name": "Rápolthy Bálint"
+        },
+        {
+            "name": "Rausch Péter"
+        },
+        {
+            "name": "Ribni Ferenc"
+        },
+        {
+            "name": "Sárközi-Paulik Brigitta"
+        },
+        {
+            "name": "Schubert Bence"
+        },
+        {
+            "name": "Seres Orsolya Zsuzsanna"
+        },
+        {
+            "name": "Siska Dávid"
+        },
+        {
+            "name": "Somogyi Zsolt"
+        },
+        {
+            "name": "Sőre Ferenc"
+        },
+        {
+            "name": "Szabados István"
+        },
+        {
+            "name": "Dr. Szabó Marianna"
+        },
+        {
+            "name": "Szajkó Orsolya"
+        },
+        {
+            "name": "Szolnok Ádám"
+        },
+        {
+            "name": "Szellner-Bakos Gabriella"
+        },
+        {
+            "name": "Takács Emese"
+        },
+        {
+            "name": "Tihanyi Péter"
+        },
+        {
+            "name": "Tóth Béla"
+        },
+        {
+            "name": "Tóth Éva"
+        },
+        {
+            "name": "Tóth Krisztina"
+        },
+        {
+            "name": "Uhlár Zoltán István"
+        },
+        {
+            "name": "Urbán Barbara"
+        },
+        {
+            "name": "Urbin Péter"
+        },
+        {
+            "name": "Vámos Tibor"
+        },
+        {
+            "name": "Varga László"
+        },
+        {
+            "name": "Veres Gyula"
+        },
+        {
+            "name": "Villányi-Borsics Eszter"
+        },
+        {
+            "name": "Völgyi Ferenc Iván"
+        },
+        {
+            "name": "Weisz Ilona Mária"
+        }
+    ],
+    "subjects": [
+        {
+            "subjectId": "Gyárigyak",
+            "name": "Gyakorlati Ipar"
+        },
+        {
+            "subjectId": "Vegy. műv. és ír.",
+            "name": "Vegyipari műveletek és irányítás"
+        },
+        {
+            "subjectId": "Ang",
+            "name": "Angol nyelv"
+        },
+        {
+            "subjectId": "Fiz",
+            "name": "Fizika"
+        },
+        {
+            "subjectId": "Műsz. an. gyak",
+            "name": "Műszaki alapismeretek gyakorlat"
+        },
+        {
+            "subjectId": "Körn. és munkavéd",
+            "name": "Környezet- és munkavédelem"
+        },
+        {
+            "subjectId": "Lab.műk.",
+            "name": "Laboratóriumi működés"
+        },
+        {
+            "subjectId": "Projekt",
+            "name": "Projektmunka"
+        },
+        {
+            "subjectId": "M.v. id.nyelv",
+            "name": "Második idegen nyelv"
+        },
+        {
+            "subjectId": "Alk.kém",
+            "name": "Alkalmazott kémia"
+        },
+        {
+            "subjectId": "Ofő",
+            "name": "Osztályfőnöki óra"
+        },
+        {
+            "subjectId": "VegyTech",
+            "name": "Vegyipari technológia"
+        },
+        {
+            "subjectId": "Biol.fakt.",
+            "name": "Biológia fakultáció"
+        },
+        {
+            "subjectId": "Pénzügy",
+            "name": "Pénzügyi ismeretek"
+        },
+        {
+            "subjectId": "BioTech GY",
+            "name": "Biotechnológia gyakorlat"
+        },
+        {
+            "subjectId": "Prep. gyak",
+            "name": "Preparációs gyakorlat"
+        },
+        {
+            "subjectId": "Vegyip. műv. és ir. GY",
+            "name": "Vegyipari műveletek és irányítás gyakorlat"
+        },
+        {
+            "subjectId": "Test.",
+            "name": "Testnevelés"
+        },
+        {
+            "subjectId": "Frontend",
+            "name": "Frontend fejlesztés"
+        },
+        {
+            "subjectId": "AMAF_C",
+            "name": "Automatizált folyamatirányítás"
+        },
+        {
+            "subjectId": "Backend",
+            "name": "Backend fejlesztés"
+        },
+        {
+            "subjectId": "IKTPrII",
+            "name": "Informatikai projekt II."
+        },
+        {
+            "subjectId": "AdatbII",
+            "name": "Adatbázis-kezelés II."
+        }
+    ],
+    "rooms": [
+        {
+            "name": "testnevelés1"
+        },
+        {
+            "name": "testnevelés2"
+        },
+        {
+            "name": "testnevelés3"
+        },
+        {
+            "name": "testnevelés3*"
+        },
+        {
+            "name": "testnevelés4"
+        },
+        {
+            "name": "testnevelés4*"
+        },
+        {
+            "name": "A007"
+        },
+        {
+            "name": "A009"
+        },
+        {
+            "name": "A014"
+        },
+        {
+            "name": "A015"
+        },
+        {
+            "name": "A105"
+        },
+        {
+            "name": "A106"
+        },
+        {
+            "name": "A108"
+        },
+        {
+            "name": "B314"
+        },
+        {
+            "name": "B331"
+        },
+        {
+            "name": "B117-135"
+        },
+        {
+            "name": "B212-230"
+        },
+        {
+            "name": "B014_aut"
+        },
+        {
+            "name": "B021_műv"
+        },
+        {
+            "name": "A018A"
+        },
+        {
+            "name": "A018B"
+        },
+        {
+            "name": "A023"
+        },
+        {
+            "name": "A117"
+        },
+        {
+            "name": "A118"
+        },
+        {
+            "name": "Györgyi Tamás A"
+        },
+        {
+            "name": "Györgyi Tamás B"
+        },
+        {
+            "name": "A122"
+        },
+        {
+            "name": "A222"
+        },
+        {
+            "name": "A109"
+        },
+        {
+            "name": "As009"
+        },
+        {
+            "name": "A010"
+        },
+        {
+            "name": "A119"
+        },
+        {
+            "name": "A123"
+        },
+        {
+            "name": "A205"
+        },
+        {
+            "name": "A206"
+        },
+        {
+            "name": "A208"
+        },
+        {
+            "name": "A210"
+        },
+        {
+            "name": "A215"
+        },
+        {
+            "name": "A216"
+        },
+        {
+            "name": "A217"
+        },
+        {
+            "name": "A218"
+        },
+        {
+            "name": "A220"
+        },
+        {
+            "name": "B017"
+        },
+        {
+            "name": "B042"
+        },
+        {
+            "name": "B112 tárgyaló"
+        },
+        {
+            "name": "Petrik Előadó"
+        },
+        {
+            "name": "B203"
+        },
+        {
+            "name": "B204"
+        },
+        {
+            "name": "B205"
+        },
+        {
+            "name": "B207"
+        },
+        {
+            "name": "B219"
+        },
+        {
+            "name": "B210-211"
+        },
+        {
+            "name": "B303"
+        },
+        {
+            "name": "B304"
+        },
+        {
+            "name": "B306"
+        },
+        {
+            "name": "B307"
+        },
+        {
+            "name": "B310_alsó"
+        },
+        {
+            "name": "B311_felső"
+        },
+        {
+            "name": "Könyvtár"
+        },
+        {
+            "name": "A209 - Szertár"
+        }
+    ],
+    "events": [],
+    "timetables": [
+        {
+            "name": "9KNY"
+        },
+        {
+            "name": "9A"
+        },
+        {
+            "name": "9B"
+        },
+        {
+            "name": "9C"
+        },
+        {
+            "name": "9D"
+        },
+        {
+            "name": "9E"
+        },
+        {
+            "name": "9G"
+        },
+        {
+            "name": "10A"
+        },
+        {
+            "name": "10B"
+        },
+        {
+            "name": "10C"
+        },
+        {
+            "name": "10D"
+        },
+        {
+            "name": "10E"
+        },
+        {
+            "name": "11A"
+        },
+        {
+            "name": "11B"
+        },
+        {
+            "name": "11C"
+        },
+        {
+            "name": "11D"
+        },
+        {
+            "name": "11E"
+        },
+        {
+            "name": "12A"
+        },
+        {
+            "name": "12B"
+        },
+        {
+            "name": "12C"
+        },
+        {
+            "name": "12D"
+        },
+        {
+            "name": "12E"
+        },
+        {
+            "name": "13A"
+        },
+        {
+            "name": "13B"
+        },
+        {
+            "name": "13C"
+        },
+        {
+            "name": "13D"
+        },
+        {
+            "name": "13E"
+        },
+        {
+            "name": "1/13V"
+        },
+        {
+            "name": "1/13R"
+        },
+        {
+            "name": "2/14V"
+        },
+        {
+            "name": "2/14R"
+        },
+        {
+            "name": "2/14S"
+        },
+        {
+            "name": "1/13VL"
+        },
+        {
+            "name": "2/14VL"
+        },
+        {
+            "name": "1/15DL"
+        },
+        {
+            "name": "1/13VE"
+        },
+        {
+            "name": "2/14VE"
+        },
+        {
+            "name": "1/13RL"
+        }
+    ],
+    "appointments": [
+        {
+            "start": "2025-02-03T11:35:00Z",
+            "end": "2025-02-03T13:15:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Gyárigyak"
+            },
+            "presentators": [],
+            "rooms": [],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-04T08:00:00Z",
+            "end": "2025-02-04T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Vegy. műv. és ír."
+            },
+            "presentators": [
+                {
+                    "name": "Frank Attila"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-04T08:55:00Z",
+            "end": "2025-02-04T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-04T09:50:00Z",
+            "end": "2025-02-04T10:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Fiz"
+            },
+            "presentators": [
+                {
+                    "name": "Kovács Olivér"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A208"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-05T11:35:00Z",
+            "end": "2025-02-05T13:15:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Műsz. an. gyak"
+            },
+            "presentators": [
+                {
+                    "name": "Sőre Ferenc"
+                },
+                {
+                    "name": "Tihanyi Péter"
+                },
+                {
+                    "name": "Tóth Krisztina"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B117-135"
+                },
+                {
+                    "name": "B212-230"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-06T08:00:00Z",
+            "end": "2025-02-06T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "M.v. id.nyelv"
+            },
+            "presentators": [
+                {
+                    "name": "Seres Orsolya Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-06T08:55:00Z",
+            "end": "2025-02-06T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Alk.kém"
+            },
+            "presentators": [
+                {
+                    "name": "Dr. Máté Marianna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-06T09:50:00Z",
+            "end": "2025-02-06T10:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "VegyTech"
+            },
+            "presentators": [
+                {
+                    "name": "Fandel Richárd Gábor"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-07T08:00:00Z",
+            "end": "2025-02-07T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Seres Orsolya Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-07T08:55:00Z",
+            "end": "2025-02-07T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Pénzügy"
+            },
+            "presentators": [
+                {
+                    "name": "Horváth Gyöngyi"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-07T09:50:00Z",
+            "end": "2025-02-07T10:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Fiz"
+            },
+            "presentators": [
+                {
+                    "name": "Kovács Olivér"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A208"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-03T12:50:00Z",
+            "end": "2025-02-03T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test."
+            },
+            "presentators": [
+                {
+                    "name": "Schubert Bence"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A118"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-03T13:45:00Z",
+            "end": "2025-02-03T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test."
+            },
+            "presentators": [
+                {
+                    "name": "Laman Richárd"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A118"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-03T15:20:00Z",
+            "end": "2025-02-03T16:00:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Frontend"
+            },
+            "presentators": [
+                {
+                    "name": "Rápolthy Bálint"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A118"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-03T16:40:00Z",
+            "end": "2025-02-03T17:25:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "AMAF_C"
+            },
+            "presentators": [
+                {
+                    "name": "Budaházi Bence Nándor"
+                },
+                {
+                    "name": "Pál Csenge"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A117"
+                },
+                {
+                    "name": "A118"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-05T12:50:00Z",
+            "end": "2025-02-05T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Backend"
+            },
+            "presentators": [
+                {
+                    "name": "Halász Gábor"
+                },
+                {
+                    "name": "Bogdán Marianna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A117"
+                },
+                {
+                    "name": "A118"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-05T13:45:00Z",
+            "end": "2025-02-05T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Pénzügy"
+            },
+            "presentators": [
+                {
+                    "name": "Horváth Gyöngyi"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A010"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-05T14:40:00Z",
+            "end": "2025-02-05T15:25:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "AMAF_C"
+            },
+            "presentators": [
+                {
+                    "name": "Merényi Miklós"
+                },
+                {
+                    "name": "Pál Csenge"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A117"
+                },
+                {
+                    "name": "A118"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-06T08:00:00Z",
+            "end": "2025-02-06T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "M.v. id.nyelv"
+            },
+            "presentators": [
+                {
+                    "name": "Bende Gyöngyi Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A215"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        },
+        {
+            "start": "2025-02-06T08:55:00Z",
+            "end": "2025-02-06T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "M.v. id.nyelv"
+            },
+            "presentators": [
+                {
+                    "name": "Jabelkó-Tolnai Csilla Anna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ]
+        }
+    ]
+}
