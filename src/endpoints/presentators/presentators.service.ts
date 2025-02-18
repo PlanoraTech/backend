@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@app/prisma/prisma.service';
+import { Presentators } from '@prisma/client';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdatePresentatorDto } from './dto/update-presentator.dto';
-import { Presentators, PrismaClient } from '@prisma/client';
 import { DataServiceIds } from 'src/interfaces/DataServiceIds';
 
 interface PresentatorsSelect {
@@ -10,7 +11,8 @@ interface PresentatorsSelect {
 
 @Injectable()
 export class PresentatorsService {
-	constructor(private readonly prisma: PrismaClient) { }
+	constructor(private readonly prisma: PrismaService) { }
+
 	async create(institutionId: string, createPresentatorDto: CreatePresentatorDto): Promise<void> {
 		await this.prisma.presentators.create({
 			data: {
@@ -106,7 +108,8 @@ export class PresentatorsService {
 
 @Injectable()
 export class PresentatorsFromAppointmentsService {
-	constructor(private readonly prisma: PrismaClient) { }
+	constructor(private readonly prisma: PrismaService) { }
+
 	async add(institutionId: string, dataServiceIds: DataServiceIds, presentatorId: string): Promise<void> {
 		await this.prisma.appointments.update({
 			data: {

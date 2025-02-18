@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
-import { PrismaClient } from '@prisma/client';
 
 describe('AppointmentsService', () => {
   let service: AppointmentsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AppointmentsService, PrismaClient],
+      providers: [AppointmentsService, PrismaService],
     }).compile();
 
     service = module.get<AppointmentsService>(AppointmentsService);
@@ -23,7 +23,7 @@ describe('AppointmentsFromInstitutionsTimeTablesService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AppointmentsFromTimeTablesService, PrismaClient],
+      providers: [AppointmentsFromTimeTablesService, PrismaService],
     }).compile();
 
     service = module.get<AppointmentsFromTimeTablesService>(AppointmentsFromTimeTablesService);

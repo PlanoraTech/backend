@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { TimeTablesService } from './timetables.service';
 import { TimeTablesController } from './timetables.controller';
 
 @Module({
 	controllers: [TimeTablesController],
-	providers: [TimeTablesService, PrismaClient],
+	providers: [TimeTablesService, PrismaService],
 })
 export class TimeTablesModule { }

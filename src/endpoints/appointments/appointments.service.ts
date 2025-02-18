@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@app/prisma/prisma.service';
+import { Appointments } from '@prisma/client';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { Appointments, PrismaClient } from '@prisma/client';
 import { DataServiceIds } from 'src/interfaces/DataServiceIds';
 
 interface AppointmentsSelect {
@@ -42,7 +43,7 @@ interface AppointmentsSelect {
 
 @Injectable()
 export class AppointmentsService {
-	constructor(protected readonly prisma: PrismaClient) { }
+	constructor(protected readonly prisma: PrismaService) { }
 
 	async findAll(institutionId: string, dataServiceIds: DataServiceIds, select?: AppointmentsSelect): Promise<Partial<Appointments>[]> {
 		let appointments = await this.prisma.appointments.findMany({
@@ -135,7 +136,7 @@ export class AppointmentsService {
 @Injectable()
 export class AppointmentsFromTimeTablesService extends AppointmentsService {
 	constructor() {
-		super(new PrismaClient);
+		super(new PrismaService);
 	}
 	async create(institutionId: string, timetableId: string, createAppointmentDto: CreateAppointmentDto): Promise<void> {
 		await this.prisma.appointments.create({

@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Rooms } from '@prisma/client';
 import { RoomsFromAppointmentsService, RoomsService } from './rooms.service';
+import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { Access, AccessTypes } from '../../decorators/access.decorator';
-import { Rooms } from '@prisma/client';
 
 @Controller('rooms')
 export class RoomsController {

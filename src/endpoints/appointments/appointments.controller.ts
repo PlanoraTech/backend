@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { PrismaService } from '@app/prisma/prisma.service';
+import { Appointments } from '@prisma/client';
 import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
 import { Access, AccessTypes } from '../../decorators/access.decorator';
-import { Appointments, PrismaClient } from '@prisma/client';
+import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
 @Controller([
 	'institutions/:institutionId/presentators/:presentatorId/appointments',
@@ -94,7 +95,7 @@ export class AppointmentsController {
 ])
 export class AppointmentsFromTimeTablesController extends AppointmentsController {
 	constructor(private readonly timetableService: AppointmentsFromTimeTablesService) {
-		super(new AppointmentsService(new PrismaClient));
+		super(new AppointmentsService(new PrismaService));
 	}
 
 	@Post()

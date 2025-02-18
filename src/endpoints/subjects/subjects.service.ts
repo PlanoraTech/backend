@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@app/prisma/prisma.service';
+import { Subjects } from '@prisma/client';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
-import { PrismaClient, Subjects } from '@prisma/client';
 
 interface SubjectsSelect {
 	name?: boolean,
@@ -10,7 +11,8 @@ interface SubjectsSelect {
 
 @Injectable()
 export class SubjectsService {
-	constructor(private readonly prisma: PrismaClient) { }
+	constructor(private readonly prisma: PrismaService) { }
+	
 	async create(institutionId: string, createSubjectDto: CreateSubjectDto): Promise<void> {
 		await this.prisma.subjects.create({
 			select: {

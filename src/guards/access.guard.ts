@@ -1,11 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from 'express';
-import { SecretService } from "../endpoints/auth/secret/secret.service";
-import { Access, AccessTypes } from "../decorators/access.decorator";
-import { InstitutionsService } from "src/endpoints/institutions/institutions.service";
 import { AccessType, Roles } from "@prisma/client";
-import { UsersService } from "src/endpoints/users/users.service";
+import { Access, AccessTypes } from "@app/decorators/access.decorator";
+import { SecretService } from "@app/endpoints/auth/secret/secret.service";
 
 @Injectable()
 export class AccessGuard implements CanActivate {
@@ -19,13 +17,13 @@ export class AccessGuard implements CanActivate {
         let request: Request = context.switchToHttp().getRequest();
         switch (access) {
             case AccessTypes.RESTRICTED:
-                switch (await InstitutionsService.getInstitutionAccessById(request.params.institutionId)) {
+                switch (await SecretService.getInstitutionAccessById(request.params.institutionId)) {
                     case AccessType.PUBLIC:
                         return true;
                     case AccessType.PRIVATE:
                         switch (await SecretService.seamlessAuth(request.query.token as string)) {
                             case true:
-                                switch (await UsersService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
+                                switch (await SecretService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
                                     case true:
                                         return true;
                                     default:
@@ -40,9 +38,9 @@ export class AccessGuard implements CanActivate {
             case AccessTypes.PRIVATE:
                 switch (await SecretService.seamlessAuth(request.query.token as string)) {
                     case true:
-                        switch (await UsersService.getIfRoleIsAssignedToAUserByToken(request.query.token as string, Roles.DIRECTOR)) {
+                        switch (await SecretService.getIfRoleIsAssignedToAUserByToken(request.query.token as string, Roles.DIRECTOR)) {
                             case true:
-                                switch (await UsersService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
+                                switch (await SecretService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
                                     case true:
                                         return true;
                                     default:
