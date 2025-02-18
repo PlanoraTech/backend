@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Subjects } from '@prisma/client';
 import { SubjectsService } from './subjects.service';
+import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
-import { Access, AccessTypes } from '../../decorators/access.decorator';
-import { Subjects } from '@prisma/client';
 
 @Controller()
 export class SubjectsController {

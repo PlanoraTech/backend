@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { Appointments } from '@prisma/client';
 import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
 import { Access, AccessTypes } from '../../decorators/access.decorator';

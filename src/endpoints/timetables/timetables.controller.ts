@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { TimeTables } from '@prisma/client';
+import { TimeTablesService } from './timetables.service';
+import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
-import { TimeTablesService } from './timetables.service';
-import { Access, AccessTypes } from '../../decorators/access.decorator';
-import { TimeTables } from '@prisma/client';
 
 @Controller()
 export class TimeTablesController {

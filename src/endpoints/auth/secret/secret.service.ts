@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { AccessType, Roles, Tokens } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 

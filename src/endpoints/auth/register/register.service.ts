@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { Tokens } from '@prisma/client';
 import { RegisterDto } from './dto/register.dto';
 import { SecretService, TokenExpiry } from '../secret/secret.service';

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { TimeTablesService } from './timetables.service';
 import { TimeTablesController } from './timetables.controller';
 

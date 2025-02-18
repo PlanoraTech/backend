@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch, Delete, Query } from '@nestjs/common';
+import { Users } from '@prisma/client';
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { Users } from '@prisma/client';
 
 @Controller('profile')
 export class ProfileController {

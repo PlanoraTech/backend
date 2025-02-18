@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { Tokens } from '@prisma/client';
 import { SecretService, TokenExpiry } from '../secret/secret.service';
 import { ExtendedLogin } from './types/login.type';

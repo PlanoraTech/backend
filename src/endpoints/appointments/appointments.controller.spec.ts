@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '@app/prisma/prisma.service';
 import { AppointmentsController, AppointmentsFromTimeTablesController } from './appointments.controller';
 import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
-import { PrismaClient } from '@prisma/client';
 
 describe('AppointmentsController', () => {
   let controller: AppointmentsController;
@@ -9,7 +9,7 @@ describe('AppointmentsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppointmentsController],
-      providers: [AppointmentsService, PrismaClient],
+      providers: [AppointmentsService, PrismaService],
     }).compile();
 
     controller = module.get<AppointmentsController>(AppointmentsController);
@@ -26,7 +26,7 @@ describe('AppointmentsFromTimeTablesController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppointmentsFromTimeTablesController],
-      providers: [AppointmentsFromTimeTablesService, PrismaClient],
+      providers: [AppointmentsFromTimeTablesService, PrismaService],
     }).compile();
 
     controller = module.get<AppointmentsFromTimeTablesController>(AppointmentsFromTimeTablesController);

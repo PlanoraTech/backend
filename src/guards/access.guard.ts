@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from 'express';
 import { AccessType, Roles } from "@prisma/client";
-import { Access, AccessTypes } from "../decorators/access.decorator";
-import { SecretService } from "../endpoints/auth/secret/secret.service";
+import { Access, AccessTypes } from "@app/decorators/access.decorator";
+import { SecretService } from "@app/endpoints/auth/secret/secret.service";
 
 @Injectable()
 export class AccessGuard implements CanActivate {
