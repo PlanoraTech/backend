@@ -3,7 +3,7 @@ import { Presentators } from '@prisma/client';
 import { PresentatorsFromAppointmentsService, PresentatorsService } from './presentators.service';
 import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
-import { UpdatePresentatorDto } from './dto/update-presentator.dto';
+import { UpdateSubstitutionDto } from './dto/update-substitution.dto';
 
 @Controller('presentators')
 export class PresentatorsController {
@@ -74,6 +74,30 @@ export class PresentatorsFromAppointmentsController {
 		}, {
 			name: true,
 		});
+	}
+	
+	@Get(':id')
+	@Access(AccessTypes.RESTRICTED)
+	findOne(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<Partial<Presentators>> {
+		return this.presentatorsService.findOne(institutionId, {
+			timetableId: timetableId,
+			presentatorId: presentatorId,
+			roomId: roomId,
+			appointmentId: appointmentId,
+		}, id, {
+			name: true,
+		});
+	}
+
+	@Patch(':id/substitute')
+	@Access(AccessTypes.GRANTED)
+	substitution(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string, @Body() substitutionDto: UpdateSubstitutionDto): Promise<void> {
+		return this.presentatorsService.substitute(institutionId, {
+			timetableId: timetableId,
+			presentatorId: presentatorId,
+			roomId: roomId,
+			appointmentId: appointmentId,
+		}, id, substitutionDto);
 	}
 
 	@Delete(':id')
