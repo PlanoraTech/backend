@@ -3,7 +3,6 @@ import { PrismaService } from '@app/prisma/prisma.service';
 import { Presentators, Roles } from '@prisma/client';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { DataServiceIds } from 'src/interfaces/DataServiceIds';
-import { UpdateSubstitutionDto } from './dto/update-substitution.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 interface PresentatorsSelect {
