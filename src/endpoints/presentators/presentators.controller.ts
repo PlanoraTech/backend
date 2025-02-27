@@ -3,7 +3,6 @@ import { Presentators } from '@prisma/client';
 import { PresentatorsFromAppointmentsService, PresentatorsService } from './presentators.service';
 import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
-import { UpdateSubstitutionDto } from './dto/update-substitution.dto';
 
 @Controller('presentators')
 export class PresentatorsController {
