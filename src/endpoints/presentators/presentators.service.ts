@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Presentators } from '@prisma/client';
+import { Presentators, Roles } from '@prisma/client';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
-import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 import { DataServiceIds } from 'src/interfaces/DataServiceIds';
+import { UpdateSubstitutionDto } from './dto/update-substitution.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 interface PresentatorsSelect {
 	name?: boolean,
@@ -22,15 +23,42 @@ export class PresentatorsService {
 						id: institutionId,
 					},
 				},
-				/*
-				user: {
-					connect: {
-						email: createPresentatorDto.email,
-					}
-				},
-				*/
 			},
+		}).catch((e) => {
+			if (e instanceof PrismaClientKnownRequestError) {
+				if (e.code === 'P2002') return;
+			}
+			throw e;
 		});
+		if (createPresentatorDto.email)
+		{
+			await this.prisma.usersToInstitutions.create({
+				data: {
+					role: Roles.PRESENTATOR,
+					user: {
+						connect: {
+							email: createPresentatorDto.email,
+						},
+					},
+					institution: {
+						connect: {
+							id: institutionId,
+						},
+					},
+					presentator: {
+						connect: {
+							name: createPresentatorDto.name,
+						},
+					}
+				}
+			}).catch((e) => {
+				if (e instanceof PrismaClientKnownRequestError) {
+					if (e.code === 'P2002') throw new ConflictException('The given email is already assigned to a presentator');
+					if (e.code === 'P2025') throw new NotFoundException('The given email is not assigned to an account');
+				}
+				throw e;
+			});
+		}
 	}
 
 	async findAll(institutionId: string, select?: PresentatorsSelect): Promise<Partial<Presentators>[]> {
@@ -66,10 +94,24 @@ export class PresentatorsService {
 		});
 	}
 
-	async update(institutionId: string, id: string, updatePresentatorDto: UpdatePresentatorDto): Promise<void> {
+	async remove(institutionId: string, id: string): Promise<void> {
 		await this.prisma.presentators.update({
-			select: {
-				id: true,
+			data: {
+				user: {
+					disconnect: {
+						institution: {
+							id: institutionId,
+						},
+						presentator: {
+							id: id,
+						}
+					}
+				},
+				institutions: {
+					disconnect: {
+						id: institutionId,
+					}
+				}
 			},
 			where: {
 				id: id,
@@ -79,17 +121,7 @@ export class PresentatorsService {
 					},
 				},
 			},
-			data: {
-				user: {
-					connect: {
-						email: updatePresentatorDto.email,
-					},
-				},
-			},
-		});
-	}
-
-	async remove(institutionId: string, id: string): Promise<void> {
+		})
 		await this.prisma.presentators.delete({
 			select: {
 				id: true,
@@ -97,9 +129,7 @@ export class PresentatorsService {
 			where: {
 				id: id,
 				institutions: {
-					some: {
-						id: institutionId,
-					},
+					none: {}
 				},
 			},
 		});
@@ -161,8 +191,51 @@ export class PresentatorsFromAppointmentsService {
 			where: {
 				appointments: {
 					some: {
+						appointmentId: dataServiceIds.appointmentId,
 						appointment: {
-							id: dataServiceIds.appointmentId,
+							timetables: {
+								some: {
+									id: dataServiceIds.timetableId,
+									institutionId: institutionId,
+								},
+							},
+							rooms: {
+								some: {
+									id: dataServiceIds.roomId,
+									institutionId: institutionId,
+								},
+							},
+							presentators: {
+								some: {
+									presentator: {
+										id: dataServiceIds.presentatorId,
+										institutions: {
+											some: {
+												id: institutionId,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	}
+
+	async findOne(institutionId: string, dataServiceIds: DataServiceIds, presentatorId: string, select?: PresentatorsSelect): Promise<Partial<Presentators>> {
+		return await this.prisma.presentators.findUniqueOrThrow({
+			select: {
+				id: true,
+				...select,
+			},
+			where: {
+				id: presentatorId,
+				appointments: {
+					some: {
+						appointmentId: dataServiceIds.appointmentId,
+						appointment: {
 							timetables: {
 								some: {
 									id: dataServiceIds.timetableId,
