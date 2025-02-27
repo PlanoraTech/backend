@@ -13,10 +13,11 @@ export class LoginService {
 			select: {
 				user: {
 					select: {
-						role: true,
 						institutions: {
 							select: {
-								id: true,
+								institutionId: true,
+								role: true,
+								presentatorId: true,
 							},
 						}
 					}
@@ -36,11 +37,12 @@ export class LoginService {
 		let user = await this.prisma.users.findUniqueOrThrow({
 			select: {
 				id: true,
-				role: true,
 				password: true,
 				institutions: {
 					select: {
-						id: true,
+						institutionId: true,
+						role: true,
+						presentatorId: true,
 					},
 				}
 			},
@@ -53,7 +55,6 @@ export class LoginService {
 				let token: Partial<Tokens> = (await SecretService.getActiveToken(user.id)) ?? (await SecretService.createToken(user.id, tokenExpiry));
 				return {
 					user: {
-						role: user.role,
 						institutions: user.institutions,
 					},
 					token: token.token,

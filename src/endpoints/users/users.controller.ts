@@ -17,10 +17,7 @@ export class UsersController {
 	@Get()
 	@Access(AccessTypes.PRIVATE)
 	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Users>[]> {
-		return this.usersService.findAll(institutionId, {
-			email: true,
-			role: true,
-		});
+		return this.usersService.findAll(institutionId);
 	}
 
 	@Delete(':id')

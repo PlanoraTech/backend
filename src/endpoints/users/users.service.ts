@@ -2,42 +2,48 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { Users } from '@prisma/client';
 import { UserDto } from './dto/user.dto';
+import { SecretService } from '../auth/secret/secret.service';
 
 @Injectable()
 export class UsersService {
 	constructor(private readonly prisma: PrismaService) { }
 
 	async add(institutionId: string, userDto: UserDto): Promise<void> {
-		await this.prisma.users.update({
-			select: {
-				email: true,
-			},
+		await this.prisma.usersToInstitutions.create({
 			data: {
-				institutions: {
+				user: {
+					connect: {
+						email: userDto.email,
+					},
+				},
+				institution: {
 					connect: {
 						id: institutionId,
 					},
 				},
-			},
-			where: {
-				email: userDto.email,
-			},
+			}
 		});
 	}
 
-	async findAll(institutionId: string, select?: {
-		email?: boolean,
-		role?: boolean,
-	}): Promise<Partial<Users>[]> {
+	async findAll(institutionId: string): Promise<Partial<Users>[]> {
 		return await this.prisma.users.findMany({
 			select: {
-				role: true,
-				...select,
+				email: true,
+				institutions: {
+					select: {
+						institution: {
+							select: {
+								name: true,
+							}
+						},
+						role: true,
+					}
+				}
 			},
 			where: {
 				institutions: {
 					some: {
-						id: institutionId,
+						institutionId: institutionId,
 					},
 				},
 			},
@@ -45,20 +51,17 @@ export class UsersService {
 	}
 
 	async remove(institutionId: string, userDto: UserDto): Promise<void> {
-		await this.prisma.users.update({
-			select: {
-				email: true,
-			},
-			data: {
-				institutions: {
-					disconnect: {
-						id: institutionId,
-					},
-				},
-			},
+		let user: Partial<Users> = await SecretService.getUserIdByEmail(userDto.email);
+		await this.prisma.usersToInstitutions.delete({
 			where: {
-				email: userDto.email,
-			},
+				userId_institutionId: {
+					userId: user.id,
+					institutionId: institutionId,
+				},
+				institution: {
+					id: institutionId,
+				}
+			}
 		});
 	}
 }

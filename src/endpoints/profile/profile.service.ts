@@ -13,7 +13,16 @@ export class ProfileService {
 		return await this.prisma.users.findUniqueOrThrow({
 			select: {
 				email: true,
-				role: true,
+				institutions: {
+					select: {
+						institution: {
+							select: {
+								name: true,
+							}
+						},
+						role: true,
+					}
+				}
 			},
 			where: {
 				id: userId,

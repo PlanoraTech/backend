@@ -3,7 +3,6 @@ import { Presentators } from '@prisma/client';
 import { PresentatorsFromAppointmentsService, PresentatorsService } from './presentators.service';
 import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
-import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 
 @Controller('presentators')
 export class PresentatorsController {
@@ -29,12 +28,6 @@ export class PresentatorsController {
 		return this.presentatorsService.findOne(institutionId, id, {
 			name: true,
 		});
-	}
-
-	@Patch(':id')
-	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto): Promise<void> {
-		return this.presentatorsService.update(institutionId, id, updatePresentatorDto);
 	}
 
 	@Delete(':id')

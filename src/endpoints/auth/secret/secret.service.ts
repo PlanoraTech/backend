@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { AccessType, Roles, Tokens } from '@prisma/client';
+import { AccessType, Roles, Tokens, Users } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
 export enum TokenExpiry {
@@ -85,20 +85,51 @@ export class SecretService {
             }
         })).userId;
     }
+    
+    static async getUserIdByEmail(email: string): Promise<Partial<Users>> {
+        return await this.prisma.users.findUniqueOrThrow({
+            select: {
+                id: true,
+            },
+            where: {
+                email: email,
+            }
+        });
+    }
+
+    static async getIfPresentatorIsAssignedToAUserByToken(token: string, institutionId: string): Promise<boolean>
+    {
+        await this.prisma.users.findFirstOrThrow({
+            where: {
+                institutions: {
+                    some: {
+                        institutionId: institutionId,
+                        presentator: {},
+                    }
+                },
+                tokens: {
+                    some: {
+                        token: token,
+                    }
+                }
+            }
+        })
+        return true;
+    }
 
     static async getIfInstitutionIsAssignedToAUserByToken(token: string, institutionId: string): Promise<boolean> {
         await this.prisma.users.findFirstOrThrow({
             select: {
                 institutions: {
                     select: {
-                        id: true,
+                        institutionId: true,
                     },
                 },
             },
             where: {
                 institutions: {
                     some: {
-                        id: institutionId,
+                        institutionId: institutionId,
                     },
                 },
                 tokens: {
@@ -113,13 +144,26 @@ export class SecretService {
         return true;
     }
 
-    static async getIfRoleIsAssignedToAUserByToken(token: string, role: Roles): Promise<boolean> {
+    static async getIfRoleWithInstitutionIsAssignedToAUserByToken(token: string, institutionId: string, roles: Roles[]): Promise<boolean> {
         await this.prisma.users.findFirstOrThrow({
             select: {
-                role: true,
+                institutions: {
+                    select: {
+                        role: true,
+                    }
+                }
             },
             where: {
-                role: role,
+                institutions: {
+                    some: {
+                        institutionId: institutionId,
+                        OR: roles.map((role) => {
+                            return {
+                                role: role,
+                            }
+                        }),
+                    }
+                },
                 tokens: {
                     some: {
                         token: token,
