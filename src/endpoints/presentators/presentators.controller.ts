@@ -31,12 +31,6 @@ export class PresentatorsController {
 		});
 	}
 
-	@Patch(':id')
-	@Access(AccessTypes.PRIVATE)
-	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updatePresentatorDto: UpdatePresentatorDto): Promise<void> {
-		return this.presentatorsService.update(institutionId, id, updatePresentatorDto);
-	}
-
 	@Delete(':id')
 	@Access(AccessTypes.PRIVATE)
 	remove(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<void> {

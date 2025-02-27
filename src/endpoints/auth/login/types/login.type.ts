@@ -4,10 +4,11 @@ export type ExtendedLogin = Prisma.TokensGetPayload<{
     include: {
         user?: {
             select: {
-                role?: boolean,
                 institutions?: {
                     select: {
-                        id?: true,
+                        institutionId?: boolean,
+                        role?: boolean,
+                        presentatorId?: boolean,
                     },
                 },
             },

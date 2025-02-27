@@ -32,18 +32,18 @@ enum Roles {
 }
 
 model Institutions {
-    id           String          @id @default(uuid())
-    name         String          @unique
+    id           String                @id @default(uuid())
+    name         String                @unique
     type         InstitutionType
     access       AccessType
-    color        String          @unique
-    website      String          @unique
+    color        String                @unique
+    website      String                @unique
     presentators Presentators[]
     subjects     Subjects[]
     rooms        Rooms[]
     timetables   TimeTables[]
     events       Events[]
-    users        Users[]
+    users        UsersToInstitutions[]
 }
 
 model Presentators {
@@ -51,7 +51,7 @@ model Presentators {
     name         String                       @unique
     appointments PresentatorsToAppointments[]
     institutions Institutions[]
-    user         Users?
+    user         UsersToInstitutions?
 }
 
 model Subjects {
@@ -110,14 +110,23 @@ model PresentatorsToAppointments {
 }
 
 model Users {
-    id            String         @id @default(uuid())
-    email         String         @unique
-    password      String
-    role          Roles          @default(USER)
-    institutions  Institutions[]
-    presentator   Presentators?  @relation(fields: [presentatorId], references: [id])
-    presentatorId String?        @unique
-    tokens        Tokens[]
+    id           String                @id @default(uuid())
+    email        String                @unique
+    password     String
+    institutions UsersToInstitutions[]
+    tokens       Tokens[]
+}
+
+model UsersToInstitutions {
+    user          Users         @relation(fields: [userId], references: [id])
+    userId        String
+    institution   Institutions  @relation(fields: [institutionId], references: [id])
+    institutionId String
+    role          Roles         @default(USER)
+    presentator   Presentators? @relation(fields: [presentatorId], references: [id])
+    presentatorId String?       @unique
+
+    @@id([userId, institutionId])
 }
 
 model Admins {

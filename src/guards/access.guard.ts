@@ -21,39 +21,26 @@ export class AccessGuard implements CanActivate {
                     case AccessType.PUBLIC:
                         return true;
                     case AccessType.PRIVATE:
-                        switch (await SecretService.seamlessAuth(request.query.token as string)) {
-                            case true:
-                                switch (await SecretService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
-                                    case true:
-                                        return true;
-                                    default:
-                                        return false;
-                                }
-                            default:
-                                return false;
+                        if (await SecretService.seamlessAuth(request.query.token as string)) {
+                            return await SecretService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId);
                         }
+                        return false;
                     default:
                         return false;
                 }
+            case AccessTypes.GRANTED:
+                return await this.checkAccess(request.query.token as string, request.params.institutionId, [Roles.PRESENTATOR, Roles.DIRECTOR]);
             case AccessTypes.PRIVATE:
-                switch (await SecretService.seamlessAuth(request.query.token as string)) {
-                    case true:
-                        switch (await SecretService.getIfRoleIsAssignedToAUserByToken(request.query.token as string, Roles.DIRECTOR)) {
-                            case true:
-                                switch (await SecretService.getIfInstitutionIsAssignedToAUserByToken(request.query.token as string, request.params.institutionId)) {
-                                    case true:
-                                        return true;
-                                    default:
-                                        return false;
-                                }
-                            default:
-                                return false;
-                        }
-                    default:
-                        return false;
-                }
+                return await this.checkAccess(request.query.token as string, request.params.institutionId, [Roles.DIRECTOR]);
             default:
                 return false;
         }
+    }
+
+    private async checkAccess(token: string, institutionId: string, roles: Roles[]): Promise<boolean> {
+        if (await SecretService.seamlessAuth(token)) {
+            return await SecretService.getIfRoleWithInstitutionIsAssignedToAUserByToken(token, institutionId, roles);
+        }
+        return false;
     }
 }
