@@ -1,26 +1,31 @@
-import { Appointments, Events, Institutions, Presentators, Prisma, PrismaClient, Rooms, Subjects, TimeTables } from '@prisma/client';
+import { Appointments, Events, Institutions, Presentators, Prisma, PrismaClient, Roles, Rooms, Subjects, TimeTables, Users } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { select } from '@inquirer/prompts';
 import { readdirSync, readFileSync } from 'fs';
 import { DefaultArgs, PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { hash } from 'bcrypt';
 
-type ExtendedInstitutions = Institutions & {
-	presentators: Partial<Presentators>[],
-	subjects: Partial<Subjects>[],
-	rooms: Partial<Rooms>[],
-	events: Partial<Events>[],
-	timetables: Partial<TimeTables>[],
-	appointments: Partial<ExtendedAppointments>[],
-};
+type ExtendedPresentators = (Presentators & {
+	isSubstituted?: boolean,
+});
 
-type ExtendedAppointments = Appointments & {
-	timetables: Partial<TimeTables>[],
-	subject: Partial<Subjects>,
-	rooms: Partial<Rooms>[],
-	presentators: Partial<Presentators & {
-		isSubstituted: boolean,
-	}>[]
-}
+type ExtendedAppointments = (Appointments & {
+	timetables: (TimeTables | undefined)[],
+	subject: Subjects,
+	rooms: (Rooms | undefined)[],
+	presentators: (ExtendedPresentators | undefined)[],
+});
+
+type ExtendedInstitutions = (Institutions & {
+	presentators: Presentators[],
+	subjects: Subjects[],
+	rooms: Rooms[],
+	events: Events[],
+	timetables: TimeTables[],
+	appointments: (ExtendedAppointments & {
+		recurringTill?: Date,
+	})[],
+});
 
 const prisma = new PrismaClient();
 
@@ -79,7 +84,8 @@ async function seed(): Promise<void> {
 			})
 			for (let i = 0; i < predefinedData.length; i++) {
 				await prisma.$transaction(async (tx) => {
-					let institution: Partial<Institutions> = await createInstitution(tx, {
+					let institution: Institutions = await createInstitution(tx, {
+						id: '',
 						name: predefinedData[i].name,
 						type: predefinedData[i].type,
 						access: predefinedData[i].access,
@@ -87,23 +93,63 @@ async function seed(): Promise<void> {
 						website: predefinedData[i].website,
 					});
 					await createEvents(tx, institution.id, predefinedData[i].events);
-					let presentators: Partial<Presentators>[] = await createPresentators(tx, institution.id, predefinedData[i].presentators);
-					let subjects: Partial<Subjects>[] = await createSubjects(tx, institution.id, predefinedData[i].subjects);
-					let rooms: Partial<Rooms>[] = await createRooms(tx, institution.id, predefinedData[i].rooms);
-					let timetables: Partial<TimeTables>[] = await createTimeTables(tx, institution.id, predefinedData[i].timetables);
-					let appointments: Partial<ExtendedAppointments>[] = new Array<Partial<ExtendedAppointments>>();
+					console.log("\nEvents created");
+					let presentators: Presentators[] = await createPresentators(tx, institution.id, predefinedData[i].presentators);
+					console.log("\nPresentators created");
+					let subjects: Subjects[] = await createSubjects(tx, institution.id, predefinedData[i].subjects);
+					console.log("\nSubjects created");
+					let rooms: Rooms[] = await createRooms(tx, institution.id, predefinedData[i].rooms);
+					console.log("\nRooms created");
+					let timetables: TimeTables[] = await createTimeTables(tx, institution.id, predefinedData[i].timetables);
+					console.log("\nTimetables created");
+					let appointments: ExtendedAppointments[] = new Array<ExtendedAppointments>();
 					for (let j = 0; j < predefinedData[i].appointments.length; j++) {
-						appointments.push({
-							start: predefinedData[i].appointments[j].start,
-							end: predefinedData[i].appointments[j].end,
-							isCancelled: predefinedData[i].appointments[j].isCancelled,
-							subject: subjects.find((subject) => subject.subjectId === predefinedData[i].appointments[j].subject.subjectId),
-							timetables: predefinedData[i].appointments[j].timetables.map((timetable) => timetables.find((t) => t.name === timetable.name)),
-							rooms: predefinedData[i].appointments[j].rooms.map((room) => rooms.find((r) => r.name === room.name)),
-							presentators: predefinedData[i].appointments[j].presentators.map((presentator) => presentators.find((p) => p.name === presentator.name)),
-						});
+						let connectedSubject: Subjects | undefined = subjects.find((subject) => subject.subjectId === predefinedData[i].appointments[j].subject.subjectId);
+						if (connectedSubject) {
+							if (predefinedData[i].appointments[j].recurringTill) {
+								let start: Date = new Date(predefinedData[i].appointments[j].start);
+								let end: Date = new Date(predefinedData[i].appointments[j].end);
+								let recurringTill: Date = new Date(predefinedData[i].appointments[j].recurringTill ?? start);
+								while (start <= recurringTill) {
+									appointments.push({
+										start: start,
+										end: end,
+										isCancelled: predefinedData[i].appointments[j].isCancelled,
+										presentators: predefinedData[i].appointments[j].presentators.map((presentator) => presentators.find((p) => p.name === presentator?.name)),
+										subject: connectedSubject,
+										rooms: predefinedData[i].appointments[j].rooms.map((room) => rooms.find((r) => r.name === room?.name)),
+										timetables: predefinedData[i].appointments[j].timetables.map((timetable) => timetables.find((t) => t.name === timetable?.name)),
+										id: '',
+										subjectId: ''
+									});
+									start = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+									end = new Date(end.getTime() + 7 * 24 * 60 * 60 * 1000);
+								}
+							}
+						}
+						else {
+							throw new Error("Cannot find subject for appointment. It may be due to a mistype. Error occured at " + j);
+						}
 					}
 					await createAppointments(tx, institution.id, appointments);
+					console.log("\nAppointments created");
+					let users: {
+						name: string,
+						email: string,
+						password: string,
+					}[] = [
+							{
+								email: 'merenyi@petrik.hu',
+								password: 'merenyim',
+								name: 'Merényi Miklós',
+							},
+							{
+								email: 'jabelko@petrik.hu',
+								password: 'jabelkocsa',
+								name: 'Jabelkó-Tolnai Csilla Anna',
+							},
+						]
+					await createUsersForPresentators(tx, institution.id, users);
 					progress += 100 / predefinedData.length;
 				},
 				{
@@ -116,7 +162,8 @@ async function seed(): Promise<void> {
 			interval = setInterval(getProgress, 100)
 			for (let a = 0; a < numberOfItems.institutions; a++) {
 				await prisma.$transaction(async (tx) => {
-					let institution: Partial<Institutions> = await createInstitution(tx, {
+					let institution: Institutions = await createInstitution(tx, {
+						id: '',
 						name: faker.company.name(),
 						type: faker.helpers.arrayElements(["SCHOOL", "UNIVERSITY", "COMPANY"], 1)[0],
 						access: faker.helpers.arrayElements(["PUBLIC", "PRIVATE"], 1)[0],
@@ -124,16 +171,16 @@ async function seed(): Promise<void> {
 						website: faker.internet.url(),
 					});
 					await createEvents(tx, institution.id, Array.from({ length: numberOfItems.events }, () => ({ title: faker.lorem.word(), date: faker.date.future() })));
-					console.log("\nEvents created")
-					let presentators: Partial<Presentators>[] = await createPresentators(tx, institution.id, Array.from({ length: numberOfItems.presentators }, () => ({ name: faker.person.fullName() })));
-					console.log("\nPresentators created")
-					let subjects: Partial<Subjects>[] = await createSubjects(tx, institution.id, Array.from({ length: numberOfItems.subjects }, () => ({ name: faker.lorem.word(), subjectId: faker.lorem.word() + faker.number.int() })));
-					console.log("\nSubjects created")
-					let rooms: Partial<Rooms>[] = await createRooms(tx, institution.id, Array.from({ length: numberOfItems.rooms }, () => ({ name: faker.lorem.word() })));
-					console.log("\nRooms created")
-					let timetables: Partial<TimeTables>[] = await createTimeTables(tx, institution.id, Array.from({ length: numberOfItems.timeTables }, () => ({ name: faker.lorem.word() }))) as Partial<TimeTables>[];
-					console.log("\nTimetables created")
-					let appointments: Partial<ExtendedAppointments>[] = new Array<Partial<ExtendedAppointments>>();
+					console.log("\nEvents created");
+					let presentators: Presentators[] = await createPresentators(tx, institution.id, Array.from({ length: numberOfItems.presentators }, () => ({ name: faker.person.fullName() })));
+					console.log("\nPresentators created");
+					let subjects: Subjects[] = await createSubjects(tx, institution.id, Array.from({ length: numberOfItems.subjects }, () => ({ name: faker.lorem.word(), subjectId: faker.lorem.word() + faker.number.int() })));
+					console.log("\nSubjects created");
+					let rooms: Rooms[] = await createRooms(tx, institution.id, Array.from({ length: numberOfItems.rooms }, () => ({ name: faker.lorem.word() })));
+					console.log("\nRooms created");
+					let timetables: TimeTables[] = await createTimeTables(tx, institution.id, Array.from({ length: numberOfItems.timeTables }, () => ({ name: faker.lorem.word() })));
+					console.log("\nTimetables created");
+					let appointments: ExtendedAppointments[] = new Array<ExtendedAppointments>();
 					for (let i = 0; i < numberOfItems.appointments; i++) {
 						appointments.push({
 							start: faker.date.anytime(),
@@ -145,19 +192,22 @@ async function seed(): Promise<void> {
 							presentators: faker.helpers.arrayElements(presentators, 2).map((presentator) => {
 								return {
 									id: presentator.id,
+									name: presentator.name,
 									isSubstituted: faker.datatype.boolean(),
-								}
+								};
 							}),
+							id: '',
+							subjectId: ''
 						});
 					}
 					await createAppointments(tx, institution.id, appointments);
-					console.log("\nAppointments created")
+					console.log("\nAppointments created");
 					progress += 100 / numberOfItems.institutions;
 				},
-				{
-					maxWait: 300000,
-					timeout: 600000,
-				});
+					{
+						maxWait: 300000,
+						timeout: 600000,
+					});
 			}
 			break;
 		default:
@@ -165,11 +215,8 @@ async function seed(): Promise<void> {
 	}
 }
 
-async function createInstitution(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institution: Partial<Institutions>): Promise<Partial<Institutions>> {
+async function createInstitution(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institution: Institutions): Promise<Institutions> {
 	return await prisma.institutions.create({
-		select: {
-			id: true,
-		},
 		data: {
 			name: institution.name,
 			type: institution.type,
@@ -182,9 +229,6 @@ async function createInstitution(prisma: Omit<PrismaClient<Prisma.PrismaClientOp
 			switch (e.code) {
 				case 'P2002':
 					return await prisma.institutions.findUniqueOrThrow({
-						select: {
-							id: true,
-						},
 						where: {
 							name: institution.name,
 						},
@@ -195,9 +239,9 @@ async function createInstitution(prisma: Omit<PrismaClient<Prisma.PrismaClientOp
 	});
 }
 
-async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, presentators: Partial<Presentators>[]): Promise<Partial<Presentators>[]> {
+async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, presentators: { name: string }[]): Promise<Presentators[]> {
 	try {
-		let result: (void | Partial<Presentators>)[] = await Promise.all(presentators.map(async (presentator, index) => {
+		let result: (void | Presentators)[] = await Promise.all(presentators.map(async (presentator, index) => {
 			return await prisma.presentators.create({
 				data: {
 					name: presentator.name,
@@ -224,9 +268,9 @@ async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientO
 	}
 }
 
-async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, subjects: Partial<Subjects>[]): Promise<Partial<Subjects>[]> {
+async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, subjects: { name: string, subjectId: string }[]): Promise<Subjects[]> {
 	try {
-		let result: (void | Partial<Subjects>)[] = await Promise.all(subjects.map(async (subject: Subjects, index) => {
+		let result: (void | Subjects)[] = await Promise.all(subjects.map(async (subject: Subjects, index) => {
 			return await prisma.subjects.create({
 				data: {
 					name: subject.name,
@@ -254,9 +298,9 @@ async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptio
 	}
 }
 
-async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, rooms: Partial<Rooms>[]): Promise<Partial<Rooms>[]> {
+async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, rooms: { name: string }[]): Promise<Rooms[]> {
 	try {
-		let result: (void | Partial<Rooms>)[] = await Promise.all(rooms.map(async (room, index) => {
+		let result: (void | Rooms)[] = await Promise.all(rooms.map(async (room, index) => {
 			return await prisma.rooms.create({
 				data: {
 					name: room.name,
@@ -283,9 +327,9 @@ async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions,
 	}
 }
 
-async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, events: Partial<Events>[]): Promise<Partial<Events>[]> {
+async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, events: { title: string, date: Date }[]): Promise<Events[]> {
 	try {
-		let result: (void | Partial<Events>)[] = await Promise.all(events.map(async (event, index) => {
+		let result: (void | Events)[] = await Promise.all(events.map(async (event, index) => {
 			return await prisma.events.create({
 				data: {
 					title: event.title,
@@ -313,9 +357,9 @@ async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions
 	}
 }
 
-async function createTimeTables(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, timeTables: Partial<TimeTables>[]): Promise<Partial<TimeTables>[]> {
+async function createTimeTables(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, timeTables: { name: string }[]): Promise<TimeTables[]> {
 	try {
-		let result = await Promise.all(timeTables.map(async (timeTable, index) => {
+		let result: (void | TimeTables)[] = await Promise.all(timeTables.map(async (timeTable, index) => {
 			return await prisma.timeTables.create({
 				data: {
 					name: timeTable.name,
@@ -342,62 +386,47 @@ async function createTimeTables(prisma: Omit<PrismaClient<Prisma.PrismaClientOpt
 	}
 }
 
-async function createAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, appointments: Partial<ExtendedAppointments>[]): Promise<void> {
-	try {
-		for (let i = 0; i < appointments.length; i++) {
-			let appointment: Partial<ExtendedAppointments> = await prisma.appointments.create({
-				select: {
-					id: true,
-					timetables: {
-						select: {
-							name: true,
-						}
-					},
-					subject: {
-						select: {
-							id: true,
-							subjectId: true,
-						}
+async function createAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, appointments: ExtendedAppointments[]): Promise<void> {
+	for (let i = 0; i < appointments.length; i++) {
+		let appointment: Appointments = await prisma.appointments.create({
+			data: {
+				subject: {
+					connect: {
+						id: appointments[i].subject.id,
+						institutionId: institutionId,
 					}
 				},
-				data: {
-					subject: {
-						connect: {
-							id: appointments[i].subject.id,
+				rooms: {
+					connect: appointments[i].rooms.map((room) => {
+						return {
+							id: room?.id,
 							institutionId: institutionId,
 						}
-					},
-
-					timetables: {
-						connect: appointments[i].timetables.map((timetable) => {
-							return {
-								id: timetable.id,
-								institutionId: institutionId,
-							}
-						}),
-					},
-					start: appointments[i].start,
-					end: appointments[i].end,
-					isCancelled: appointments[i].isCancelled,
-				}
-			}).catch((e) => {
-				console.log("\n");
-				throw new Error("Cannot create appointment. It may be due to not defining any. Error occured at " + i + "\nError: " + e);
-			})
-			if (appointments[i].presentators.length > 0 && appointment) {
-				await presentatorsToAppointments(prisma, institutionId, appointment.id, appointments[i].presentators);
+					}),
+				},
+				timetables: {
+					connect: appointments[i].timetables.map((timetable) => {
+						return {
+							id: timetable?.id,
+							institutionId: institutionId,
+						}
+					}),
+				},
+				start: appointments[i].start,
+				end: appointments[i].end,
+				isCancelled: appointments[i].isCancelled,
 			}
+		}).catch((e) => {
+			console.log("\n");
+			throw new Error("Cannot create appointment. It may be due to not defining any. Error occured at " + i + "\nError: " + e);
+		})
+		if (appointments[i].presentators.length > 0 && appointment) {
+			await presentatorsToAppointments(prisma, institutionId, appointment.id, appointments[i].presentators);
 		}
-	}
-	catch (e) {
-		console.log("\n");
-		throw new Error("Cannot create one or more appointment. It may be due to not defining any. Error: " + e);
 	}
 }
 
-async function presentatorsToAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, appointmentId: string, presentators: Partial<Presentators & {
-	isSubstituted: boolean,
-}>[]): Promise<void> {
+async function presentatorsToAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, appointmentId: string, presentators: (ExtendedPresentators | undefined)[]): Promise<void> {
 	for (let i = 0; i < presentators.length; i++) {
 		await prisma.presentatorsToAppointments.create({
 			data: {
@@ -408,10 +437,10 @@ async function presentatorsToAppointments(prisma: Omit<PrismaClient<Prisma.Prism
 				},
 				presentator: {
 					connect: {
-						id: presentators[i].id,
+						id: presentators[i]?.id,
 					},
 				},
-				isSubstituted: presentators[i].isSubstituted || false,
+				isSubstituted: presentators[i]?.isSubstituted || false,
 			}
 		}).catch(async (e) => {
 			if (e instanceof PrismaClientKnownRequestError) {
@@ -426,30 +455,57 @@ async function presentatorsToAppointments(prisma: Omit<PrismaClient<Prisma.Prism
 	}
 }
 
-async function updateSubjectId() {
-	/*
-	await prisma.subjects.update({
-		data: {
-			subjectId: appointment.timetable.name + "-" + appointment.subject.subjectId,
-		},
-		where: {
-			id: appointment.subject.id,
-			appointments: {
-				some: {
-					id: appointment.id,
+async function createUsersForPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, users: { name: string, email: string, password: string }[]): Promise<void> {
+	try {
+		for (let i = 0; i < users.length; i++) {
+			await prisma.users.create({
+				data: {
+					email: users[i].email,
+					password: await hash(users[i].password, 10),
 				}
-			}
+			}).catch((e) => {
+				if (e instanceof PrismaClientKnownRequestError) {
+					switch (e.code) {
+						case 'P2002':
+							return;
+					}
+				}
+				console.log("\n");
+				throw new Error("Cannot create user. It may be due to not defining any. Error occured at " + i + "\nError: " + e);
+			})
+			await prisma.usersToInstitutions.create({
+				data: {
+					role: Roles.PRESENTATOR,
+					user: {
+						connect: {
+							email: users[i].email,
+						},
+					},
+					institution: {
+						connect: {
+							id: institutionId,
+						},
+					},
+					presentator: {
+						connect: {
+							name: users[i].name,
+						}
+					}
+				}
+			}).catch((e) => {
+				if (e instanceof PrismaClientKnownRequestError) {
+					switch (e.code) {
+						case 'P2002':
+							return;
+					}
+				}
+				console.log("\n");
+				throw new Error("Cannot connect user to an institution. It may be due to a mistype. Error occured at " + i + "\nError: " + e);
+			});
 		}
-	}).catch((e) => {
-		if (e instanceof PrismaClientKnownRequestError) {
-			switch (e.code) {
-				case 'P2002':
-					return;
-			}
-		}
+	}
+	catch (e) {
 		console.log("\n");
-		console.error("Cannot update subject. It may be due to a mistype. Error: ", e);
-		console.info("Continuing...");
-	})
-	*/
+		throw new Error("Cannot create one or more user. It may be due to not defining any. Error: " + e);
+	}
 }

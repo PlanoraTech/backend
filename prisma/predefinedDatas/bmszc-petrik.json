@@ -1,5 +1,4 @@
 {
-    "period": "year",
     "name": "BMSZC Petrik Lajos Technikum",
     "type": "SCHOOL",
     "access": "PUBLIC",
@@ -300,36 +299,48 @@
     ],
     "subjects": [
         {
-            "subjectId": "Gyárigyak",
-            "name": "Gyakorlati Ipar"
-        },
-        {
-            "subjectId": "Vegy. műv. és ír.",
-            "name": "Vegyipari műveletek és irányítás"
-        },
-        {
             "subjectId": "Ang",
             "name": "Angol nyelv"
+        },
+        {
+            "subjectId": "Mat",
+            "name": "Matematika"
         },
         {
             "subjectId": "Fiz",
             "name": "Fizika"
         },
         {
-            "subjectId": "Műsz. an. gyak",
-            "name": "Műszaki alapismeretek gyakorlat"
+            "subjectId": "Tört",
+            "name": "Történelem"
         },
         {
-            "subjectId": "Körn. és munkavéd",
-            "name": "Környezet- és munkavédelem"
+            "subjectId": "Magyar/Ir",
+            "name": "Magyar nyelv és Irodalom"
+        },
+        {
+            "subjectId": "Gyárigyak",
+            "name": "Gyári gyakorlat"
+        },
+        {
+            "subjectId": "Vegy. műv. és ír.",
+            "name": "Vegyipari műveletek és irányításuk"
+        },
+        {
+            "subjectId": "Műsz. an. gyak",
+            "name": "Műszeres analitika gyakorlat"
+        },
+        {
+            "subjectId": "Körny és munkavéd",
+            "name": "Környezet és munkavédelem"
         },
         {
             "subjectId": "Lab.műk.",
-            "name": "Laboratóriumi működés"
+            "name": "Laboratóriumok működtetése"
         },
         {
             "subjectId": "Projekt",
-            "name": "Projektmunka"
+            "name": "Projektfeladat"
         },
         {
             "subjectId": "M.v. id.nyelv",
@@ -348,12 +359,12 @@
             "name": "Vegyipari technológia"
         },
         {
-            "subjectId": "Biol.fakt.",
+            "subjectId": "Biol.fakt",
             "name": "Biológia fakultáció"
         },
         {
             "subjectId": "Pénzügy",
-            "name": "Pénzügyi ismeretek"
+            "name": "Pénzügyi és vállalkozói ismeretek"
         },
         {
             "subjectId": "BioTech GY",
@@ -361,15 +372,23 @@
         },
         {
             "subjectId": "Prep. gyak",
-            "name": "Preparációs gyakorlat"
+            "name": "Preparatív gyakorlat"
         },
         {
             "subjectId": "Vegyip. műv. és ir. GY",
-            "name": "Vegyipari műveletek és irányítás gyakorlat"
+            "name": "Vegyipari műveletek és irányításuk gyakorlat"
         },
         {
-            "subjectId": "Test.",
+            "subjectId": "Test",
             "name": "Testnevelés"
+        },
+        {
+            "subjectId": "Test (úszás)",
+            "name": "Testnevelés (úszás)"
+        },
+        {
+            "subjectId": "DiKu",
+            "name": "Digitális kultúra"
         },
         {
             "subjectId": "Frontend",
@@ -377,19 +396,19 @@
         },
         {
             "subjectId": "AMAF_C",
-            "name": "Automatizált folyamatirányítás"
+            "name": "Asztali és mobil alkalmazások fejlesztése és tesztelése - C#"
         },
         {
             "subjectId": "Backend",
-            "name": "Backend fejlesztés"
+            "name": "Backend programozás és tesztelés"
         },
         {
             "subjectId": "IKTPrII",
-            "name": "Informatikai projekt II."
+            "name": "IKT projektmunka II"
         },
         {
             "subjectId": "AdatbII",
-            "name": "Adatbázis-kezelés II."
+            "name": "Adatbázis-kezelés II"
         }
     ],
     "rooms": [
@@ -693,8 +712,1260 @@
     ],
     "appointments": [
         {
-            "start": "2025-02-03T11:35:00Z",
-            "end": "2025-02-03T13:15:00Z",
+            "start": "2025-02-03T08:55:00Z",
+            "end": "2025-02-03T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Tört"
+            },
+            "presentators": [
+                {
+                    "name": "Csák Szilárd Csongor"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T09:40:00Z"
+        },
+        {
+            "start": "2025-02-03T09:55:00Z",
+            "end": "2025-02-03T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T10:40:00Z"
+        },
+        {
+            "start": "2025-02-03T09:55:00Z",
+            "end": "2025-02-03T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Bende Gyöngyi Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A123"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T10:40:00Z"
+        },
+        {
+            "start": "2025-02-03T10:50:00Z",
+            "end": "2025-02-03T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Magyar/Ir"
+            },
+            "presentators": [
+                {
+                    "name": "Szabados István"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T11:35:00Z"
+        },
+        {
+            "start": "2025-02-03T11:45:00Z",
+            "end": "2025-02-03T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Darányi Katalin"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T12:30:00Z"
+        },
+        {
+            "start": "2025-02-03T11:45:00Z",
+            "end": "2025-02-03T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B205"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T12:30:00Z"
+        },
+        {
+            "start": "2025-02-03T12:50:00Z",
+            "end": "2025-02-03T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Mat"
+            },
+            "presentators": [
+                {
+                    "name": "Kollár Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T13:35:00Z"
+        },
+        {
+            "start": "2025-02-03T12:50:00Z",
+            "end": "2025-02-03T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Guth Gabriella Éva"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A210"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T13:35:00Z"
+        },
+        {
+            "start": "2025-02-03T13:45:00Z",
+            "end": "2025-02-03T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A010"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
+        },
+        {
+            "start": "2025-02-03T13:45:00Z",
+            "end": "2025-02-03T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Mat"
+            },
+            "presentators": [
+                {
+                    "name": "Kollár Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A210"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
+        },
+        {
+            "start": "2025-02-04T08:00:00Z",
+            "end": "2025-02-04T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test"
+            },
+            "presentators": [
+                {
+                    "name": "Tóth Béla"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "testnevelés1"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T08:45:00Z"
+        },
+        {
+            "start": "2025-02-04T08:00:00Z",
+            "end": "2025-02-04T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test"
+            },
+            "presentators": [
+                {
+                    "name": "Kugyelláné Schmidtka Ágnes"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "testnevelés2"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T08:45:00Z"
+        },
+        {
+            "start": "2025-02-04T08:55:00Z",
+            "end": "2025-02-04T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Dr. Berkesné Okos Melinda"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T09:40:00Z"
+        },
+        {
+            "start": "2025-02-04T08:55:00Z",
+            "end": "2025-02-04T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Bende Gyöngyi Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T09:40:00Z"
+        },
+        {
+            "start": "2025-02-04T09:55:00Z",
+            "end": "2025-02-04T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Dr. Berkesné Okos Melinda"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T10:40:00Z"
+        },
+        {
+            "start": "2025-02-04T09:55:00Z",
+            "end": "2025-02-04T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Villányi-Borsics Eszter"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B219"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T10:40:00Z"
+        },
+        {
+            "start": "2025-02-04T10:50:00Z",
+            "end": "2025-02-04T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B042"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T10:40:00Z"
+        },
+        {
+            "start": "2025-02-04T10:50:00Z",
+            "end": "2025-02-04T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Villányi-Borsics Eszter"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B219"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T10:40:00Z"
+        },
+        {
+            "start": "2025-02-04T11:45:00Z",
+            "end": "2025-02-04T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Tört"
+            },
+            "presentators": [
+                {
+                    "name": "Csák Szilárd Csongor"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B017"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T12:30:00Z"
+        },
+        {
+            "start": "2025-02-04T12:50:00Z",
+            "end": "2025-02-04T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Darányi Katalin"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T12:30:00Z"
+        },
+        {
+            "start": "2025-02-04T12:50:00Z",
+            "end": "2025-02-04T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Bende Gyöngyi Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B219"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T12:30:00Z"
+        },
+        {
+            "start": "2025-02-04T13:45:00Z",
+            "end": "2025-02-04T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Darányi Katalin"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T14:30:00Z"
+        },
+        {
+            "start": "2025-02-04T13:45:00Z",
+            "end": "2025-02-04T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B207"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-14T14:30:00Z"
+        },
+        {
+            "start": "2025-02-05T08:00:00Z",
+            "end": "2025-02-05T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Madarász Ákos"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A123"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T08:45:00Z"
+        },
+        {
+            "start": "2025-02-05T08:00:00Z",
+            "end": "2025-02-05T08:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Mat"
+            },
+            "presentators": [
+                {
+                    "name": "Kollár Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T08:45:00Z"
+        },
+        {
+            "start": "2025-02-05T08:55:00Z",
+            "end": "2025-02-05T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Mat"
+            },
+            "presentators": [
+                {
+                    "name": "Kollár Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T09:40:00Z"
+        },
+        {
+            "start": "2025-02-05T08:55:00Z",
+            "end": "2025-02-05T09:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Villányi-Borsics Eszter"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B219"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T09:40:00Z"
+        },
+        {
+            "start": "2025-02-05T09:55:00Z",
+            "end": "2025-02-05T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B203"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T10:40:00Z"
+        },
+        {
+            "start": "2025-02-05T09:55:00Z",
+            "end": "2025-02-05T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Bende Gyöngyi Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B204"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T10:40:00Z"
+        },
+        {
+            "start": "2025-02-05T10:50:00Z",
+            "end": "2025-02-05T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test (úszás)"
+            },
+            "presentators": [
+                {
+                    "name": "Schubert Bence"
+                },
+                {
+                    "name": "Kugyelláné Schmidtka Ágnes"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "testnevelés4"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T12:30:00Z"
+        },
+        {
+            "start": "2025-02-05T12:50:00Z",
+            "end": "2025-02-05T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Darányi Katalin"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B307"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T13:35:00Z"
+        },
+        {
+            "start": "2025-02-05T12:50:00Z",
+            "end": "2025-02-05T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Bende Gyöngyi Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A216"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T13:35:00Z"
+        },
+        {
+            "start": "2025-02-05T13:45:00Z",
+            "end": "2025-02-05T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ofő"
+            },
+            "presentators": [
+                {
+                    "name": "Kollár Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T14:30:00Z"
+        },
+        {
+            "start": "2025-02-06T8:00:00Z",
+            "end": "2025-02-06T8:45:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Villányi-Borsics Eszter"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B204"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T8:45:00Z"
+        },
+        {
+            "start": "2025-02-06T8:55:00Z",
+            "end": "2025-02-06T9:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Darányi Katalin"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T9:40:00Z"
+        },
+        {
+            "start": "2025-02-06T8:55:00Z",
+            "end": "2025-02-06T9:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Villányi-Borsics Eszter"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B204"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T9:40:00Z"
+        },
+        {
+            "start": "2025-02-06T9:55:00Z",
+            "end": "2025-02-06T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Darányi Katalin"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T10:40:00Z"
+        },
+        {
+            "start": "2025-02-06T9:55:00Z",
+            "end": "2025-02-06T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Guth Gabriella Éva"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B219"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T10:40:00Z"
+        },
+        {
+            "start": "2025-02-06T10:50:00Z",
+            "end": "2025-02-06T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Dr. Berkesné Okos Melinda"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T11:35:00Z"
+        },
+        {
+            "start": "2025-02-06T10:50:00Z",
+            "end": "2025-02-06T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Villányi-Borsics Eszter"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B219"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T11:35:00Z"
+        },
+        {
+            "start": "2025-02-06T11:45:00Z",
+            "end": "2025-02-06T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Madarász Ákos"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T12:30:00Z"
+        },
+        {
+            "start": "2025-02-06T11:45:00Z",
+            "end": "2025-02-06T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "Petrik Előadó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T12:30:00Z"
+        },
+        {
+            "start": "2025-02-06T12:50:00Z",
+            "end": "2025-02-06T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Dr. Berkesné Okos Melinda"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T13:35:00Z"
+        },
+        {
+            "start": "2025-02-06T12:50:00Z",
+            "end": "2025-02-06T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "De Rose Lynn"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B205"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T13:35:00Z"
+        },
+        {
+            "start": "2025-02-06T13:45:00Z",
+            "end": "2025-02-06T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Dr. Berkesné Okos Melinda"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B306"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T14:30:00Z"
+        },
+        {
+            "start": "2025-02-07T8:00:00Z",
+            "end": "2025-02-07T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "DiKu"
+            },
+            "presentators": [
+                {
+                    "name": "Somogyi Zsolt"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A018A"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T10:40:00Z"
+        },
+        {
+            "start": "2025-02-07T8:00:00Z",
+            "end": "2025-02-07T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "DiKu"
+            },
+            "presentators": [
+                {
+                    "name": "Mészáros Tamás"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A018B"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T10:40:00Z"
+        },
+        {
+            "start": "2025-02-07T10:50:00Z",
+            "end": "2025-02-07T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test"
+            },
+            "presentators": [
+                {
+                    "name": "Tóth Béla"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "testnevelés1"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T11:35:00Z"
+        },
+        {
+            "start": "2025-02-07T10:50:00Z",
+            "end": "2025-02-07T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test"
+            },
+            "presentators": [
+                {
+                    "name": "Kugyelláné Schmidtka Ágnes"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "testnevelés2"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T11:35:00Z"
+        },
+        {
+            "start": "2025-02-07T11:45:00Z",
+            "end": "2025-02-07T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Magyar/Ir"
+            },
+            "presentators": [
+                {
+                    "name": "Szabados István"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T12:30:00Z"
+        },
+        {
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Darányi Katalin"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T13:35:00Z"
+        },
+        {
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Villányi-Borsics Eszter"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B219"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "9KNY"
+                }
+            ],
+            "recurringTill": "2025-06-15T13:35:00Z"
+        },
+
+        {
+            "start": "2025-02-03T8:55:00Z",
+            "end": "2025-02-03T16:00:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Gyárigyak"
@@ -705,11 +1976,51 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T16:00:00Z"
         },
         {
-            "start": "2025-02-04T08:00:00Z",
-            "end": "2025-02-04T08:45:00Z",
+            "start": "2025-02-03T8:55:00Z",
+            "end": "2025-02-03T16:00:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Gyárigyak"
+            },
+            "presentators": [],
+            "rooms": [],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:00:00Z"
+        },
+        {
+            "start": "2025-02-03T8:55:00Z",
+            "end": "2025-02-03T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Gyárigyak"
+            },
+            "presentators": [
+                {
+                    "name": "Uhlár Zoltán István"
+                },
+                {
+                    "name": "Szellner-Bakos Gabriella"
+                }
+            ],
+            "rooms": [],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T12:30:00Z"
+        },
+        {
+            "start": "2025-02-04T08:55:00Z",
+            "end": "2025-02-04T09:40:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Vegy. műv. és ír."
@@ -728,11 +2039,12 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T09:40:00Z"
         },
         {
-            "start": "2025-02-04T08:55:00Z",
-            "end": "2025-02-04T09:40:00Z",
+            "start": "2025-02-04T09:55:00Z",
+            "end": "2025-02-04T10:40:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Ang"
@@ -751,11 +2063,36 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T10:40:00Z"
         },
         {
-            "start": "2025-02-04T09:50:00Z",
-            "end": "2025-02-04T10:35:00Z",
+            "start": "2025-02-04T10:50:00Z",
+            "end": "2025-02-04T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Seres Orsolya Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T11:35:00Z"
+        },
+        {
+            "start": "2025-02-04T11:45:00Z",
+            "end": "2025-02-04T12:30:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Fiz"
@@ -774,11 +2111,39 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T12:30:00Z"
         },
         {
-            "start": "2025-02-05T11:35:00Z",
-            "end": "2025-02-05T13:15:00Z",
+            "start": "2025-02-04T12:50:00Z",
+            "end": "2025-02-04T16:00:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Gyárigyak"
+            },
+            "presentators": [
+                {
+                    "name": "Uhlár Zoltán István"
+                },
+                {
+                    "name": "Szellner-Bakos Gabriella"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B021_műv"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:00:00Z"
+        },
+        {
+            "start": "2025-02-05T8:55:00Z",
+            "end": "2025-02-05T13:35:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Műsz. an. gyak"
@@ -806,11 +2171,93 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T13:35:00Z"
         },
         {
-            "start": "2025-02-06T08:00:00Z",
-            "end": "2025-02-06T08:45:00Z",
+            "start": "2025-02-05T13:45:00Z",
+            "end": "2025-02-05T16:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Projekt"
+            },
+            "presentators": [
+                {
+                    "name": "Bődi István"
+                },
+                {
+                    "name": "Fortuna Zsuzsanna"
+                },
+                {
+                    "name": "Petri Judit"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A105"
+                },
+                {
+                    "name": "A108"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:40:00Z"
+        },
+        {
+            "start": "2025-02-05T13:45:00Z",
+            "end": "2025-02-05T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Körny és munkavéd"
+            },
+            "presentators": [
+                {
+                    "name": "Fortuna Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
+        },
+        {
+            "start": "2025-02-05T14:35:00Z",
+            "end": "2025-02-05T15:20:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Lab.műk."
+            },
+            "presentators": [
+                {
+                    "name": "Fortuna Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T15:20:00Z"
+        },
+        {
+            "start": "2025-02-06T08:55:00Z",
+            "end": "2025-02-06T10:40:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "M.v. id.nyelv"
@@ -829,11 +2276,36 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T10:40:00Z"
         },
         {
             "start": "2025-02-06T08:55:00Z",
-            "end": "2025-02-06T09:40:00Z",
+            "end": "2025-02-06T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "M.v. id.nyelv"
+            },
+            "presentators": [
+                {
+                    "name": "Csutak Zsolt"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B304"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T10:40:00Z"
+        },
+        {
+            "start": "2025-02-06T10:50:00Z",
+            "end": "2025-02-06T11:35:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Alk.kém"
@@ -852,11 +2324,60 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T11:35:00Z"
         },
         {
-            "start": "2025-02-06T09:50:00Z",
-            "end": "2025-02-06T10:35:00Z",
+            "start": "2025-02-06T11:45:00Z",
+            "end": "2025-02-06T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Alk.kém"
+            },
+            "presentators": [
+                {
+                    "name": "Dr. Máté Marianna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T12:30:00Z"
+        },
+        {
+            "start": "2025-02-06T12:50:00Z",
+            "end": "2025-02-06T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ofő"
+            },
+            "presentators": [
+                {
+                    "name": "Seres Orsolya Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T13:35:00Z"
+        },
+        {
+            "start": "2025-02-06T13:45:00Z",
+            "end": "2025-02-06T16:00:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "VegyTech"
@@ -875,11 +2396,36 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T16:00:00Z"
         },
         {
-            "start": "2025-02-07T08:00:00Z",
-            "end": "2025-02-07T08:45:00Z",
+            "start": "2025-02-06T16:00:00Z",
+            "end": "2025-02-06T17:25:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Biol.fakt"
+            },
+            "presentators": [
+                {
+                    "name": "Nagyné Németh Ildikó Andrea"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B307"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T17:25:00Z"
+        },
+        {
+            "start": "2025-02-07T08:55:00Z",
+            "end": "2025-02-07T09:40:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Ang"
@@ -898,11 +2444,36 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T09:40:00Z"
         },
         {
-            "start": "2025-02-07T08:55:00Z",
-            "end": "2025-02-07T09:40:00Z",
+            "start": "2025-02-07T09:55:00Z",
+            "end": "2025-02-07T10:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Seres Orsolya Zsuzsanna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B310_alsó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T10:40:00Z"
+        },
+        {
+            "start": "2025-02-07T10:50:00Z",
+            "end": "2025-02-07T11:35:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Pénzügy"
@@ -921,11 +2492,12 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T09:40:00Z"
         },
         {
-            "start": "2025-02-07T09:50:00Z",
-            "end": "2025-02-07T10:35:00Z",
+            "start": "2025-02-07T11:45:00Z",
+            "end": "2025-02-07T12:30:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Fiz"
@@ -944,57 +2516,197 @@
                 {
                     "name": "13A"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T10:35:00Z"
         },
         {
-            "start": "2025-02-03T12:50:00Z",
-            "end": "2025-02-03T13:35:00Z",
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T14:30:00Z",
             "isCancelled": false,
             "subject": {
-                "subjectId": "Test."
+                "subjectId": "BioTech GY"
+            },
+            "presentators": [
+                {
+                    "name": "Márta Jószef István"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B314"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
+        },
+        {
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T16:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Prep. gyak"
+            },
+            "presentators": [
+                {
+                    "name": "Fandel Richárd Gábor"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B331"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:40:00Z"
+        },
+        {
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T16:00:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Vegyip. műv. és ir. GY"
+            },
+            "presentators": [
+                {
+                    "name": "Frank Attila"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B021_műv"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:00:00Z"
+        },
+        {
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T16:40:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Prep. gyak"
+            },
+            "presentators": [
+                {
+                    "name": "Fandel Richárd Gábor"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B331"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:40:00Z"
+        },
+        {
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "BioTech GY"
+            },
+            "presentators": [
+                {
+                    "name": "Márta Jószef István"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B314"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
+        },
+        {
+            "start": "2025-02-07T12:50:00Z",
+            "end": "2025-02-07T15:20:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Vegyip. műv. és ir. GY"
+            },
+            "presentators": [
+                {
+                    "name": "Frank Attila"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "B021_műv"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13A"
+                }   
+            ],
+            "recurringTill": "2025-06-13T15:20:00Z"
+        },
+
+        {
+            "start": "2025-02-03T12:50:00Z",
+            "end": "2025-02-03T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Test"
             },
             "presentators": [
                 {
                     "name": "Schubert Bence"
                 }
             ],
-            "rooms": [
-                {
-                    "name": "A118"
-                }
-            ],
+            "rooms": [],
             "timetables": [
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
         },
         {
-            "start": "2025-02-03T13:45:00Z",
+            "start": "2025-02-03T12:50:00Z",
             "end": "2025-02-03T14:30:00Z",
             "isCancelled": false,
             "subject": {
-                "subjectId": "Test."
+                "subjectId": "Test"
             },
             "presentators": [
                 {
                     "name": "Laman Richárd"
                 }
             ],
-            "rooms": [
-                {
-                    "name": "A118"
-                }
-            ],
+            "rooms": [],
             "timetables": [
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
         },
         {
-            "start": "2025-02-03T15:20:00Z",
-            "end": "2025-02-03T16:00:00Z",
+            "start": "2025-02-03T14:35:00Z",
+            "end": "2025-02-03T16:40:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Frontend"
@@ -1013,11 +2725,12 @@
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T16:40:00Z"
         },
         {
-            "start": "2025-02-03T16:40:00Z",
-            "end": "2025-02-03T17:25:00Z",
+            "start": "2025-02-03T16:45:00Z",
+            "end": "2025-02-03T19:40:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "AMAF_C"
@@ -1042,11 +2755,12 @@
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T19:40:00Z"
         },
         {
-            "start": "2025-02-05T12:50:00Z",
-            "end": "2025-02-05T13:35:00Z",
+            "start": "2025-02-05T11:45:00Z",
+            "end": "2025-02-05T14:30:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Backend"
@@ -1071,11 +2785,12 @@
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
         },
         {
-            "start": "2025-02-05T13:45:00Z",
-            "end": "2025-02-05T14:30:00Z",
+            "start": "2025-02-05T14:35:00Z",
+            "end": "2025-02-05T15:20:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "Pénzügy"
@@ -1094,11 +2809,12 @@
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T15:20:00Z"
         },
         {
-            "start": "2025-02-05T14:40:00Z",
-            "end": "2025-02-05T15:25:00Z",
+            "start": "2025-02-05T15:20:00Z",
+            "end": "2025-02-05T17:25:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "AMAF_C"
@@ -1123,11 +2839,12 @@
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T17:25:00Z"
         },
         {
             "start": "2025-02-06T08:00:00Z",
-            "end": "2025-02-06T08:45:00Z",
+            "end": "2025-02-06T09:40:00Z",
             "isCancelled": false,
             "subject": {
                 "subjectId": "M.v. id.nyelv"
@@ -1146,10 +2863,11 @@
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T09:40:00Z"
         },
         {
-            "start": "2025-02-06T08:55:00Z",
+            "start": "2025-02-06T08:00:00Z",
             "end": "2025-02-06T09:40:00Z",
             "isCancelled": false,
             "subject": {
@@ -1169,7 +2887,275 @@
                 {
                     "name": "13E"
                 }   
-            ]
+            ],
+            "recurringTill": "2025-06-13T09:40:00Z"
+        },
+        {
+            "start": "2025-02-06T09:55:00Z",
+            "end": "2025-02-06T11:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Jabelkó-Tolnai Csilla Anna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "As009"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T11:35:00Z"
+        },
+        {
+            "start": "2025-02-06T11:45:00Z",
+            "end": "2025-02-06T12:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "IKTPrII"
+            },
+            "presentators": [
+                {
+                    "name": "Koczka István"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A222"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T12:30:00Z"
+        },
+        {
+            "start": "2025-02-06T12:50:00Z",
+            "end": "2025-02-06T15:20:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Backend"
+            },
+            "presentators": [
+                {
+                    "name": "Czikkely Imre"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "Györgyi Tamás B"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T15:20:00Z"
+        },
+        {
+            "start": "2025-02-06T15:20:00Z",
+            "end": "2025-02-06T16:00:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Projekt"
+            },
+            "presentators": [
+                {
+                    "name": "Bogdán Marianna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A018B"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:00:00Z"
+        },
+        {
+            "start": "2025-02-06T15:20:00Z",
+            "end": "2025-02-06T16:00:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Projekt"
+            },
+            "presentators": [
+                {
+                    "name": "Ribni Ferenc"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A018A"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T16:00:00Z"
+        },
+        {
+            "start": "2025-02-06T16:00:00Z",
+            "end": "2025-02-06T17:25:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "AdatbII"
+            },
+            "presentators": [
+                {
+                    "name": "Ribni Ferenc"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "Györgyi Tamás B"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T17:25:00Z"
+        },
+        {
+            "start": "2025-02-07T11:45:00Z",
+            "end": "2025-02-07T13:35:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ang"
+            },
+            "presentators": [
+                {
+                    "name": "Jabelkó-Tolnai Csilla Anna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "Petrik Előadó"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T13:35:00Z"
+        },
+        {
+            "start": "2025-02-07T13:45:00Z",
+            "end": "2025-02-07T14:30:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Ofő"
+            },
+            "presentators": [
+                {
+                    "name": "Takács Emese"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A218"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T14:30:00Z"
+        },
+        {
+            "start": "2025-02-07T14:35:00Z",
+            "end": "2025-02-07T15:20:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Projekt"
+            },
+            "presentators": [
+                {
+                    "name": "Bogdán Marianna"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A117"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T15:20:00Z"
+        },
+        {
+            "start": "2025-02-07T14:35:00Z",
+            "end": "2025-02-07T15:20:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Projekt"
+            },
+            "presentators": [
+                {
+                    "name": "Ribni Ferenc"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "A118"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T15:20:00Z"
+        },
+        {
+            "start": "2025-02-07T15:20:00Z",
+            "end": "2025-02-07T17:25:00Z",
+            "isCancelled": false,
+            "subject": {
+                "subjectId": "Frontend"
+            },
+            "presentators": [
+                {
+                    "name": "Budaházi Bence Nándor"
+                }
+            ],
+            "rooms": [
+                {
+                    "name": "Györgyi Tamás A"
+                },
+                {
+                    "name": "Györgyi Tamás B"
+                }
+            ],
+            "timetables": [
+                {
+                    "name": "13E"
+                }   
+            ],
+            "recurringTill": "2025-06-13T17:25:00Z"
         }
     ]
 }
