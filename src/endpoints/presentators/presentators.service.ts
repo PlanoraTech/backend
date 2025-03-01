@@ -1,9 +1,10 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { Presentators, Roles } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { DataServiceIds } from 'src/interfaces/DataServiceIds';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { UpdateSubstitutionDto } from './dto/update-substitution.dto';
 
 interface PresentatorsSelect {
 	name?: boolean,
@@ -264,6 +265,47 @@ export class PresentatorsFromAppointmentsService {
 				},
 			},
 		});
+	}
+
+	async substitute(institutionId: string, dataServiceIds: DataServiceIds, presentatorId: string, substitutionDto: UpdateSubstitutionDto): Promise<void> {
+		await this.prisma.presentatorsToAppointments.update({
+			data: {
+				isSubstituted: substitutionDto.isSubstituted,
+			},
+			where: {
+				presentatorId_appointmentId: {
+					presentatorId: presentatorId,
+					appointmentId: dataServiceIds.appointmentId,
+				},
+				appointment: {
+					id: dataServiceIds.appointmentId,
+					timetables: {
+						some: {
+							id: dataServiceIds.timetableId,
+							institutionId: institutionId,
+						},
+					},
+					rooms: {
+						some: {
+							id: dataServiceIds.roomId,
+							institutionId: institutionId,
+						},
+					},
+					presentators: {
+						some: {
+							presentator: {
+								id: dataServiceIds.presentatorId,
+								institutions: {
+									some: {
+										id: institutionId,
+									},
+								},
+							},
+						},
+					},
+				}
+			}
+		})
 	}
 
 	async remove(institutionId: string, dataServiceIds: DataServiceIds, presentatorId: string): Promise<void> {
