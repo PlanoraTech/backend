@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { Presentators, Roles } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { DataServiceIds } from 'src/interfaces/DataServiceIds';
 import { UpdateSubstitutionDto } from './dto/update-substitution.dto';
@@ -235,49 +236,6 @@ export class PresentatorsFromAppointmentsService {
 					some: {
 						appointmentId: dataServiceIds.appointmentId,
 						appointment: {
-							timetables: {
-								some: {
-									id: dataServiceIds.timetableId,
-									institutionId: institutionId,
-								},
-							},
-							rooms: {
-								some: {
-									id: dataServiceIds.roomId,
-									institutionId: institutionId,
-								},
-							},
-							presentators: {
-								some: {
-									presentator: {
-										id: dataServiceIds.presentatorId,
-										institutions: {
-											some: {
-												id: institutionId,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		});
-	}
-
-	async findOne(institutionId: string, dataServiceIds: DataServiceIds, id: string, select?: PresentatorsSelect): Promise<Partial<Presentators>> {
-		return await this.prisma.presentators.findUniqueOrThrow({
-			select: {
-				id: true,
-				...select,
-			},
-			where: {
-				id: id,
-				appointments: {
-					some: {
-						appointment: {
-							id: dataServiceIds.appointmentId,
 							timetables: {
 								some: {
 									id: dataServiceIds.timetableId,
