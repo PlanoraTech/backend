@@ -57,7 +57,7 @@ model Presentators {
 model Subjects {
     id            String         @id @default(uuid())
     name          String
-    subjectId     String         @unique
+    subjectId     String
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
@@ -95,7 +95,7 @@ model Appointments {
     rooms        Rooms[]
     start        DateTime
     end          DateTime
-    isCancelled  Boolean
+    isCancelled  Boolean                      @default(false)
     timetables   TimeTables[]
 }
 
