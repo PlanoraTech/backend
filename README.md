@@ -3,7 +3,7 @@
 PostgreSQL
 
 ## Steps
-### Install dependencies of the backend itself
+### Install dependencies
 ```
 npm i
 ```
@@ -13,7 +13,7 @@ npm i
 npx prisma db push
 ```
 
-### Run the seeder to fill up the database with random data
+### Run the seeder to fill up the database with data
 ```
-npx prisma db seed
+npm run seed
 ```
