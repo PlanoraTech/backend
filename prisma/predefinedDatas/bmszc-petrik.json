@@ -593,7 +593,36 @@
             "name": "A209 - Szertár"
         }
     ],
-    "events": [],
+    "events": [
+        {
+            "title": "1/13.R online",
+            "date": "2025-03-03"
+        },
+        {
+            "title": "2/14.R online",
+            "date": "2025-03-03"
+        },
+        {
+            "title": "Kémia fakultáció B.203",
+            "date": "2025-03-03"
+        },
+        {
+            "title": "1/13.R online",
+            "date": "2025-03-04"
+        },
+        {
+            "title": "2/14.R online",
+            "date": "2025-03-04"
+        },
+        {
+            "title": "13.B 4.óra rendhagyó osztályfőnöki óra",
+            "date": "2025-03-05"
+        },
+        {
+            "title": "11.D 11:30-tól külső helyszínen",
+            "date": "2025-03-06"
+        }
+    ],
     "timetables": [
         {
             "name": "9KNY"
@@ -3156,6 +3185,18 @@
                 }   
             ],
             "recurringTill": "2025-06-13T17:25:00Z"
+        }
+    ],
+    "users": [
+        {
+            "email": "merenyi@petrik.hu",
+            "password": "merenyim",
+            "name": "Merényi Miklós"
+        },
+        {
+            "email": "jabelko@petrik.hu",
+            "password": "jabelkocsa",
+            "name": "Jabelkó-Tolnai Csilla Anna"
         }
     ]
 }
