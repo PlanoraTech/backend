@@ -25,6 +25,11 @@ type ExtendedInstitutions = (Institutions & {
 	appointments: (ExtendedAppointments & {
 		recurringTill?: Date,
 	})[],
+	users: {
+		name: string,
+		email: string,
+		password: string,
+	}[],
 });
 
 const prisma = new PrismaClient();
@@ -93,14 +98,19 @@ async function seed(): Promise<void> {
 						website: predefinedData[i].website,
 					});
 					await createEvents(tx, institution.id, predefinedData[i].events);
+					progress += (100 / predefinedData.length) / 7;
 					console.log("\nEvents created");
 					let presentators: Presentators[] = await createPresentators(tx, institution.id, predefinedData[i].presentators);
+					progress += (100 / predefinedData.length) / 7;
 					console.log("\nPresentators created");
 					let subjects: Subjects[] = await createSubjects(tx, institution.id, predefinedData[i].subjects);
+					progress += (100 / predefinedData.length) / 7;
 					console.log("\nSubjects created");
 					let rooms: Rooms[] = await createRooms(tx, institution.id, predefinedData[i].rooms);
+					progress += (100 / predefinedData.length) / 7;
 					console.log("\nRooms created");
 					let timetables: TimeTables[] = await createTimeTables(tx, institution.id, predefinedData[i].timetables);
+					progress += (100 / predefinedData.length) / 7;
 					console.log("\nTimetables created");
 					let appointments: ExtendedAppointments[] = new Array<ExtendedAppointments>();
 					for (let j = 0; j < predefinedData[i].appointments.length; j++) {
@@ -132,29 +142,15 @@ async function seed(): Promise<void> {
 						}
 					}
 					await createAppointments(tx, institution.id, appointments);
+					progress += (100 / predefinedData.length) / 7;
 					console.log("\nAppointments created");
-					let users: {
-						name: string,
-						email: string,
-						password: string,
-					}[] = [
-							{
-								email: 'merenyi@petrik.hu',
-								password: 'merenyim',
-								name: 'Merényi Miklós',
-							},
-							{
-								email: 'jabelko@petrik.hu',
-								password: 'jabelkocsa',
-								name: 'Jabelkó-Tolnai Csilla Anna',
-							},
-						]
-					await createUsersForPresentators(tx, institution.id, users);
-					progress += 100 / predefinedData.length;
+					await createUsersForPresentators(tx, institution.id, predefinedData[i].users);
+					progress += (100 / predefinedData.length) / 7;
+					console.log("\nUsers created");
 				},
 				{
-					maxWait: 100000,
-					timeout: 200000,
+					maxWait: 1000000,
+					timeout: 2000000,
 				});
 			}
 			break;
@@ -333,7 +329,7 @@ async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions
 			return await prisma.events.create({
 				data: {
 					title: event.title,
-					date: event.date,
+					date: new Date(event.date),
 					institution: {
 						connect: {
 							id: institutionId,
@@ -412,8 +408,8 @@ async function createAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientO
 						}
 					}),
 				},
-				start: appointments[i].start,
-				end: appointments[i].end,
+				start: new Date(appointments[i].start),
+				end: new Date(appointments[i].end),
 				isCancelled: appointments[i].isCancelled,
 			}
 		}).catch((e) => {
