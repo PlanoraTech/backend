@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { InstitutionsService } from './institutions.service';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
-import { Access, AccessTypes } from '../../decorators/access.decorator';
+import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { Institutions } from '@prisma/client';
 
 @Controller()
@@ -17,25 +17,14 @@ export class InstitutionsController {
 	*/
 
 	@Get()
-	findAll(): Promise<Partial<Institutions>[]> {
-		return this.institutionsService.findAll({
-			name: true,
-			type: true,
-			access: true,
-			color: true,
-			website: true,
-		});
+	findAll(): Promise<Institutions[]> {
+		return this.institutionsService.findAll();
 	}
 
 	@Get(':institutionId')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionId') id: string): Promise<Partial<Institutions>> {
-		return this.institutionsService.findOne(id, {
-			name: true,
-			type: true,
-			color: true,
-			website: true,
-		});
+	findOne(@Param('institutionId') id: string): Promise<Institutions> {
+		return this.institutionsService.findOne(id);
 	}
 
 	@Patch(':id')

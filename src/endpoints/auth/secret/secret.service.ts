@@ -1,7 +1,8 @@
 import { Injectable, InternalServerErrorException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { AccessType, Roles, Tokens, Users } from '@prisma/client';
+import { AccessType, Roles } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export enum TokenExpiry {
     DAY = 1000 * 60 * 60 * 24,
@@ -21,7 +22,7 @@ export class SecretService {
     static async comparePassword(givenPassword: string, hash: string): Promise<boolean> {
         return await compare(givenPassword, hash);
     }
-    static async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<Partial<Tokens>> {
+    static async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<{token: string, expiry: Date}> {
         return await this.prisma.tokens.create({
             select: {
                 token: true,
@@ -45,7 +46,7 @@ export class SecretService {
             }
         });
     }
-    static async getActiveToken(userId: string): Promise<Partial<Tokens>> {
+    static async getActiveToken(userId: string): Promise<{token: string, expiry: Date} | null> {
         return await this.prisma.tokens.findFirst({
             select: {
                 token: true,
@@ -65,6 +66,18 @@ export class SecretService {
                 expiry: true,
             },
             where: {
+                OR: [
+                    {
+                        user: {
+                            isNot: null,
+                        },
+                    },
+                    {
+                        admin: {
+                            isNot: null,
+                        },
+                    },
+                ],
                 token: token,
                 expiry: {
                     gt: new Date(),
@@ -75,36 +88,46 @@ export class SecretService {
         })
         return true;
     }
+
     static async getUserIdByToken(token: string): Promise<string> {
-        return (await this.prisma.tokens.findUniqueOrThrow({
+        let user = await this.prisma.tokens.findUniqueOrThrow({
             select: {
                 userId: true,
             },
             where: {
+                NOT: {
+                    userId: null,
+                    user: null,
+                },
                 token: token,
             }
-        })).userId;
+        });
+        if (user.userId)
+        {
+            return user.userId;
+        }
+        throw new NotFoundException('Invalid token');
     }
     
-    static async getUserIdByEmail(email: string): Promise<Partial<Users>> {
-        return await this.prisma.users.findUniqueOrThrow({
+    static async getUserIdByEmail(email: string): Promise<string> {
+        return (await this.prisma.users.findUniqueOrThrow({
             select: {
                 id: true,
             },
             where: {
                 email: email,
             }
-        });
+        })).id;
     }
 
-    static async getIfPresentatorIsAssignedToAUserByToken(token: string, institutionId: string): Promise<boolean>
+    static async getIfUserHasPresentatorPermissionByToken(token: string, institutionId: string, substitutePresentatorId: string): Promise<boolean>
     {
         await this.prisma.users.findFirstOrThrow({
             where: {
                 institutions: {
                     some: {
                         institutionId: institutionId,
-                        presentator: {},
+                        presentatorId: substitutePresentatorId,
                     }
                 },
                 tokens: {
@@ -113,7 +136,17 @@ export class SecretService {
                     }
                 }
             }
-        })
+        }).catch((e) => {
+            if (e instanceof PrismaClientKnownRequestError)
+            {
+                switch (e.code)
+                {
+                    case 'P2025':
+                        throw new ForbiddenException("You do not have permission to modify this information");
+                }
+            }
+            throw e;
+        });
         return true;
     }
 

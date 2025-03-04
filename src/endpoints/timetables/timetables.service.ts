@@ -3,9 +3,11 @@ import { PrismaService } from '@app/prisma/prisma.service';
 import { TimeTables } from '@prisma/client';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
+import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
 
-interface TimeTablesSelect {
-	name?: boolean,
+const timeTablesSelect = {
+	name: true,
+	institutionId: false,
 }
 
 @Injectable()
@@ -24,11 +26,11 @@ export class TimeTablesService {
 		});
 	}
 
-	async findAll(institutionId: string, select?: TimeTablesSelect): Promise<Partial<TimeTables>[]> {
+	async findAll(institutionId: string): Promise<TimeTables[]> {
 		return await this.prisma.timeTables.findMany({
 			select: {
 				id: true,
-				...select,
+				...timeTablesSelect,
 			},
 			where: {
 				institutionId: institutionId,
@@ -36,11 +38,11 @@ export class TimeTablesService {
 		});
 	}
 
-	async findOne(institutionId: string, id: string, select?: TimeTablesSelect): Promise<Partial<TimeTables>> {
+	async findOne(institutionId: string, id: string): Promise<TimeTables> {
 		return await this.prisma.timeTables.findUniqueOrThrow({
 			select: {
 				id: true,
-				...select,
+				...timeTablesSelect,
 			},
 			where: {
 				id: id,
@@ -84,5 +86,173 @@ export class TimeTablesService {
 				},
 			}),
 		])
+	}
+}
+
+@Injectable()
+export class TimeTablesFromAppointmentsService {
+	constructor(private readonly prisma: PrismaService) { }
+	
+	async add(institutionId: string, dataService: AppointmentsDataService, timetableId: string): Promise<void> {
+		await this.prisma.appointments.update({
+			data: {
+				timetables: {
+					connect: {
+						id: timetableId,
+						institutionId: institutionId,
+					},
+				},
+			},
+			where: {
+				id: dataService.appointmentId,
+				timetables: {
+					some: {
+						id: dataService.timetableId,
+						institutionId: institutionId,
+					},
+				},
+				rooms: {
+					some: {
+						id: dataService.roomId,
+						institutionId: institutionId,
+					},
+				},
+				presentators: {
+					some: {
+						presentator: {
+							id: dataService.presentatorId,
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	}
+
+	async findAll(institutionId: string, dataService: AppointmentsDataService): Promise<TimeTables[]> {
+		return await this.prisma.timeTables.findMany({
+			select: {
+				id: true,
+				...timeTablesSelect,
+			},
+			where: {
+				institutionId: institutionId,
+				appointments: {
+					some: {
+						id: dataService.appointmentId,
+						timetables: {
+							some: {
+								id: dataService.timetableId,
+								institutionId: institutionId,
+							},
+						},
+						rooms: {
+							some: {
+								id: dataService.roomId,
+								institutionId: institutionId,
+							},
+						},
+						presentators: {
+							some: {
+								presentator: {
+									id: dataService.presentatorId,
+									institutions: {
+										some: {
+											id: institutionId,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	}
+
+	async findOne(institutionId: string, dataService: AppointmentsDataService, timetableId: string): Promise<TimeTables> {
+		return await this.prisma.timeTables.findUniqueOrThrow({
+			select: {
+				id: true,
+				...timeTablesSelect,
+			},
+			where: {
+				id: timetableId,
+				institutionId: institutionId,
+				appointments: {
+					some: {
+						id: dataService.appointmentId,
+						timetables: {
+							some: {
+								id: dataService.timetableId,
+								institutionId: institutionId,
+							},
+						},
+						rooms: {
+							some: {
+								id: dataService.roomId,
+								institutionId: institutionId,
+							},
+						},
+						presentators: {
+							some: {
+								presentator: {
+									id: dataService.presentatorId,
+									institutions: {
+										some: {
+											id: institutionId,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+	}
+
+	async remove(institutionId: string, dataService: AppointmentsDataService, timetableId: string): Promise<void> {
+		await this.prisma.appointments.update({
+			data: {
+				timetables: {
+					disconnect: {
+						id: timetableId,
+						institutionId: institutionId,
+					},
+				},
+			},
+			where: {
+				id: dataService.appointmentId,
+				timetables: {
+					some: {
+						id: dataService.timetableId,
+						institutionId: institutionId,
+					},
+				},
+				rooms: {
+					some: {
+						id: dataService.roomId,
+						institutionId: institutionId,
+					}
+				},
+				presentators: {
+					some: {
+						presentator: {
+							id: dataService.presentatorId,
+							institutions: {
+								some: {
+									id: institutionId,
+								},
+							},
+						},
+					},
+				},
+			},
+		});
 	}
 }

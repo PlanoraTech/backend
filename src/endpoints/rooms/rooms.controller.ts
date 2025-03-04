@@ -17,18 +17,14 @@ export class RoomsController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Rooms>[]> {
-		return this.roomsService.findAll(institutionId, {
-			name: true,
-		});
+	findAll(@Param('institutionId') institutionId: string): Promise<Rooms[]> {
+		return this.roomsService.findAll(institutionId);
 	}
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<Rooms>> {
-		return this.roomsService.findOne(institutionId, id, {
-			name: true,
-		});
+	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Rooms> {
+		return this.roomsService.findOne(institutionId, id);
 	}
 
 	@Patch(':id')
@@ -65,15 +61,24 @@ export class RoomsFromAppointmentsController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string): Promise<Partial<Rooms>[]> {
+	findAll(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string): Promise<Rooms[]> {
 		return this.roomsService.findAll(institutionId, {
 			timetableId: timetableId,
 			presentatorId: presentatorId,
 			roomId: roomId,
 			appointmentId: appointmentId,
-		}, {
-			name: true,
 		});
+	}
+
+	@Get(':id')
+	@Access(AccessTypes.RESTRICTED)
+	findOne(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<Rooms> {
+		return this.roomsService.findOne(institutionId, {
+			timetableId: timetableId,
+			presentatorId: presentatorId,
+			roomId: roomId,
+			appointmentId: appointmentId,
+		}, id);
 	}
 
 	@Delete(':id')

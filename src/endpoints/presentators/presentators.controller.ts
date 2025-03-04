@@ -3,7 +3,7 @@ import { Presentators } from '@prisma/client';
 import { PresentatorsFromAppointmentsService, PresentatorsService } from './presentators.service';
 import { Access, AccessTypes } from '@app/decorators/access.decorator';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
-import { UpdateSubstitutionDto } from './dto/update-substitution.dto';
+import { UpdateSubstitutionDto, UpdateSubstitutionsDto } from './dto/update-substitution.dto';
 
 @Controller('presentators')
 export class PresentatorsController {
@@ -18,21 +18,22 @@ export class PresentatorsController {
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
 	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Presentators>[]> {
-		return this.presentatorsService.findAll(institutionId, {
-			name: true,
-		});
+		return this.presentatorsService.findAll(institutionId);
 	}
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
 	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<Presentators>> {
-		return this.presentatorsService.findOne(institutionId, id, {
-			name: true,
-		});
+		return this.presentatorsService.findOne(institutionId, id);
+	}
+
+	@Patch(':substitutePresentatorId/substitute')
+	@Access(AccessTypes.GRANTED)
+	substitution(@Param('institutionId') institutionId: string, @Param('substitutePresentatorId') id: string, @Body() substitutionDto: UpdateSubstitutionsDto): Promise<void> {
+		return this.presentatorsService.substitute(institutionId, id, substitutionDto);
 	}
 
 	@Delete(':id')
-	@Access(AccessTypes.PRIVATE)
 	remove(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<void> {
 		return this.presentatorsService.remove(institutionId, id);
 	}
@@ -59,33 +60,29 @@ export class PresentatorsFromAppointmentsController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string): Promise<Partial<Presentators>[]> {
+	findAll(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string): Promise<Presentators[]> {
 		return this.presentatorsService.findAll(institutionId, {
 			timetableId: timetableId,
 			presentatorId: presentatorId,
 			roomId: roomId,
 			appointmentId: appointmentId,
-		}, {
-			name: true,
 		});
 	}
 	
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<Partial<Presentators>> {
+	findOne(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<Presentators> {
 		return this.presentatorsService.findOne(institutionId, {
 			timetableId: timetableId,
 			presentatorId: presentatorId,
 			roomId: roomId,
 			appointmentId: appointmentId,
-		}, id, {
-			name: true,
-		});
+		}, id);
 	}
 
-	@Patch(':id/substitute')
+	@Patch(':substitutePresentatorId/substitute')
 	@Access(AccessTypes.GRANTED)
-	substitution(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string, @Body() substitutionDto: UpdateSubstitutionDto): Promise<void> {
+	substitution(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('substitutePresentatorId') id: string, @Body() substitutionDto: UpdateSubstitutionDto): Promise<void> {
 		return this.presentatorsService.substitute(institutionId, {
 			timetableId: timetableId,
 			presentatorId: presentatorId,

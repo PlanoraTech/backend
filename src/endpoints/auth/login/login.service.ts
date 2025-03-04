@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Tokens } from '@prisma/client';
 import { SecretService, TokenExpiry } from '../secret/secret.service';
-import { ExtendedLogin } from './types/login.type';
+import { Login } from './interfaces/Login';
 
 @Injectable()
 export class LoginService {
 	constructor(private readonly prisma: PrismaService) { }
 
-	async loginByToken(token: string): Promise<Partial<ExtendedLogin>> {
+	async loginByToken(token: string): Promise<Login> {
 		return await this.prisma.tokens.findUniqueOrThrow({
 			select: {
 				user: {
@@ -33,7 +32,7 @@ export class LoginService {
 		});
 	}
 
-	async loginByEmailAndPassword(email: string, password: string, tokenExpiry?: TokenExpiry): Promise<Partial<ExtendedLogin>> {
+	async loginByEmailAndPassword(email: string, password: string, tokenExpiry?: TokenExpiry): Promise<Login> {
 		let user = await this.prisma.users.findUniqueOrThrow({
 			select: {
 				id: true,
@@ -50,18 +49,16 @@ export class LoginService {
 				email: email,
 			},
 		});
-		switch (await SecretService.comparePassword(password, user.password)) {
-			case true:
-				let token: Partial<Tokens> = (await SecretService.getActiveToken(user.id)) ?? (await SecretService.createToken(user.id, tokenExpiry));
-				return {
-					user: {
-						institutions: user.institutions,
-					},
-					token: token.token,
-					expiry: token.expiry,
-				};
-			default:
-				throw new NotFoundException;
-		};
+		if (await SecretService.comparePassword(password, user.password)) {
+			let token: { token: string; expiry: Date; } = (await SecretService.getActiveToken(user.id)) ?? (await SecretService.createToken(user.id, tokenExpiry));
+			return {
+				user: {
+					institutions: user.institutions,
+				},
+				token: token.token,
+				expiry: token.expiry,
+			};
+		}
+		throw new NotFoundException("Invalid email or password");
 	}
 }
