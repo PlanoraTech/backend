@@ -29,7 +29,9 @@ export class AccessGuard implements CanActivate {
                         return false;
                 }
             case AccessTypes.GRANTED:
-                return await this.checkAccess(request.query.token as string, request.params.institutionId, [Roles.PRESENTATOR, Roles.DIRECTOR]);
+                if (await SecretService.seamlessAuth(request.query.token as string)) {
+                    return await SecretService.getIfUserHasPresentatorPermissionByToken(request.query.token as string, request.params.institutionId, request.params.substitutePresentatorId);
+                }
             case AccessTypes.PRIVATE:
                 return await this.checkAccess(request.query.token as string, request.params.institutionId, [Roles.DIRECTOR]);
             default:

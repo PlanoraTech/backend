@@ -51,11 +51,11 @@ export class UsersService {
 	}
 
 	async remove(institutionId: string, userDto: UserDto): Promise<void> {
-		let user: Partial<Users> = await SecretService.getUserIdByEmail(userDto.email);
+		let userId: string = await SecretService.getUserIdByEmail(userDto.email);
 		await this.prisma.usersToInstitutions.delete({
 			where: {
 				userId_institutionId: {
-					userId: user.id,
+					userId: userId,
 					institutionId: institutionId,
 				},
 				institution: {

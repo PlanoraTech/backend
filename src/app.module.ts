@@ -47,7 +47,7 @@ import { EventsModule } from './endpoints/events/events.module';
             module: EventsModule,
           },
           {
-            path: ':institutionId/timetables',
+            path: ':institutionId',
             module: TimeTablesModule,
           },
           {

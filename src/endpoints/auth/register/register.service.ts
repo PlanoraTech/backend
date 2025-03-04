@@ -1,6 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Tokens } from '@prisma/client';
 import { RegisterDto } from './dto/register.dto';
 import { SecretService, TokenExpiry } from '../secret/secret.service';
 
@@ -8,7 +7,7 @@ import { SecretService, TokenExpiry } from '../secret/secret.service';
 export class RegisterService {
 	constructor(private readonly prisma: PrismaService) { }
 
-	async create(registerDto: RegisterDto, tokenExpiry?: TokenExpiry): Promise<Partial<Tokens>> {
+	async create(registerDto: RegisterDto, tokenExpiry?: TokenExpiry): Promise<{ token: string; expiry: Date; }> {
 		let user = await this.prisma.users.create({
 			select: {
 				id: true,

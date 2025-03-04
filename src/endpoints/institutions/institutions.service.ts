@@ -3,6 +3,14 @@ import { PrismaService } from '@app/prisma/prisma.service';
 import { Institutions } from '@prisma/client';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 
+const institutionsSelect = {
+	name: true,
+	type: true,
+	access: true,
+	color: true,
+	website: true,
+};
+
 @Injectable()
 export class InstitutionsService {
 	constructor(private readonly prisma: PrismaService) { }
@@ -11,32 +19,20 @@ export class InstitutionsService {
 	async create(createInstitutionDto: CreateInstitutionDto): Promise<void> {}
 	*/
 
-	async findAll(select?: {
-		name?: boolean,
-		type?: boolean,
-		access?: boolean,
-		color?: boolean,
-		website?: boolean,
-	}): Promise<Partial<Institutions>[]> {
+	async findAll(): Promise<Institutions[]> {
 		return await this.prisma.institutions.findMany({
 			select: {
 				id: true,
-				...select,
+				...institutionsSelect,
 			},
 		});
 	}
 
-	async findOne(id: string, select?: {
-		name?: boolean,
-		type?: boolean,
-		color?: boolean,
-		website?: boolean,
-	}): Promise<Partial<Institutions>> {
+	async findOne(id: string): Promise<Institutions> {
 		return await this.prisma.institutions.findUniqueOrThrow({
 			select: {
 				id: true,
-				access: true,
-				...select,
+				...institutionsSelect,
 			},
 			where: {
 				id,

@@ -17,20 +17,14 @@ export class SubjectsController {
 
 	@Get()
 	@Access(AccessTypes.RESTRICTED)
-	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Subjects>[]> {
-		return this.subjectsService.findAll(institutionId, {
-			name: true,
-			subjectId: true,
-		});
+	findAll(@Param('institutionId') institutionId: string): Promise<Subjects[]> {
+		return this.subjectsService.findAll(institutionId);
 	}
 
 	@Get(':id')
 	@Access(AccessTypes.RESTRICTED)
-	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<Subjects>> {
-		return this.subjectsService.findOne(institutionId, id, {
-			name: true,
-			subjectId: true,
-		});
+	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Subjects> {
+		return this.subjectsService.findOne(institutionId, id);
 	}
 
 	@Patch(':id')

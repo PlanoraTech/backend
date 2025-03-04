@@ -4,9 +4,10 @@ import { Subjects } from '@prisma/client';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 
-interface SubjectsSelect {
-	name?: boolean,
-	subjectId?: boolean,
+const subjectsSelect = {
+	name: true,
+	subjectId: true,
+	institutionId: false,
 }
 
 @Injectable()
@@ -25,11 +26,11 @@ export class SubjectsService {
 		});
 	}
 
-	async findAll(institutionId: string, select?: SubjectsSelect): Promise<Partial<Subjects>[]> {
+	async findAll(institutionId: string): Promise<Subjects[]> {
 		return await this.prisma.subjects.findMany({
 			select: {
 				id: true,
-				...select,
+				...subjectsSelect,
 			},
 			where: {
 				institutionId: institutionId,
@@ -37,11 +38,11 @@ export class SubjectsService {
 		});
 	}
 
-	async findOne(institutionId: string, id: string, select?: SubjectsSelect): Promise<Partial<Subjects>> {
+	async findOne(institutionId: string, id: string): Promise<Subjects> {
 		return await this.prisma.subjects.findUniqueOrThrow({
 			select: {
 				id: true,
-				...select,
+				...subjectsSelect,
 			},
 			where: {
 				id,

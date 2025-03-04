@@ -9,7 +9,7 @@ export class ProfileService {
 	constructor(private readonly prisma: PrismaService) { }
 
 	async get(token: string): Promise<Partial<Users>> {
-		let userId = await SecretService.getUserIdByToken(token);
+		let userId: string = await SecretService.getUserIdByToken(token);
 		return await this.prisma.users.findUniqueOrThrow({
 			select: {
 				email: true,
@@ -31,7 +31,7 @@ export class ProfileService {
 	}
 
 	async updatePassword(token: string, updateProfileDto: UpdateProfileDto): Promise<void> {
-		let userId = await SecretService.getUserIdByToken(token);
+		let userId: string = await SecretService.getUserIdByToken(token);
 		await this.prisma.users.update({
 			select: {
 				id: true,
@@ -46,7 +46,7 @@ export class ProfileService {
 	}
 
 	async remove(token: string): Promise<void> {
-		let userId = await SecretService.getUserIdByToken(token);
+		let userId: string = await SecretService.getUserIdByToken(token);
 		await this.prisma.users.delete({
 			select: {
 				id: true,
