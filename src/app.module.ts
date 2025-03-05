@@ -7,8 +7,8 @@ import { RoomsModule } from './endpoints/rooms/rooms.module';
 import { TimeTablesModule } from './endpoints/timetables/timetables.module';
 import { AppointmentsModule } from './endpoints/appointments/appointments.module';
 import { UsersModule } from './endpoints/users/users.module';
-import { LoginModule } from './endpoints/auth/login/login.module';
-import { RegisterModule } from './endpoints/auth/register/register.module';
+import { LoginModule } from './endpoints/login/login.module';
+import { RegisterModule } from './endpoints/register/register.module';
 import { ProfileModule } from './endpoints/profile/profile.module';
 import { EventsModule } from './endpoints/events/events.module';
 

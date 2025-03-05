@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
-import { SecretService, TokenExpiry } from '../secret/secret.service';
+import { SecretService, TokenExpiry } from '@app/auth/secret/secret.service';
 
 @Injectable()
 export class RegisterService {

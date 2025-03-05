@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Query } from '@nestjs/common';
 import { RegisterService } from './register.service';
 import { RegisterDto } from './dto/register.dto';
-import { TokenExpiry } from '../secret/secret.service';
+import { TokenExpiry } from '@app/auth/secret/secret.service';
 
 @Controller('register')
 export class RegisterController {
