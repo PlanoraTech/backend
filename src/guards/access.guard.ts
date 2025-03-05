@@ -3,7 +3,7 @@ import { Reflector } from "@nestjs/core";
 import { Request } from 'express';
 import { AccessType, Roles } from "@prisma/client";
 import { Access, AccessTypes } from "@app/decorators/access.decorator";
-import { SecretService } from "@app/endpoints/auth/secret/secret.service";
+import { SecretService } from "@app/auth/secret/secret.service";
 
 @Injectable()
 export class AccessGuard implements CanActivate {
@@ -32,6 +32,7 @@ export class AccessGuard implements CanActivate {
                 if (await SecretService.seamlessAuth(request.query.token as string)) {
                     return await SecretService.getIfUserHasPresentatorPermissionByToken(request.query.token as string, request.params.institutionId, request.params.substitutePresentatorId);
                 }
+                return false;
             case AccessTypes.PRIVATE:
                 return await this.checkAccess(request.query.token as string, request.params.institutionId, [Roles.DIRECTOR]);
             default:

@@ -2,7 +2,7 @@ import { Controller, Post, Body, Query } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { LoginDto } from './dto/login.dto';
 import { Login } from './interfaces/Login';
-import { TokenExpiry } from '../secret/secret.service';
+import { TokenExpiry } from '@app/auth/secret/secret.service';
 
 @Controller('login')
 export class LoginController {
