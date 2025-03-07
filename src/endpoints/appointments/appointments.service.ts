@@ -206,12 +206,12 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
 				start: updateAppointmentDto.start,
 				end: updateAppointmentDto.end,
 				isCancelled: updateAppointmentDto.isCancelled,
-				subject: {
+				subject: (updateAppointmentDto.subjectId) ? {
 					connect: {
 						id: updateAppointmentDto.subjectId,
 						institutionId: institutionId,
 					},
-				},
+				} : undefined,
 			},
 			where: {
 				id: id,
