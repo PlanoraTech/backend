@@ -15,16 +15,16 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         let access: AccessType = this.reflector.get<AccessType>(Access, context.getHandler());
-        let request: (Request & { user: User }) = context.switchToHttp().getRequest<(Request & { user: User })>();
+        let request: (Request & { headers: { authorization: string }, user: User }) = context.switchToHttp().getRequest<(Request & { headers: { authorization: string }, user: User })>();
         if (!access) {
-            request.user = await this.secretService.seamlessAuth(request.query.token as string);
+            request.user = await this.secretService.seamlessAuth(this.secretService.extractTokenFromHeader(request.headers.authorization) ?? request.query.token as string);
             return true;
         }
         switch (access) {
             case AccessType.PUBLIC:
                 return true;
             default:
-                request.user = await this.secretService.seamlessAuth(request.query.token as string);
+                request.user = await this.secretService.seamlessAuth(this.secretService.extractTokenFromHeader(request.headers.authorization) ?? request.query.token as string);
                 return true;
         }
     }

@@ -23,6 +23,10 @@ export class SecretService {
     async comparePassword(givenPassword: string, hash: string): Promise<boolean> {
         return await compare(givenPassword, hash);
     }
+    extractTokenFromHeader(authorization: string): string | undefined {
+        let [type, token] = authorization.split(' ') ?? [];
+        return type === 'Bearer' ? token : undefined;
+    }
     async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<{ token: string, expiry: Date }> {
         return await this.prisma.tokens.create({
             select: {
@@ -70,6 +74,28 @@ export class SecretService {
             throw e;
         })
     }
+    async destroyToken(token: string): Promise<void> {
+        await this.prisma.tokens.delete({
+            where: {
+                token: token,
+            }
+        }).catch((e) => {
+            if (e instanceof PrismaClientKnownRequestError) {
+                switch (e.code) {
+                    case 'P2025':
+                        throw new UnauthorizedException("Invalid token");
+                }
+            }
+            throw e;
+        });
+    }
+    async destroyAllTokens(userId: string): Promise<void> {
+        await this.prisma.tokens.deleteMany({
+            where: {
+                userId: userId,
+            }
+        });
+    }
     async seamlessAuth(token: string): Promise<User> {
         let query: { user: User } = await this.prisma.tokens.findUniqueOrThrow({
             select: {
@@ -92,8 +118,14 @@ export class SecretService {
                     gt: new Date(),
                 },
             }
-        }).catch(() => {
-            throw new UnauthorizedException("Invalid token");
+        }).catch((e) => {
+            if (e instanceof PrismaClientKnownRequestError) {
+                switch (e.code) {
+                    case 'P2025':
+                        throw new UnauthorizedException("Invalid token");
+                }
+            }
+            throw e;
         });
         return {
             id: query.user.id,
