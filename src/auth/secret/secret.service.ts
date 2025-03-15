@@ -1,8 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { AccessType, Roles } from '@prisma/client';
+import { AccessType } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { User } from '@app/interfaces/User.interface';
 
 export enum TokenExpiry {
     DAY = 1000 * 60 * 60 * 24,
@@ -12,17 +13,17 @@ export enum TokenExpiry {
 
 @Injectable()
 export class SecretService {
-    private static readonly prisma: PrismaService = new PrismaService();
-    private static generateToken(): string {
+    constructor(private readonly prisma: PrismaService) { };
+    private generateToken(): string {
         return crypto.randomUUID();
     }
-    static async encryptPassword(password: string, saltRounds: number = 10): Promise<string> {
+    async encryptPassword(password: string, saltRounds: number = 10): Promise<string> {
         return await hash(password, saltRounds);
     }
-    static async comparePassword(givenPassword: string, hash: string): Promise<boolean> {
+    async comparePassword(givenPassword: string, hash: string): Promise<boolean> {
         return await compare(givenPassword, hash);
     }
-    static async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<{token: string, expiry: Date}> {
+    async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<{ token: string, expiry: Date }> {
         return await this.prisma.tokens.create({
             select: {
                 token: true,
@@ -37,17 +38,18 @@ export class SecretService {
                     }
                 }
             }
-        }).catch((error) => {
-            switch (error.code) {
-                case "P2002":
-                    return this.createToken(userId, tokenExpiry);
-                default:
-                    throw new InternalServerErrorException;
+        }).catch((e) => {
+            if (e instanceof PrismaClientKnownRequestError) {
+                switch (e.code) {
+                    case "P2002":
+                        return this.createToken(userId, tokenExpiry);
+                }
             }
+            throw e;
         });
     }
-    static async getActiveToken(userId: string): Promise<{token: string, expiry: Date} | null> {
-        return await this.prisma.tokens.findFirst({
+    async getActiveToken(userId: string): Promise<{ token: string, expiry: Date } | null> {
+        return await this.prisma.tokens.findFirstOrThrow({
             select: {
                 token: true,
                 expiry: true,
@@ -58,58 +60,48 @@ export class SecretService {
                     gt: new Date(),
                 },
             }
+        }).catch((e) => {
+            if (e instanceof PrismaClientKnownRequestError) {
+                switch (e.code) {
+                    case 'P2025':
+                        return null;
+                }
+            }
+            throw e;
         })
     }
-    static async seamlessAuth(token: string): Promise<boolean> {
-        await this.prisma.tokens.findUniqueOrThrow({
+    async seamlessAuth(token: string): Promise<User> {
+        let query: { user: User } = await this.prisma.tokens.findUniqueOrThrow({
             select: {
-                expiry: true,
+                user: {
+                    select: {
+                        id: true,
+                        institutions: {
+                            select: {
+                                institutionId: true,
+                                role: true,
+                                presentatorId: true,
+                            },
+                        }
+                    }
+                }
             },
             where: {
-                OR: [
-                    {
-                        user: {
-                            isNot: null,
-                        },
-                    },
-                    {
-                        admin: {
-                            isNot: null,
-                        },
-                    },
-                ],
                 token: token,
                 expiry: {
                     gt: new Date(),
                 },
             }
         }).catch(() => {
-            throw new NotFoundException("Invalid token");
-        })
-        return true;
+            throw new UnauthorizedException("Invalid token");
+        });
+        return {
+            id: query.user.id,
+            institutions: query.user.institutions,
+        }
     }
 
-    static async getUserIdByToken(token: string): Promise<string> {
-        let user = await this.prisma.tokens.findUniqueOrThrow({
-            select: {
-                userId: true,
-            },
-            where: {
-                NOT: {
-                    userId: null,
-                    user: null,
-                },
-                token: token,
-            }
-        });
-        if (user.userId)
-        {
-            return user.userId;
-        }
-        throw new NotFoundException('Invalid token');
-    }
-    
-    static async getUserIdByEmail(email: string): Promise<string> {
+    async getUserIdByEmail(email: string): Promise<string> {
         return (await this.prisma.users.findUniqueOrThrow({
             select: {
                 id: true,
@@ -120,103 +112,14 @@ export class SecretService {
         })).id;
     }
 
-    static async getIfUserHasPresentatorPermissionByToken(token: string, institutionId: string, substitutePresentatorId: string): Promise<boolean>
-    {
-        await this.prisma.users.findFirstOrThrow({
-            where: {
-                institutions: {
-                    some: {
-                        institutionId: institutionId,
-                        presentatorId: substitutePresentatorId,
-                    }
-                },
-                tokens: {
-                    some: {
-                        token: token,
-                    }
-                }
-            }
-        }).catch((e) => {
-            if (e instanceof PrismaClientKnownRequestError)
-            {
-                switch (e.code)
-                {
-                    case 'P2025':
-                        throw new ForbiddenException("You do not have permission to modify this information");
-                }
-            }
-            throw e;
-        });
-        return true;
-    }
-
-    static async getIfInstitutionIsAssignedToAUserByToken(token: string, institutionId: string): Promise<boolean> {
-        await this.prisma.users.findFirstOrThrow({
+    async getInstitutionAccessById(id: string): Promise<AccessType> {
+        return (await this.prisma.institutions.findUniqueOrThrow({
             select: {
-                institutions: {
-                    select: {
-                        institutionId: true,
-                    },
-                },
+                access: true,
             },
             where: {
-                institutions: {
-                    some: {
-                        institutionId: institutionId,
-                    },
-                },
-                tokens: {
-                    some: {
-                        token: token,
-                    },
-                },
+                id,
             },
-        }).catch(() => {
-            throw new ForbiddenException("You do not have permission to access this information");
-        });
-        return true;
+        })).access;
     }
-
-    static async getIfRoleWithInstitutionIsAssignedToAUserByToken(token: string, institutionId: string, roles: Roles[]): Promise<boolean> {
-        await this.prisma.users.findFirstOrThrow({
-            select: {
-                institutions: {
-                    select: {
-                        role: true,
-                    }
-                }
-            },
-            where: {
-                institutions: {
-                    some: {
-                        institutionId: institutionId,
-                        OR: roles.map((role) => {
-                            return {
-                                role: role,
-                            }
-                        }),
-                    }
-                },
-                tokens: {
-                    some: {
-                        token: token,
-                    },
-                },
-            },
-        }).catch(() => {
-            throw new ForbiddenException("You do not have permission to access this information");
-        });
-        return true;
-    }
-
-    static async getInstitutionAccessById(id: string): Promise<AccessType> {
-		return (await this.prisma.institutions.findUniqueOrThrow({
-			select: {
-				access: true,
-			},
-			where: {
-				id,
-			},
-		})).access;
-	}
 }

@@ -1,11 +1,4 @@
 import { Reflector } from '@nestjs/core';
+import { AccessType } from '@prisma/client';
 
-export enum AccessTypes {
-    PUBLIC,
-    RESTRICTED,
-    GRANTED,
-    PRIVATE,
-    ADMIN,
-}
-
-export const Access = Reflector.createDecorator<AccessTypes>();
+export const Access = Reflector.createDecorator<AccessType>();

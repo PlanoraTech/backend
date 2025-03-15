@@ -6,10 +6,12 @@ import { SecretService } from '@app/auth/secret/secret.service';
 
 @Injectable()
 export class ProfileService {
-	constructor(private readonly prisma: PrismaService) { }
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly secretService: SecretService,
+	) { }
 
-	async get(token: string): Promise<Partial<Users>> {
-		let userId: string = await SecretService.getUserIdByToken(token);
+	async get(id: string): Promise<Partial<Users>> {
 		return await this.prisma.users.findUniqueOrThrow({
 			select: {
 				email: true,
@@ -25,34 +27,32 @@ export class ProfileService {
 				}
 			},
 			where: {
-				id: userId,
+				id: id,
 			},
 		});
 	}
 
-	async updatePassword(token: string, updateProfileDto: UpdateProfileDto): Promise<void> {
-		let userId: string = await SecretService.getUserIdByToken(token);
+	async updatePassword(id: string, updateProfileDto: UpdateProfileDto): Promise<void> {
 		await this.prisma.users.update({
 			select: {
 				id: true,
 			},
 			data: {
-				password: await SecretService.encryptPassword(updateProfileDto.newPassword),
+				password: await this.secretService.encryptPassword(updateProfileDto.newPassword),
 			},
 			where: {
-				id: userId,
+				id: id,
 			},
 		});
 	}
 
-	async remove(token: string): Promise<void> {
-		let userId: string = await SecretService.getUserIdByToken(token);
+	async remove(id: string): Promise<void> {
 		await this.prisma.users.delete({
 			select: {
 				id: true,
 			},
 			where: {
-				id: userId,
+				id: id,
 			},
 		});
 	}
