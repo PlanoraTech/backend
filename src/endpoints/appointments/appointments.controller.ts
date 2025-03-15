@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { Appointments } from '@prisma/client';
+import { AccessType, Appointments } from '@prisma/client';
 import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
-import { Access, AccessTypes } from '@app/decorators/access.decorator';
+import { Access } from '@app/decorators/access.decorator';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
@@ -13,7 +13,7 @@ export class AppointmentsController {
 	constructor(protected readonly appointmentsService: AppointmentsService) { }
 
 	@Get()
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findAll(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string): Promise<Appointments[]> {
 		return this.appointmentsService.findAll(institutionId, {
 			timetableId: timetableId,
@@ -23,7 +23,7 @@ export class AppointmentsController {
 	}
 
 	@Get(':id')
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findOne(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('id') id: string): Promise<Appointments> {
 		return this.appointmentsService.findOne(institutionId, {
 			timetableId: timetableId,
@@ -42,19 +42,16 @@ export class AppointmentsFromTimeTablesController extends AppointmentsController
 	}
 
 	@Post()
-	@Access(AccessTypes.PRIVATE)
 	create(@Param('institutionId') institutionId: string, @Body() createAppointmentDto: CreateAppointmentDto): Promise<void> {
 		return this.appointmentsService.create(institutionId, createAppointmentDto);
 	}
 
 	@Patch(':id')
-	@Access(AccessTypes.PRIVATE)
 	update(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('id') id: string, @Body() updateAppointmentDto: UpdateAppointmentDto): Promise<void> {
 		return this.appointmentsService.update(institutionId, timetableId, id, updateAppointmentDto);
 	}
 
 	@Delete(':id')
-	@Access(AccessTypes.PRIVATE)
 	remove(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('id') id: string): Promise<void> {
 		return this.appointmentsService.remove(institutionId, timetableId, id);
 	}

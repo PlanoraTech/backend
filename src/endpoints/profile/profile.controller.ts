@@ -1,24 +1,29 @@
-import { Controller, Get, Body, Patch, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Delete, Req } from '@nestjs/common';
 import { Users } from '@prisma/client';
 import { ProfileService } from './profile.service';
+import { Permissions } from '@app/decorators/permissions.decorator';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { User } from '@app/interfaces/User.interface';
 
 @Controller('profile')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(private readonly profileService: ProfileService) { }
 
   @Get()
-  get(@Query('token') token: string): Promise<Partial<Users>> {
-    return this.profileService.get(token);
+  @Permissions([])
+  get(@Req() req: (Request & { user: User })): Promise<Partial<Users>> {
+    return this.profileService.get(req.user.id);
   }
 
   @Patch()
-  update(@Query('token') token: string, @Body() updateProfileDto: UpdateProfileDto): Promise<void> {
-    return this.profileService.updatePassword(token, updateProfileDto);
+  @Permissions([])
+  update(@Req() req: (Request & { user: User }), @Body() updateProfileDto: UpdateProfileDto): Promise<void> {
+    return this.profileService.updatePassword(req.user.id, updateProfileDto);
   }
 
   @Delete()
-  remove(@Query('token') token: string): Promise<void> {
-    return this.profileService.remove(token);
+  @Permissions([])
+  remove(@Req() req: (Request & { user: User })): Promise<void> {
+    return this.profileService.remove(req.user.id);
   }
 }

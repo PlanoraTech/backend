@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { Rooms } from '@prisma/client';
+import { AccessType, Rooms } from '@prisma/client';
 import { RoomsFromAppointmentsService, RoomsService } from './rooms.service';
-import { Access, AccessTypes } from '@app/decorators/access.decorator';
+import { Access } from '@app/decorators/access.decorator';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 
@@ -10,31 +10,28 @@ export class RoomsController {
 	constructor(private readonly roomsService: RoomsService) { }
 
 	@Post()
-	@Access(AccessTypes.PRIVATE)
 	create(@Param('institutionId') institutionId: string, @Body() createRoomDto: CreateRoomDto): Promise<void> {
 		return this.roomsService.create(institutionId, createRoomDto);
 	}
 
 	@Get()
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findAll(@Param('institutionId') institutionId: string): Promise<Rooms[]> {
 		return this.roomsService.findAll(institutionId);
 	}
 
 	@Get(':id')
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Rooms> {
 		return this.roomsService.findOne(institutionId, id);
 	}
 
 	@Patch(':id')
-	@Access(AccessTypes.PRIVATE)
 	update(@Param('institutionId') institutionId: string, @Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto): Promise<void> {
 		return this.roomsService.update(institutionId, id, updateRoomDto);
 	}
 
 	@Delete(':id')
-	@Access(AccessTypes.PRIVATE)
 	remove(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<void> {
 		return this.roomsService.remove(institutionId, id);
 	}
@@ -47,9 +44,8 @@ export class RoomsController {
 ])
 export class RoomsFromAppointmentsController {
 	constructor(private readonly roomsService: RoomsFromAppointmentsService) { }
-	
+
 	@Post(':id')
-	@Access(AccessTypes.PRIVATE)
 	add(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<void> {
 		return this.roomsService.add(institutionId, {
 			timetableId: timetableId,
@@ -60,7 +56,7 @@ export class RoomsFromAppointmentsController {
 	}
 
 	@Get()
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findAll(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string): Promise<Rooms[]> {
 		return this.roomsService.findAll(institutionId, {
 			timetableId: timetableId,
@@ -71,7 +67,7 @@ export class RoomsFromAppointmentsController {
 	}
 
 	@Get(':id')
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findOne(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<Rooms> {
 		return this.roomsService.findOne(institutionId, {
 			timetableId: timetableId,
@@ -82,7 +78,6 @@ export class RoomsFromAppointmentsController {
 	}
 
 	@Delete(':id')
-	@Access(AccessTypes.PRIVATE)
 	remove(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<void> {
 		return this.roomsService.add(institutionId, {
 			timetableId: timetableId,

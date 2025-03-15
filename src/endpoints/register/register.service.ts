@@ -5,7 +5,10 @@ import { SecretService, TokenExpiry } from '@app/auth/secret/secret.service';
 
 @Injectable()
 export class RegisterService {
-	constructor(private readonly prisma: PrismaService) { }
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly secretService: SecretService,
+	) { }
 
 	async create(registerDto: RegisterDto, tokenExpiry?: TokenExpiry): Promise<{ token: string; expiry: Date; }> {
 		let user = await this.prisma.users.create({
@@ -14,11 +17,11 @@ export class RegisterService {
 			},
 			data: {
 				email: registerDto.email,
-				password: await SecretService.encryptPassword(registerDto.password),
+				password: await this.secretService.encryptPassword(registerDto.password),
 			}
 		}).catch(() => {
 			throw new ConflictException('User already exists')
 		});
-		return await SecretService.createToken(user.id, tokenExpiry);
+		return await this.secretService.createToken(user.id, tokenExpiry);
 	}
 }

@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { Presentators } from '@prisma/client';
+import { AccessType, Presentators, Roles } from '@prisma/client';
 import { PresentatorsFromAppointmentsService, PresentatorsService } from './presentators.service';
-import { Access, AccessTypes } from '@app/decorators/access.decorator';
+import { Access } from '@app/decorators/access.decorator';
+import { Permissions } from '@app/decorators/permissions.decorator';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdateSubstitutionDto, UpdateSubstitutionsDto } from './dto/update-substitution.dto';
 
@@ -10,25 +11,24 @@ export class PresentatorsController {
 	constructor(private readonly presentatorsService: PresentatorsService) { }
 
 	@Post()
-	@Access(AccessTypes.PRIVATE)
 	create(@Param('institutionId') institutionId: string, @Body() createPresentatorDto: CreatePresentatorDto): Promise<void> {
 		return this.presentatorsService.create(institutionId, createPresentatorDto);
 	}
 
 	@Get()
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findAll(@Param('institutionId') institutionId: string): Promise<Partial<Presentators>[]> {
 		return this.presentatorsService.findAll(institutionId);
 	}
 
 	@Get(':id')
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findOne(@Param('institutionId') institutionId: string, @Param('id') id: string): Promise<Partial<Presentators>> {
 		return this.presentatorsService.findOne(institutionId, id);
 	}
 
 	@Patch(':substitutePresentatorId/substitute')
-	@Access(AccessTypes.GRANTED)
+	@Permissions([Roles.DIRECTOR, Roles.PRESENTATOR])
 	substitution(@Param('institutionId') institutionId: string, @Param('substitutePresentatorId') id: string, @Body() substitutionDto: UpdateSubstitutionsDto): Promise<void> {
 		return this.presentatorsService.substitute(institutionId, id, substitutionDto);
 	}
@@ -46,9 +46,8 @@ export class PresentatorsController {
 ])
 export class PresentatorsFromAppointmentsController {
 	constructor(private readonly presentatorsService: PresentatorsFromAppointmentsService) { }
-	
+
 	@Post(':id')
-	@Access(AccessTypes.PRIVATE)
 	add(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<void> {
 		return this.presentatorsService.add(institutionId, {
 			timetableId: timetableId,
@@ -59,7 +58,7 @@ export class PresentatorsFromAppointmentsController {
 	}
 
 	@Get()
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findAll(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string): Promise<Presentators[]> {
 		return this.presentatorsService.findAll(institutionId, {
 			timetableId: timetableId,
@@ -68,9 +67,9 @@ export class PresentatorsFromAppointmentsController {
 			appointmentId: appointmentId,
 		});
 	}
-	
+
 	@Get(':id')
-	@Access(AccessTypes.RESTRICTED)
+	@Access(AccessType.PUBLIC)
 	findOne(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<Presentators> {
 		return this.presentatorsService.findOne(institutionId, {
 			timetableId: timetableId,
@@ -81,7 +80,7 @@ export class PresentatorsFromAppointmentsController {
 	}
 
 	@Patch(':substitutePresentatorId/substitute')
-	@Access(AccessTypes.GRANTED)
+	@Permissions([Roles.DIRECTOR, Roles.PRESENTATOR])
 	substitution(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('substitutePresentatorId') id: string, @Body() substitutionDto: UpdateSubstitutionDto): Promise<void> {
 		return this.presentatorsService.substitute(institutionId, {
 			timetableId: timetableId,
@@ -92,7 +91,6 @@ export class PresentatorsFromAppointmentsController {
 	}
 
 	@Delete(':id')
-	@Access(AccessTypes.PRIVATE)
 	remove(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('id') id: string): Promise<void> {
 		return this.presentatorsService.add(institutionId, {
 			timetableId: timetableId,

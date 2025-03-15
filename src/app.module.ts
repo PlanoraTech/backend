@@ -1,5 +1,10 @@
 import { Module } from '@nestjs/common';
-import { RouterModule } from '@nestjs/core';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
+import { PrismaService } from './prisma/prisma.service';
+import { SecretService } from './auth/secret/secret.service';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AuthGuard } from './guards/auth.guard';
+import { PermissionsGuard } from './guards/permissions.guard';
 import { InstitutionsModule } from './endpoints/institutions/institutions.module';
 import { PresentatorsModule } from './endpoints/presentators/presentators.module';
 import { SubjectsModule } from './endpoints/subjects/subjects.module';
@@ -57,6 +62,39 @@ import { EventsModule } from './endpoints/events/events.module';
         ]
       }
     ]),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100
+      }
+    ]),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
+    },
+    SecretService,
+    PrismaService,
   ],
 })
 export class AppModule { }

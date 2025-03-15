@@ -6,7 +6,10 @@ import { SecretService } from '@app/auth/secret/secret.service';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly prisma: PrismaService) { }
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly secretService: SecretService,
+	) { }
 
 	async add(institutionId: string, userDto: UserDto): Promise<void> {
 		await this.prisma.usersToInstitutions.create({
@@ -51,7 +54,7 @@ export class UsersService {
 	}
 
 	async remove(institutionId: string, userDto: UserDto): Promise<void> {
-		let userId: string = await SecretService.getUserIdByEmail(userDto.email);
+		let userId: string = await this.secretService.getUserIdByEmail(userDto.email);
 		await this.prisma.usersToInstitutions.delete({
 			where: {
 				userId_institutionId: {

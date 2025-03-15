@@ -12,13 +12,26 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
+    "strict": true,
+    "alwaysStrict": true,
     "strictNullChecks": true,
-    "noImplicitAny": false,
+    "strictFunctionTypes": true,
+    "strictBuiltinIteratorReturn": true,
     "strictBindCallApply": true,
-    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
       "@app/*": ["src/*"],
-    }
+    },
+    
+    "exactOptionalPropertyTypes": false,
   }
 }
