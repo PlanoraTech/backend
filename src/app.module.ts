@@ -10,12 +10,13 @@ import { PresentatorsModule } from './endpoints/presentators/presentators.module
 import { SubjectsModule } from './endpoints/subjects/subjects.module';
 import { RoomsModule } from './endpoints/rooms/rooms.module';
 import { TimeTablesModule } from './endpoints/timetables/timetables.module';
+import { EventsModule } from './endpoints/events/events.module';
 import { AppointmentsModule } from './endpoints/appointments/appointments.module';
 import { UsersModule } from './endpoints/users/users.module';
-import { LoginModule } from './endpoints/login/login.module';
 import { RegisterModule } from './endpoints/register/register.module';
+import { LoginModule } from './endpoints/login/login.module';
+import { LogoutModule } from './endpoints/logout/logout.module';
 import { ProfileModule } from './endpoints/profile/profile.module';
-import { EventsModule } from './endpoints/events/events.module';
 
 @Module({
   imports: [
@@ -27,8 +28,9 @@ import { EventsModule } from './endpoints/events/events.module';
     EventsModule,
     AppointmentsModule,
     UsersModule,
-    LoginModule,
     RegisterModule,
+    LoginModule,
+    LogoutModule,
     ProfileModule,
     RouterModule.register([
       {
