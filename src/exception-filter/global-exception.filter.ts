@@ -1,6 +1,7 @@
 import { ArgumentsHost, BadRequestException, Catch, ConflictException, ExceptionFilter, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
+import { ThrottlerException } from '@nestjs/throttler';
 import { Response } from 'express';
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -28,13 +29,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 			}
 		}
 
-		if (typeof exception.getStatus !== 'function' || exception.response.message == undefined) {
+		if (!(exception instanceof ThrottlerException) && (typeof exception.getStatus !== 'function' || exception.response.message == undefined)) {
 			exception = new InternalServerErrorException;
 		}
 
 		response.status(exception.getStatus()).json({
 			statusCode: exception.getStatus(),
-			message: exception.response.message,
+			message: exception.response.message || exception.response,
 		});
 	}
 }
