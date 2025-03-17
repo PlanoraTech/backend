@@ -68,17 +68,17 @@ import { ProfileModule } from './endpoints/profile/profile.module';
       {
         name: 'short',
         ttl: 1000,
-        limit: 3,
+        limit: 50,
       },
       {
         name: 'medium',
         ttl: 10000,
-        limit: 20
+        limit: 100,
       },
       {
         name: 'long',
         ttl: 60000,
-        limit: 100
+        limit: 200,
       }
     ]),
   ],
