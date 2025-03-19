@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AccessType, Presentators, Roles } from '@prisma/client';
+import { AccessType, Permissions, Presentators, SpecialPermissions } from '@prisma/client';
 import { PresentatorsFromAppointmentsService, PresentatorsService } from './presentators.service';
 import { Access } from '@app/decorators/access.decorator';
-import { Permissions } from '@app/decorators/permissions.decorator';
+import { Permission } from '@app/decorators/permission.decorator';
+import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import { UpdateSubstitutionDto, UpdateSubstitutionsDto } from './dto/update-substitution.dto';
 
@@ -28,7 +29,8 @@ export class PresentatorsController {
 	}
 
 	@Patch(':substitutePresentatorId/substitute')
-	@Permissions([Roles.DIRECTOR, Roles.PRESENTATOR])
+	@Permission([Permissions.READ])
+	@SpecialPermission([SpecialPermissions.SUBSTITUTE])
 	substitution(@Param('institutionId') institutionId: string, @Param('substitutePresentatorId') id: string, @Body() substitutionDto: UpdateSubstitutionsDto): Promise<void> {
 		return this.presentatorsService.substitute(institutionId, id, substitutionDto);
 	}
@@ -80,7 +82,8 @@ export class PresentatorsFromAppointmentsController {
 	}
 
 	@Patch(':substitutePresentatorId/substitute')
-	@Permissions([Roles.DIRECTOR, Roles.PRESENTATOR])
+	@Permission([Permissions.READ])
+	@SpecialPermission([SpecialPermissions.SUBSTITUTE])
 	substitution(@Param('institutionId') institutionId: string, @Param('timetableId') timetableId: string, @Param('presentatorId') presentatorId: string, @Param('roomId') roomId: string, @Param('appointmentId') appointmentId: string, @Param('substitutePresentatorId') id: string, @Body() substitutionDto: UpdateSubstitutionDto): Promise<void> {
 		return this.presentatorsService.substitute(institutionId, {
 			timetableId: timetableId,

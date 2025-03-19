@@ -1,4 +1,4 @@
-import { Appointments, Events, Institutions, Presentators, Prisma, PrismaClient, Roles, Rooms, Subjects, TimeTables, Users } from '@prisma/client';
+import { Appointments, Events, Institutions, Permissions, Presentators, Prisma, PrismaClient, Roles, Rooms, SpecialPermissions, Subjects, TimeTables } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { select } from '@inquirer/prompts';
 import { readdirSync, readFileSync } from 'fs';
@@ -89,6 +89,7 @@ async function seed(): Promise<void> {
 			})
 			for (let i = 0; i < predefinedData.length; i++) {
 				await prisma.$transaction(async (tx) => {
+					await createRolesToPermissions(tx);
 					let institution: Institutions = await createInstitution(tx, {
 						id: '',
 						name: predefinedData[i].name,
@@ -200,15 +201,54 @@ async function seed(): Promise<void> {
 					console.log("\nAppointments created");
 					progress += 100 / numberOfItems.institutions;
 				},
-					{
-						maxWait: 300000,
-						timeout: 600000,
-					});
+				{
+					maxWait: 300000,
+					timeout: 600000,
+				});
 			}
 			break;
 		default:
 			process.exit(1);
 	}
+}
+
+async function createRolesToPermissions(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">): Promise<void> {
+	await prisma.rolesToPermissions.createMany({
+		data: [
+			{
+				role: Roles.USER,
+				permissions: [
+					Permissions.READ,
+				],
+			},
+			{
+				role: Roles.PRESENTATOR,
+				permissions: [
+					Permissions.READ,
+				],
+				specialPermissions: [
+					SpecialPermissions.SUBSTITUTE,
+					SpecialPermissions.CHANGE_ROOM,
+				]
+			},
+			{
+				role: Roles.DIRECTOR,
+				permissions: [
+					Permissions.READ,
+					Permissions.WRITE,
+				],
+				specialPermissions: Object.values(SpecialPermissions),
+			},
+		],
+	}).catch((e) => {
+		if (e instanceof PrismaClientKnownRequestError) {
+			switch(e.code) {
+				case 'P2002':
+					return;
+			}
+		}
+		throw e;
+	});
 }
 
 async function createInstitution(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institution: Institutions): Promise<Institutions> {
@@ -237,7 +277,7 @@ async function createInstitution(prisma: Omit<PrismaClient<Prisma.PrismaClientOp
 
 async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, presentators: { name: string }[]): Promise<Presentators[]> {
 	try {
-		let result: (void | Presentators)[] = await Promise.all(presentators.map(async (presentator, index) => {
+		let result: Presentators[] = await Promise.all(presentators.map(async (presentator: { name: string }, index) => {
 			return await prisma.presentators.create({
 				data: {
 					name: presentator.name,
@@ -256,7 +296,7 @@ async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientO
 				}
 				throw new Error("\nCannot create presentator. It may be due to a mistype. Error occurued at: " + index + "\nError: " + e);
 			});
-		}));
+		})) as Presentators[];
 		return result.filter((presentator: Presentators): presentator is Presentators => presentator !== undefined);
 	}
 	catch (e) {
@@ -266,7 +306,7 @@ async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientO
 
 async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, subjects: { name: string, subjectId: string }[]): Promise<Subjects[]> {
 	try {
-		let result: (void | Subjects)[] = await Promise.all(subjects.map(async (subject: Subjects, index) => {
+		let result: Subjects[] = await Promise.all(subjects.map(async (subject: { name: string, subjectId: string }, index) => {
 			return await prisma.subjects.create({
 				data: {
 					name: subject.name,
@@ -286,7 +326,7 @@ async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptio
 				}
 				throw new Error("\nCannot create subject. It may be due to a mistype. Error occurued at: " + index + "\nError: " + e);
 			});
-		}));
+		})) as Subjects[];
 		return result.filter((subject: Subjects): subject is Subjects => subject !== undefined);
 	}
 	catch (e) {
@@ -296,7 +336,7 @@ async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptio
 
 async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, rooms: { name: string }[]): Promise<Rooms[]> {
 	try {
-		let result: (void | Rooms)[] = await Promise.all(rooms.map(async (room, index) => {
+		let result: Rooms[] = await Promise.all(rooms.map(async (room: { name: string }, index) => {
 			return await prisma.rooms.create({
 				data: {
 					name: room.name,
@@ -315,7 +355,7 @@ async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions,
 				}
 				throw new Error("\nCannot create room. It may be due to a mistype. Error occurued at: " + index + "\nError: " + e);
 			});
-		}));
+		})) as Rooms[];
 		return result.filter((room: Rooms): room is Rooms => room !== undefined);
 	}
 	catch (e) {
@@ -325,7 +365,7 @@ async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions,
 
 async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, events: { title: string, date: Date }[]): Promise<Events[]> {
 	try {
-		let result: (void | Events)[] = await Promise.all(events.map(async (event, index) => {
+		let result: Events[] = await Promise.all(events.map(async (event: { title: string, date: Date }, index) => {
 			return await prisma.events.create({
 				data: {
 					title: event.title,
@@ -345,7 +385,7 @@ async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions
 				}
 				throw new Error("\nCannot create event. It may be due to a mistype. Error occurued at: " + index + "\nError: " + e);
 			});
-		}));
+		})) as Events[];
 		return result.filter((event: Events): event is Events => event !== undefined);
 	}
 	catch (e) {
@@ -355,7 +395,7 @@ async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions
 
 async function createTimeTables(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, timeTables: { name: string }[]): Promise<TimeTables[]> {
 	try {
-		let result: (void | TimeTables)[] = await Promise.all(timeTables.map(async (timeTable, index) => {
+		let result: TimeTables[] = await Promise.all(timeTables.map(async (timeTable: { name: string }, index) => {
 			return await prisma.timeTables.create({
 				data: {
 					name: timeTable.name,
@@ -374,7 +414,7 @@ async function createTimeTables(prisma: Omit<PrismaClient<Prisma.PrismaClientOpt
 				}
 				throw new Error("\nCannot create timetable. It may be due to a mistype. Error occurued at: " + index + "\nError: " + e);
 			});
-		}));
+		})) as TimeTables[];
 		return result.filter((timeTable: TimeTables): timeTable is TimeTables => timeTable !== undefined);
 	}
 	catch (e) {
