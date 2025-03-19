@@ -7,6 +7,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { InstitutionsModule } from './endpoints/institutions/institutions.module';
 import { PresentatorsModule } from './endpoints/presentators/presentators.module';
+import { SubstitutionsModule } from './endpoints/substitutions/substitutions.module';
 import { SubjectsModule } from './endpoints/subjects/subjects.module';
 import { RoomsModule } from './endpoints/rooms/rooms.module';
 import { TimeTablesModule } from './endpoints/timetables/timetables.module';
@@ -22,6 +23,7 @@ import { ProfileModule } from './endpoints/profile/profile.module';
   imports: [
     InstitutionsModule,
     PresentatorsModule,
+    SubstitutionsModule,
     SubjectsModule,
     RoomsModule,
     TimeTablesModule,
@@ -40,6 +42,12 @@ import { ProfileModule } from './endpoints/profile/profile.module';
           {
             path: ':institutionId',
             module: PresentatorsModule,
+            children: [
+              {
+                path: 'presentators/:substitutePresentatorId/substitutions',
+                module: SubstitutionsModule,
+              },
+            ]
           },
           {
             path: ':institutionId/subjects',

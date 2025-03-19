@@ -65,11 +65,19 @@ model Institutions {
 }
 
 model Presentators {
-    id           String                       @id @default(uuid())
-    name         String                       @unique
-    appointments PresentatorsToAppointments[]
-    institutions Institutions[]
-    user         UsersToInstitutions?
+    id            String                       @id @default(uuid())
+    name          String                       @unique
+    appointments  PresentatorsToAppointments[]
+    Substitutions Substitutions[]
+    institutions  Institutions[]
+    user          UsersToInstitutions?
+}
+
+model Substitutions {
+    id           String         @id @default(uuid())
+    from         DateTime
+    to           DateTime
+    presentators Presentators[]
 }
 
 model Subjects {
