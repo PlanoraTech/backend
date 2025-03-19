@@ -2,7 +2,6 @@ import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { AccessType, Institutions } from '@prisma/client';
 import { InstitutionsService } from './institutions.service';
 import { Access } from '@app/decorators/access.decorator';
-import { Permissions } from '@app/decorators/permissions.decorator';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 
 @Controller()
@@ -11,7 +10,6 @@ export class InstitutionsController {
 
 	@Get()
 	@Access(AccessType.PUBLIC)
-	@Permissions([])
 	findAll(): Promise<Institutions[]> {
 		return this.institutionsService.findAll();
 	}

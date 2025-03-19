@@ -31,6 +31,24 @@ enum Roles {
     DIRECTOR
 }
 
+enum Permissions {
+    READ
+    WRITE
+}
+
+enum SpecialPermissions {
+    SUBSTITUTE
+    CHANGE_ROOM
+}
+
+model RolesToPermissions {
+    role               Roles
+    permissions        Permissions[]
+    specialPermissions SpecialPermissions[]
+
+    @@unique([role, permissions])
+}
+
 model Institutions {
     id           String                @id @default(uuid())
     name         String                @unique
@@ -126,7 +144,7 @@ model UsersToInstitutions {
     presentator   Presentators? @relation(fields: [presentatorId], references: [id])
     presentatorId String?       @unique
 
-    @@id([userId, institutionId])
+    @@unique([userId, institutionId])
 }
 
 model Admins {

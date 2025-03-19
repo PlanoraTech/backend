@@ -1,8 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from 'express';
-import { AccessType, Roles } from "@prisma/client";
-import { Permissions } from "@app/decorators/permissions.decorator";
+import { AccessType, Permissions, Roles, RolesToPermissions, SpecialPermissions } from "@prisma/client";
+import { Permission } from "@app/decorators/permission.decorator";
+import { SpecialPermission } from "@app/decorators/specialPermission.decorator";
 import { User } from "@app/interfaces/User.interface";
 import { SecretService } from "@app/auth/secret/secret.service";
 
@@ -14,16 +15,44 @@ export class PermissionsGuard implements CanActivate {
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        let roles: Roles = this.reflector.get<Roles>(Permissions, context.getHandler());
-        if (Array.isArray(roles) && roles.length === 0) {
+        const request: (Request & { headers: { authorization: string }, user: User }) = context.switchToHttp().getRequest<(Request & { headers: { authorization: string }, user: User })>();
+        if (!request.params.institutionId) {
             return true;
         }
-        let request: (Request & { headers: { authorization: string }, user: User }) = context.switchToHttp().getRequest<(Request & { headers: { authorization: string }, user: User })>();
+        const permissions: Permissions[] = this.reflector.get<Permissions[]>(Permission, context.getHandler()) ?? [Permissions.READ, Permissions.WRITE];
+        const specialPermissions: SpecialPermissions[] = this.reflector.get<SpecialPermissions[]>(SpecialPermission, context.getHandler()) ?? [];
+
         if (request.user) {
-            if (roles && (roles.includes(Roles.PRESENTATOR) && request.params.substitutePresentatorId)) {
-                return (request.user.institutions.find((institution) => institution.institutionId === request.params.institutionId && (institution.role === Roles.PRESENTATOR && institution.presentatorId === request.params.substitutePresentatorId || institution.role === Roles.DIRECTOR)) != undefined) ? true : false;
+            const institutionConnectionToUser: {
+                institutionId: string;
+                role: Roles;
+                presentatorId: string | null;
+            } | undefined = request.user.institutions.find((institution) => institution.institutionId === request.params.institutionId);
+            
+            if (!institutionConnectionToUser) {
+                throw new ForbiddenException("You do not have access to this institution");
             }
-            return (request.user.institutions.find((institution) => institution.institutionId === request.params.institutionId && institution.role === Roles.DIRECTOR) != undefined) ? true : false;
+
+            const rolesToPermissions: RolesToPermissions[] = await this.secretService.getPermissionsForRoles();
+            const userPermissions: Permissions[] = rolesToPermissions.find((roleToPermissions) => roleToPermissions.role === institutionConnectionToUser.role)?.permissions ?? [];
+            const userSpecialPermissions: SpecialPermissions[] = rolesToPermissions.find((roleToPermissions) => roleToPermissions.role === institutionConnectionToUser.role)?.specialPermissions ?? [];
+            
+            if (!permissions.every((permission) => userPermissions.includes(permission))) {
+                throw new ForbiddenException("You do not have the required permissions");
+            }
+            
+            if (userSpecialPermissions.includes(SpecialPermissions.SUBSTITUTE)) {
+                if (institutionConnectionToUser.role == Roles.DIRECTOR || (institutionConnectionToUser.role == Roles.PRESENTATOR && institutionConnectionToUser.presentatorId == request.params.substitutePresentatorId)) {
+                    return true;
+                }
+                throw new ForbiddenException("You do not have the required permissions");
+            }
+            
+            if (!(specialPermissions.every((specialPermission) => userSpecialPermissions.includes(specialPermission)))) {
+                throw new ForbiddenException("You do not have the required permissions");
+            }
+
+            return true;
         }
 
         switch (request.method) {
@@ -32,11 +61,11 @@ export class PermissionsGuard implements CanActivate {
                     case AccessType.PUBLIC:
                         return true;
                     case AccessType.PRIVATE:
-                        let user: User = await this.secretService.seamlessAuth(this.secretService.extractTokenFromHeader(request.headers.authorization) ?? request.query.token as string);
+                        const user: User = await this.secretService.seamlessAuth(this.secretService.extractTokenFromHeader(request.headers.authorization));
                         return (user.institutions.find((institution) => institution.institutionId === request.params.institutionId) != undefined) ? true : false;
                 }
             default:
-                return false;
+                throw new ForbiddenException("You do not have access to this resource");
         }
     }
 }

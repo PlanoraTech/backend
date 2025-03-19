@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { AccessType } from '@prisma/client';
+import { AccessType, RolesToPermissions } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { User } from '@app/interfaces/User.interface';
@@ -23,15 +23,16 @@ export class SecretService {
     async comparePassword(givenPassword: string, hash: string): Promise<boolean> {
         return await compare(givenPassword, hash);
     }
-    extractTokenFromHeader(authorization: string): string | undefined {
-        let [type, token] = authorization.split(' ') ?? [];
-        return type === 'Bearer' ? token : undefined;
+    extractTokenFromHeader(authorization: string | undefined): string {
+        if (!authorization) throw new UnauthorizedException("No token provided");
+        const [type, token] = authorization.split(' ') ?? [];
+        if (token && type === 'Bearer') return token;
+        throw new UnauthorizedException("Invalid token");
     }
-    async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<{ token: string, expiry: Date }> {
+    async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<{ token: string }> {
         return await this.prisma.tokens.create({
             select: {
                 token: true,
-                expiry: true,
             },
             data: {
                 token: this.generateToken(),
@@ -51,28 +52,6 @@ export class SecretService {
             }
             throw e;
         });
-    }
-    async getActiveToken(userId: string): Promise<{ token: string, expiry: Date } | null> {
-        return await this.prisma.tokens.findFirstOrThrow({
-            select: {
-                token: true,
-                expiry: true,
-            },
-            where: {
-                userId: userId,
-                expiry: {
-                    gt: new Date(),
-                },
-            }
-        }).catch((e) => {
-            if (e instanceof PrismaClientKnownRequestError) {
-                switch (e.code) {
-                    case 'P2025':
-                        return null;
-                }
-            }
-            throw e;
-        })
     }
     async destroyToken(token: string): Promise<void> {
         await this.prisma.tokens.delete({
@@ -131,6 +110,16 @@ export class SecretService {
             id: query.user.id,
             institutions: query.user.institutions,
         }
+    }
+
+    async getPermissionsForRoles(): Promise<RolesToPermissions[]> {
+        return await this.prisma.rolesToPermissions.findMany({
+            select: {
+                role: true,
+                permissions: true,
+                specialPermissions: true,
+            }
+        });
     }
 
     async getUserIdByEmail(email: string): Promise<string> {

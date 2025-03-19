@@ -54,13 +54,12 @@ export class LoginService {
 			},
 		});
 		if (await this.secretService.comparePassword(password, user.password)) {
-			let token: { token: string; expiry: Date; } = (await this.secretService.getActiveToken(user.id)) ?? (await this.secretService.createToken(user.id, tokenExpiry));
+			let token: { token: string; } = await this.secretService.createToken(user.id, tokenExpiry);
 			return {
 				user: {
 					institutions: user.institutions,
 				},
 				token: token.token,
-				expiry: token.expiry,
 			};
 		}
 		throw new NotFoundException("Invalid email or password");

@@ -10,7 +10,7 @@ export class RegisterService {
 		private readonly secretService: SecretService,
 	) { }
 
-	async create(registerDto: RegisterDto, tokenExpiry?: TokenExpiry): Promise<{ token: string; expiry: Date; }> {
+	async create(registerDto: RegisterDto, tokenExpiry?: TokenExpiry): Promise<{ token: string; }> {
 		let user = await this.prisma.users.create({
 			select: {
 				id: true,
