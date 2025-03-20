@@ -15,10 +15,6 @@ const institutionsSelect = {
 export class InstitutionsService {
 	constructor(private readonly prisma: PrismaService) { }
 
-	/*
-	async create(createInstitutionDto: CreateInstitutionDto): Promise<void> {}
-	*/
-
 	async findAll(): Promise<Institutions[]> {
 		return await this.prisma.institutions.findMany({
 			select: {
@@ -53,8 +49,4 @@ export class InstitutionsService {
 			},
 		});
 	}
-
-	/*
-	async remove(id: string): Promise<void> {}
-	*/
 }

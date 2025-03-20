@@ -1,19 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@app/prisma/prisma.service';
+import { PushNotificationsService } from './push-notifications.service';
 import { HttpModule } from '@nestjs/axios';
-import { PushNotificationsService } from '@app/push-notifications/push-notifications.service';
-import { PresentatorsService } from './presentators.service';
 
-describe('PresentatorsService', () => {
-  let service: PresentatorsService;
+describe('PushNotificationsService', () => {
+  let service: PushNotificationsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule],
-      providers: [PresentatorsService, PushNotificationsService, PrismaService],
+      providers: [PushNotificationsService, PrismaService],
     }).compile();
 
-    service = module.get<PresentatorsService>(PresentatorsService);
+    service = module.get<PushNotificationsService>(PushNotificationsService);
   });
 
   it('should be defined', () => {

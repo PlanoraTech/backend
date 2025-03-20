@@ -18,6 +18,7 @@ import { RegisterModule } from './endpoints/register/register.module';
 import { LoginModule } from './endpoints/login/login.module';
 import { LogoutModule } from './endpoints/logout/logout.module';
 import { ProfileModule } from './endpoints/profile/profile.module';
+import { NotificationsModule } from './endpoints/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ProfileModule } from './endpoints/profile/profile.module';
     LoginModule,
     LogoutModule,
     ProfileModule,
+    NotificationsModule,
     RouterModule.register([
       {
         path: 'institutions',
