@@ -457,6 +457,11 @@ export class PresentatorsFromAppointmentsService {
 						},
 					},
 				},
+			}).catch((e) => {
+				if (e instanceof PrismaClientKnownRequestError) {
+					if (e.code === 'P2025') return;
+				}
+				throw e;
 			});
 			const presentator: { name: string } = await this.prisma.presentators.findUniqueOrThrow({
 				select: {
@@ -468,7 +473,7 @@ export class PresentatorsFromAppointmentsService {
 			});
 			await this.pushNotificationsService.sendNotificationToPushServer(await this.pushNotificationsService.getPushNotificationTokens(), {
 				title: "Substitution",
-				body: `${presentator.name} has been substituted for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start} - ${appointment.appointment.end}`,
+				body: `${presentator.name} has been substituted for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start.toLocaleDateString()} ${appointment.appointment.start.toLocaleTimeString()} - ${appointment.appointment.end.toLocaleTimeString()}`,
 			});
 		});
 	}
