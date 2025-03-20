@@ -1,5 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
+import { PushNotificationsService } from '@app/push-notifications/push-notifications.service';
 import { Presentators, Roles } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
@@ -12,7 +13,10 @@ const presentatorsSelect = {
 
 @Injectable()
 export class PresentatorsService {
-	constructor(private readonly prisma: PrismaService) { }
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly pushNotificationsService: PushNotificationsService,
+	) { }
 
 	async create(institutionId: string, createPresentatorDto: CreatePresentatorDto): Promise<void> {
 		await this.prisma.$transaction(async (prisma) => {
@@ -97,7 +101,10 @@ export class PresentatorsService {
 
 	async substitute(institutionId: string, id: string, substitutionDto: UpdateSubstitutionsDto): Promise<void> {
 		await this.prisma.$transaction(async (prisma) => {
-			let appointments = await prisma.appointments.findMany({
+			const appointments: { id: string }[] = await prisma.appointments.findMany({
+				select: {
+					id: true,
+				},
 				where: {
 					start: {
 						gte: new Date(substitutionDto.from),
@@ -139,6 +146,51 @@ export class PresentatorsService {
 					},
 				},
 			});
+			await prisma.substitutions.create({
+				data: {
+					from: new Date(substitutionDto.from),
+					to: new Date(substitutionDto.to),
+					presentators: {
+						connect: {
+							id: id
+						}
+					}
+				}
+			})
+			await prisma.appointments.updateMany({
+				data: {
+					isCancelled: true,
+				},
+				where: {
+					id: {
+						in: appointments.map(appointment => appointment.id),
+					},
+					presentators: {
+						every: {
+							presentator: {
+								institutions: {
+									some: {
+										id: institutionId,
+									},
+								},
+							},
+							isSubstituted: true,
+						},
+					}
+				},
+			});
+		});
+		const presentator: { name: string } = await this.prisma.presentators.findUniqueOrThrow({
+			select: {
+				name: true,
+			},
+			where: {
+				id: id,
+			},
+		});
+		await this.pushNotificationsService.sendNotificationToPushServer(await this.pushNotificationsService.getPushNotificationTokens(), {
+			title: "Substitution",
+			body: `${presentator.name} has been substituted between ${substitutionDto.from} and ${substitutionDto.to}`,
 		});
 	}
 
@@ -201,7 +253,10 @@ export class PresentatorsService {
 
 @Injectable()
 export class PresentatorsFromAppointmentsService {
-	constructor(private readonly prisma: PrismaService) { }
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly pushNotificationsService: PushNotificationsService,
+	) { }
 
 	async add(institutionId: string, dataService: AppointmentsDataService, presentatorId: string): Promise<void> {
 		await this.prisma.appointments.update({
@@ -331,43 +386,90 @@ export class PresentatorsFromAppointmentsService {
 	}
 
 	async substitute(institutionId: string, dataService: AppointmentsDataService, presentatorId: string, substitutionDto: UpdateSubstitutionDto): Promise<void> {
-		await this.prisma.presentatorsToAppointments.update({
-			data: {
-				isSubstituted: substitutionDto.isSubstituted,
-			},
-			where: {
-				presentatorId_appointmentId: {
-					presentatorId: presentatorId,
-					appointmentId: dataService.appointmentId,
+		await this.prisma.$transaction(async (prisma) => {
+			const appointment: { appointment: { start: Date, end: Date, subject: { name: string } } } = await prisma.presentatorsToAppointments.update({
+				select: {
+					appointment: {
+						select: {
+							start: true,
+							end: true,
+							subject: {
+								select: {
+									name: true,
+								},
+							},
+						},
+					},
 				},
-				appointment: {
+				data: {
+					isSubstituted: substitutionDto.isSubstituted,
+				},
+				where: {
+					presentatorId_appointmentId: {
+						presentatorId: presentatorId,
+						appointmentId: dataService.appointmentId,
+					},
+					appointment: {
+						id: dataService.appointmentId,
+						timetables: {
+							some: {
+								id: dataService.timetableId,
+								institutionId: institutionId,
+							},
+						},
+						rooms: {
+							some: {
+								id: dataService.roomId,
+								institutionId: institutionId,
+							},
+						},
+						presentators: {
+							some: {
+								presentator: {
+									id: dataService.presentatorId,
+									institutions: {
+										some: {
+											id: institutionId,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			});
+			await prisma.appointments.update({
+				data: {
+					isCancelled: true,
+				},
+				where: {
 					id: dataService.appointmentId,
-					timetables: {
-						some: {
-							id: dataService.timetableId,
-							institutionId: institutionId,
-						},
-					},
-					rooms: {
-						some: {
-							id: dataService.roomId,
-							institutionId: institutionId,
-						},
-					},
 					presentators: {
-						some: {
+						every: {
 							presentator: {
-								id: dataService.presentatorId,
 								institutions: {
 									some: {
 										id: institutionId,
 									},
 								},
 							},
+							isSubstituted: true,
 						},
 					},
-				}
-			}
+				},
+			});
+			const presentator: { name: string } = await this.prisma.presentators.findUniqueOrThrow({
+				select: {
+					name: true,
+				},
+				where: {
+					id: presentatorId,
+				},
+			});
+			await this.pushNotificationsService.sendNotificationToPushServer(await this.pushNotificationsService.getPushNotificationTokens(), {
+				title: "Substitution",
+				body: `${presentator.name} has been substituted for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start} - ${appointment.appointment.end}`,
+			});
 		});
 	}
 

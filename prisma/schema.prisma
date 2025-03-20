@@ -136,11 +136,12 @@ model PresentatorsToAppointments {
 }
 
 model Users {
-    id           String                @id @default(uuid())
-    email        String                @unique
-    password     String
-    institutions UsersToInstitutions[]
-    tokens       Tokens[]
+    id                  String                @id @default(uuid())
+    email               String                @unique
+    password            String
+    institutions        UsersToInstitutions[]
+    tokens              Tokens[]
+    notificationsTokens NotificationTokens[]
 }
 
 model UsersToInstitutions {
@@ -167,4 +168,11 @@ model Tokens {
     expiry DateTime @default(now())
     user   Users    @relation(fields: [userId], references: [id])
     userId String
+}
+
+model NotificationTokens {
+    id          String   @id @default(uuid())
+    token       String   @unique
+    user        Users    @relation(fields: [userId], references: [id])
+    userId      String
 }
