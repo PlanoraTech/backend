@@ -473,7 +473,7 @@ export class PresentatorsFromAppointmentsService {
 			});
 			await this.pushNotificationsService.sendNotificationToPushServer(await this.pushNotificationsService.getPushNotificationTokens(), {
 				title: "Substitution",
-				body: `${presentator.name} has been substituted for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start.toLocaleDateString()} ${appointment.appointment.start.toLocaleTimeString()} - ${appointment.appointment.end.toLocaleTimeString()}`,
+				body: (substitutionDto.isSubstituted) ? `${presentator.name} has been substituted for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start.toLocaleDateString()} ${appointment.appointment.start.toLocaleTimeString()} - ${appointment.appointment.end.toLocaleTimeString()}` : `Substitution for ${presentator.name} has been cancelled for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start.toLocaleDateString()} ${appointment.appointment.start.toLocaleTimeString()} - ${appointment.appointment.end.toLocaleTimeString()}`,
 			});
 		});
 	}
