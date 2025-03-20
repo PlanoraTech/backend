@@ -13,7 +13,7 @@ export class PushNotificationsService {
 
     async sendNotificationToPushServer(tokens: { token: string }[], notification: Notification) {
         return await firstValueFrom(this.httpService.post("https://exp.host/--/api/v2/push/send", {
-            to: tokens.map((token) => `ExponentPushToken[${token}]`),
+            to: tokens.map((token) => `ExponentPushToken[${token.token}]`),
             title: notification.title,
             body: notification.body,
         }));
