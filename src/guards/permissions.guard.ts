@@ -19,7 +19,7 @@ export class PermissionsGuard implements CanActivate {
         if (!request.params.institutionId) {
             return true;
         }
-        const permissions: Permissions[] = this.reflector.get<Permissions[]>(Permission, context.getHandler()) ?? [Permissions.READ, Permissions.WRITE];
+        const permissions: Permissions[] = this.reflector.get<Permissions[]>(Permission, context.getHandler()) ?? Object.values(Permissions);
         const specialPermissions: SpecialPermissions[] = this.reflector.get<SpecialPermissions[]>(SpecialPermission, context.getHandler()) ?? [];
 
         if (request.user) {
@@ -41,18 +41,18 @@ export class PermissionsGuard implements CanActivate {
                 throw new ForbiddenException("You do not have the required permissions");
             }
             
-            if (userSpecialPermissions.includes(SpecialPermissions.SUBSTITUTE)) {
+            if (specialPermissions.includes(SpecialPermissions.SUBSTITUTE) && userSpecialPermissions.includes(SpecialPermissions.SUBSTITUTE)) {
                 if (institutionConnectionToUser.role == Roles.DIRECTOR || (institutionConnectionToUser.role == Roles.PRESENTATOR && institutionConnectionToUser.presentatorId == request.params.substitutePresentatorId)) {
                     return true;
                 }
                 throw new ForbiddenException("You do not have the required permissions");
             }
             
-            if (!(specialPermissions.every((specialPermission) => userSpecialPermissions.includes(specialPermission)))) {
-                throw new ForbiddenException("You do not have the required permissions");
+            if (specialPermissions.every((specialPermission) => userSpecialPermissions.includes(specialPermission))) {
+                return true;
             }
 
-            return true;
+            throw new ForbiddenException("You do not have the required permissions");
         }
 
         switch (request.method) {
