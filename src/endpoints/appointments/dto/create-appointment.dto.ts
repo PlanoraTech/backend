@@ -1,17 +1,17 @@
-import { Type } from "class-transformer";
 import { IsBoolean, IsDate, IsString, MinDate, Validate } from "class-validator";
-import { IsBeforeConstraint } from "@app/validators/IsBefore.validator";
+import { Type } from "class-transformer";
+import { IsAfterOrEqual } from "@app/validators/isAfterOrEqual.validator";
 
 export class CreateAppointmentDto {
     @Type(() => Date)
     @IsDate()
     @MinDate(new Date())
-    @Validate(IsBeforeConstraint, ['end'])
     start: Date;
-
+    
     @Type(() => Date)
     @IsDate()
     @MinDate(new Date())
+    @Validate(IsAfterOrEqual, ['start'])
     end: Date;
 
     @IsBoolean()
