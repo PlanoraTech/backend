@@ -4,18 +4,11 @@ export class LoginDto {
     @IsString()
     @IsEmail()
     @IsNotEmpty()
-    @IsOptional()
-    email?: string;
+    email: string;
 
     @IsString()
     @IsNotEmpty()
-    @IsOptional()
-    password?: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @IsOptional()
-    token?: string;
+    password: string;
 
     @IsBoolean()
     @IsOptional()
