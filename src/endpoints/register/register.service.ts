@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
-import { SecretService, TokenExpiry } from '@app/auth/secret/secret.service';
+import { SecretService } from '@app/auth/secret/secret.service';
 
 @Injectable()
 export class RegisterService {
@@ -10,7 +10,7 @@ export class RegisterService {
 		private readonly secretService: SecretService,
 	) { }
 
-	async create(registerDto: RegisterDto, tokenExpiry?: TokenExpiry): Promise<{ token: string; }> {
+	async create(registerDto: RegisterDto): Promise<{ token: string; }> {
 		let user = await this.prisma.users.create({
 			select: {
 				id: true,
@@ -22,6 +22,6 @@ export class RegisterService {
 		}).catch(() => {
 			throw new ConflictException('User already exists')
 		});
-		return await this.secretService.createToken(user.id, tokenExpiry);
+		return await this.secretService.createToken(user.id);
 	}
 }

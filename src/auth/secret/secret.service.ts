@@ -29,14 +29,14 @@ export class SecretService {
         if (token && type === 'Bearer') return token;
         throw new UnauthorizedException("Invalid token");
     }
-    async createToken(userId: string, tokenExpiry: TokenExpiry = TokenExpiry.DAY): Promise<{ token: string }> {
+    async createToken(userId: string, rememberMe: boolean = false): Promise<{ token: string }> {
         return await this.prisma.tokens.create({
             select: {
                 token: true,
             },
             data: {
                 token: this.generateToken(),
-                expiry: new Date(Date.now() + tokenExpiry),
+                expiry: new Date(Date.now() + ((rememberMe) ? TokenExpiry.MONTH : TokenExpiry.DAY)),
                 user: {
                     connect: {
                         id: userId,
@@ -47,7 +47,7 @@ export class SecretService {
             if (e instanceof PrismaClientKnownRequestError) {
                 switch (e.code) {
                     case "P2002":
-                        return this.createToken(userId, tokenExpiry);
+                        return this.createToken(userId);
                 }
             }
             throw e;

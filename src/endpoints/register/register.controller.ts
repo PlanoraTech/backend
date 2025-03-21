@@ -1,7 +1,6 @@
-import { Controller, Post, Body, Query } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { RegisterService } from './register.service';
 import { RegisterDto } from './dto/register.dto';
-import { TokenExpiry } from '@app/auth/secret/secret.service';
 import { Access } from '@app/decorators/access.decorator';
 import { AccessType } from '@prisma/client';
 
@@ -11,7 +10,7 @@ export class RegisterController {
 
   @Post()
   @Access(AccessType.PUBLIC)
-  create(@Body() registerDto: RegisterDto, @Query('expiry') expiry?: string): Promise<{ token: string; }> {
-    return this.registerService.create(registerDto, TokenExpiry[expiry as keyof typeof TokenExpiry]);
+  create(@Body() registerDto: RegisterDto): Promise<{ token: string; }> {
+    return this.registerService.create(registerDto);
   }
 }

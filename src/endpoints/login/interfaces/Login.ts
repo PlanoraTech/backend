@@ -1,11 +1,6 @@
-import { Tokens } from "@prisma/client";
+import { User } from "@app/interfaces/User.interface";
 
-export interface Login extends Partial<Tokens> {
-    user: {
-        institutions: {
-            institutionId: string,
-            role: string,
-            presentatorId: string | null,
-        }[],
-    } | null,
+export interface Login {
+    user: Partial<User>,
+    token: string,
 }
