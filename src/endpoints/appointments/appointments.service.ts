@@ -184,8 +184,8 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
 	async create(institutionId: string, createAppointmentDto: CreateAppointmentDto): Promise<void> {
 		await this.prisma.appointments.create({
 			data: {
-				start: createAppointmentDto.start,
-				end: createAppointmentDto.end,
+				start: new Date(createAppointmentDto.start),
+				end: new Date(createAppointmentDto.end),
 				isCancelled: createAppointmentDto.isCancelled,
 				subject: {
 					connect: {
@@ -203,8 +203,8 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
 				id: true,
 			},
 			data: {
-				start: updateAppointmentDto.start,
-				end: updateAppointmentDto.end,
+				start: (updateAppointmentDto.start) ? new Date(updateAppointmentDto.start) : undefined,
+				end: (updateAppointmentDto.end) ? new Date(updateAppointmentDto.end) : undefined,
 				isCancelled: updateAppointmentDto.isCancelled,
 				subject: (updateAppointmentDto.subjectId) ? {
 					connect: {

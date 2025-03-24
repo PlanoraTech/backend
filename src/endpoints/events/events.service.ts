@@ -40,7 +40,10 @@ export class EventsService {
 				id: id,
 				institutionId: institutionId,
 			},
-			data: updateEventDto,
+			data: {
+				title: updateEventDto.title,
+				date: (updateEventDto.date) ? new Date(updateEventDto.date) : undefined,
+			},
 		});
 	}
 
