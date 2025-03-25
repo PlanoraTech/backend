@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { Users } from '@prisma/client';
 import { UserDto } from './dto/user.dto';
-import { SecretService } from '@app/auth/secret/secret.service';
 
 @Injectable()
 export class UsersService {
-	constructor(
-		private readonly prisma: PrismaService,
-		private readonly secretService: SecretService,
-	) { }
+	constructor(private readonly prisma: PrismaService) { }
 
 	async add(institutionId: string, userDto: UserDto): Promise<void> {
 		await this.prisma.usersToInstitutions.create({
@@ -53,12 +49,11 @@ export class UsersService {
 		})
 	}
 
-	async remove(institutionId: string, userDto: UserDto): Promise<void> {
-		let userId: string = await this.secretService.getUserIdByEmail(userDto.email);
+	async remove(institutionId: string, id: string): Promise<void> {
 		await this.prisma.usersToInstitutions.delete({
 			where: {
 				userId_institutionId: {
-					userId: userId,
+					userId: id,
 					institutionId: institutionId,
 				},
 				institution: {

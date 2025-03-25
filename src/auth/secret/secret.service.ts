@@ -76,7 +76,7 @@ export class SecretService {
         });
     }
     async seamlessAuth(token: string): Promise<User> {
-        let query: { user: User } = await this.prisma.tokens.findUniqueOrThrow({
+        const query: { user: User } = await this.prisma.tokens.findUniqueOrThrow({
             select: {
                 user: {
                     select: {
@@ -122,25 +122,15 @@ export class SecretService {
         });
     }
 
-    async getUserIdByEmail(email: string): Promise<string> {
-        return (await this.prisma.users.findUniqueOrThrow({
-            select: {
-                id: true,
-            },
-            where: {
-                email: email,
-            }
-        })).id;
-    }
-
     async getInstitutionAccessById(id: string): Promise<AccessType> {
-        return (await this.prisma.institutions.findUniqueOrThrow({
+        const query: { access: AccessType } = await this.prisma.institutions.findUniqueOrThrow({
             select: {
                 access: true,
             },
             where: {
                 id,
             },
-        })).access;
+        });
+        return query.access;
     }
 }
