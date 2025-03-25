@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { AccessType, RolesToPermissions } from '@prisma/client';
-import { compare, hash } from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { compare, hash } from 'bcrypt';
 import { User } from '@app/interfaces/User.interface';
 
 export enum TokenExpiry {
@@ -51,28 +51,6 @@ export class SecretService {
                 }
             }
             throw e;
-        });
-    }
-    async destroyToken(token: string): Promise<void> {
-        await this.prisma.tokens.delete({
-            where: {
-                token: token,
-            }
-        }).catch((e) => {
-            if (e instanceof PrismaClientKnownRequestError) {
-                switch (e.code) {
-                    case 'P2025':
-                        throw new UnauthorizedException("Invalid token");
-                }
-            }
-            throw e;
-        });
-    }
-    async destroyAllTokens(userId: string): Promise<void> {
-        await this.prisma.tokens.deleteMany({
-            where: {
-                userId: userId,
-            }
         });
     }
     async seamlessAuth(token: string): Promise<User> {
