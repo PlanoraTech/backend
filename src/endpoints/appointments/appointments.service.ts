@@ -81,7 +81,7 @@ export class AppointmentsService {
 	constructor(protected readonly prisma: PrismaService) { }
 
 	async findAll(institutionId: string, dataService: DataService): Promise<ExtendedAppointmentsWithPresentators[]> {
-		let appointments: ExtendedAppointmentsWithPrismaPresentators[] = await this.prisma.appointments.findMany({
+		const appointments: ExtendedAppointmentsWithPrismaPresentators[] = await this.prisma.appointments.findMany({
 			select: {
 				id: true,
 				...appointmentsSelect,
@@ -132,7 +132,7 @@ export class AppointmentsService {
 	};
 
 	async findOne(institutionId: string, dataService: DataService, id: string): Promise<ExtendedAppointmentsWithPresentators> {
-		let appointment: ExtendedAppointmentsWithPrismaPresentators = await this.prisma.appointments.findUniqueOrThrow({
+		const appointment: ExtendedAppointmentsWithPrismaPresentators = await this.prisma.appointments.findUniqueOrThrow({
 			select: {
 				id: true,
 				...appointmentsSelect,

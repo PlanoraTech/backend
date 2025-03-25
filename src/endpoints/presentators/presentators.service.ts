@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { PushNotificationsService } from '@app/push-notifications/push-notifications.service';
 import { Presentators, Roles } from '@prisma/client';
@@ -31,7 +31,10 @@ export class PresentatorsService {
 				},
 			}).catch((e) => {
 				if (e instanceof PrismaClientKnownRequestError) {
-					if (e.code === 'P2002') return;
+					switch (e.code) {
+						case 'P2002':
+							return;
+					}
 				}
 				throw e;
 			});
@@ -57,8 +60,12 @@ export class PresentatorsService {
 					},
 				}).catch((e) => {
 					if (e instanceof PrismaClientKnownRequestError) {
-						if (e.code === 'P2002') throw new ConflictException('The given email is already assigned to a presentator');
-						if (e.code === 'P2025') throw new NotFoundException('The given email is not assigned to an account');
+						switch (e.code) {
+							case 'P2002':
+								throw new ConflictException('The given email is already assigned to a presentator');
+							case 'P2025':
+								throw new NotFoundException('The given email is not assigned to an account');
+						}
 					}
 					throw e;
 				});
@@ -146,17 +153,6 @@ export class PresentatorsService {
 					},
 				},
 			});
-			await prisma.substitutions.create({
-				data: {
-					from: new Date(substitutionDto.from),
-					to: new Date(substitutionDto.to),
-					presentators: {
-						connect: {
-							id: id
-						}
-					}
-				}
-			})
 			await prisma.appointments.updateMany({
 				data: {
 					isCancelled: true,
@@ -176,7 +172,7 @@ export class PresentatorsService {
 							},
 							isSubstituted: true,
 						},
-					}
+					},
 				},
 			});
 		});
@@ -195,42 +191,13 @@ export class PresentatorsService {
 	}
 
 	async remove(institutionId: string, id: string): Promise<void> {
-		await this.prisma.presentators.update({
-			select: {
-				id: true,
-			},
-			data: {
-				institutions: {
-					disconnect: {
-						id: institutionId,
-					},
-				},
-			},
-			where: {
-				id: id,
-				institutions: {
-					some: {
-						id: institutionId,
-					},
-				},
-			},
-		});
 		await this.prisma.usersToInstitutions.delete({
 			where: {
 				presentatorId: id,
-				user: {
-					institutions: {
-						some: {
-							institutionId: institutionId,
-						},
-					},
+				institution: {
+					id: institutionId,
 				},
 			},
-		}).catch((e) => {
-			if (e instanceof PrismaClientKnownRequestError) {
-				if (e.code === 'P2025') return;
-			}
-			throw e;
 		});
 		await this.prisma.presentators.delete({
 			select: {
@@ -239,12 +206,15 @@ export class PresentatorsService {
 			where: {
 				id: id,
 				institutions: {
-					none: {}
+					none: {},
 				},
 			},
 		}).catch((e) => {
 			if (e instanceof PrismaClientKnownRequestError) {
-				if (e.code === 'P2025') return;
+				switch (e.code) {
+					case 'P2025':
+						return;
+				}
 			}
 			throw e;
 		});
@@ -437,6 +407,14 @@ export class PresentatorsFromAppointmentsService {
 						},
 					},
 				},
+			}).catch((e) => {
+				if (e instanceof PrismaClientKnownRequestError) {
+					switch (e.code) {
+						case 'P2025':
+							throw new ForbiddenException('The presentator is not assigned to the appointment');
+					}
+				}
+				throw e;
 			});
 			await prisma.appointments.update({
 				data: {
@@ -459,7 +437,10 @@ export class PresentatorsFromAppointmentsService {
 				},
 			}).catch((e) => {
 				if (e instanceof PrismaClientKnownRequestError) {
-					if (e.code === 'P2025') return;
+					switch (e.code) {
+						case 'P2025':
+							return;
+					}
 				}
 				throw e;
 			});

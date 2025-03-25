@@ -1,22 +1,25 @@
-import { IsBoolean, IsDate, IsString, MinDate, Validate } from "class-validator";
-import { Type } from "class-transformer";
+import { IsBoolean, IsDate, IsNotEmpty, IsString, MinDate, Validate } from "class-validator";
+import { Transform } from "class-transformer";
 import { IsAfterOrEqual } from "@app/validators/isAfterOrEqual.validator";
 
 export class CreateAppointmentDto {
-    @Type(() => Date)
+    @IsNotEmpty()
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @MinDate(new Date())
     start: Date;
     
-    @Type(() => Date)
+    @IsNotEmpty()
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @MinDate(new Date())
     @Validate(IsAfterOrEqual, ['start'])
     end: Date;
-
+    
     @IsBoolean()
     isCancelled: boolean;
-
+    
+    @IsNotEmpty()
     @IsString()
     subjectId: string;
 }

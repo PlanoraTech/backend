@@ -13,7 +13,7 @@ export class LoginService {
 	) { }
 
 	async loginByEmailAndPassword(loginDto: LoginDto): Promise<Login> {
-		let user: (User & { password: string }) = await this.prisma.users.findUniqueOrThrow({
+		const user: (User & { password: string }) = await this.prisma.users.findUniqueOrThrow({
 			select: {
 				id: true,
 				password: true,
@@ -30,12 +30,11 @@ export class LoginService {
 			},
 		});
 		if (await this.secretService.comparePassword(loginDto.password, user.password)) {
-			let token: { token: string; } = await this.secretService.createToken(user.id, loginDto.rememberMe);
 			return {
 				user: {
 					institutions: user.institutions,
 				},
-				token: token.token,
+				...await this.secretService.createToken(user.id, loginDto.rememberMe)
 			};
 		}
 		throw new NotFoundException("Invalid email or password");

@@ -83,53 +83,53 @@ async function seed(): Promise<void> {
 	switch (answer) {
 		case 'predefined':
 			interval = setInterval(getProgress, 100)
-			const files = readdirSync(folderPath);
+			const files: string[] = readdirSync(folderPath);
 			const predefinedData: ExtendedInstitutions[] = files.map((file) => {
 				return JSON.parse(readFileSync(`${folderPath}/${file}`, 'utf8'));
 			})
 			for (let i = 0; i < predefinedData.length; i++) {
 				await prisma.$transaction(async (tx) => {
 					await createRolesToPermissions(tx);
-					let institution: Institutions = await createInstitution(tx, {
+					const institution: Institutions = await createInstitution(tx, {
 						id: '',
-						name: predefinedData[i].name,
-						type: predefinedData[i].type,
-						access: predefinedData[i].access,
-						color: predefinedData[i].color,
-						website: predefinedData[i].website,
+						name: predefinedData[i]!.name,
+						type: predefinedData[i]!.type,
+						access: predefinedData[i]!.access,
+						color: predefinedData[i]!.color,
+						website: predefinedData[i]!.website,
 					});
-					await createEvents(tx, institution.id, predefinedData[i].events);
+					await createEvents(tx, institution.id, predefinedData[i]!.events);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nEvents created");
-					let presentators: Presentators[] = await createPresentators(tx, institution.id, predefinedData[i].presentators);
+					const presentators: Presentators[] = await createPresentators(tx, institution.id, predefinedData[i]!.presentators);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nPresentators created");
-					let subjects: Subjects[] = await createSubjects(tx, institution.id, predefinedData[i].subjects);
+					const subjects: Subjects[] = await createSubjects(tx, institution.id, predefinedData[i]!.subjects);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nSubjects created");
-					let rooms: Rooms[] = await createRooms(tx, institution.id, predefinedData[i].rooms);
+					const rooms: Rooms[] = await createRooms(tx, institution.id, predefinedData[i]!.rooms);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nRooms created");
-					let timetables: TimeTables[] = await createTimeTables(tx, institution.id, predefinedData[i].timetables);
+					const timetables: TimeTables[] = await createTimeTables(tx, institution.id, predefinedData[i]!.timetables);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nTimetables created");
-					let appointments: ExtendedAppointments[] = new Array<ExtendedAppointments>();
-					for (let j = 0; j < predefinedData[i].appointments.length; j++) {
-						let connectedSubject: Subjects | undefined = subjects.find((subject) => subject.subjectId === predefinedData[i].appointments[j].subject.subjectId);
+					const appointments: ExtendedAppointments[] = new Array<ExtendedAppointments>();
+					for (let j = 0; j < predefinedData[i]!.appointments.length; j++) {
+						const connectedSubject: Subjects | undefined = subjects.find((subject) => subject.subjectId === predefinedData[i]!.appointments[j]!.subject.subjectId);
 						if (connectedSubject) {
-							if (predefinedData[i].appointments[j].recurringTill) {
-								let start: Date = new Date(predefinedData[i].appointments[j].start);
-								let end: Date = new Date(predefinedData[i].appointments[j].end);
-								let recurringTill: Date = new Date(predefinedData[i].appointments[j].recurringTill ?? start);
+							if (predefinedData[i]!.appointments[j]!.recurringTill) {
+								let start: Date = new Date(predefinedData[i]!.appointments[j]!.start);
+								let end: Date = new Date(predefinedData[i]!.appointments[j]!.end);
+								let recurringTill: Date = new Date(predefinedData[i]!.appointments[j]!.recurringTill ?? start);
 								while (start <= recurringTill) {
 									appointments.push({
 										start: start,
 										end: end,
-										isCancelled: predefinedData[i].appointments[j].isCancelled,
-										presentators: predefinedData[i].appointments[j].presentators.map((presentator) => presentators.find((p) => p.name === presentator?.name)),
+										isCancelled: predefinedData[i]!.appointments[j]!.isCancelled,
+										presentators: predefinedData[i]!.appointments[j]!.presentators.map((presentator) => presentators.find((p) => p.name === presentator?.name)),
 										subject: connectedSubject,
-										rooms: predefinedData[i].appointments[j].rooms.map((room) => rooms.find((r) => r.name === room?.name)),
-										timetables: predefinedData[i].appointments[j].timetables.map((timetable) => timetables.find((t) => t.name === timetable?.name)),
+										rooms: predefinedData[i]!.appointments[j]!.rooms.map((room) => rooms.find((r) => r.name === room?.name)),
+										timetables: predefinedData[i]!.appointments[j]!.timetables.map((timetable) => timetables.find((t) => t.name === timetable?.name)),
 										id: '',
 										subjectId: ''
 									});
@@ -145,7 +145,7 @@ async function seed(): Promise<void> {
 					await createAppointments(tx, institution.id, appointments);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nAppointments created");
-					await createUsersForPresentators(tx, institution.id, predefinedData[i].users);
+					await createUsersForPresentators(tx, institution.id, predefinedData[i]!.users);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nUsers created");
 				},
@@ -157,33 +157,33 @@ async function seed(): Promise<void> {
 			break;
 		case 'random':
 			interval = setInterval(getProgress, 100)
-			for (let a = 0; a < numberOfItems.institutions; a++) {
+			for (let i = 0; i < numberOfItems.institutions; i++) {
 				await prisma.$transaction(async (tx) => {
-					let institution: Institutions = await createInstitution(tx, {
+					const institution: Institutions = await createInstitution(tx, {
 						id: '',
 						name: faker.company.name(),
-						type: faker.helpers.arrayElements(["SCHOOL", "UNIVERSITY", "COMPANY"], 1)[0],
-						access: faker.helpers.arrayElements(["PUBLIC", "PRIVATE"], 1)[0],
+						type: faker.helpers.arrayElements(["SCHOOL", "UNIVERSITY", "COMPANY"], 1)[0]!,
+						access: faker.helpers.arrayElements(["PUBLIC", "PRIVATE"], 1)[0]!,
 						color: faker.internet.color(),
 						website: faker.internet.url(),
 					});
 					await createEvents(tx, institution.id, Array.from({ length: numberOfItems.events }, () => ({ title: faker.lorem.word(), date: faker.date.future() })));
 					console.log("\nEvents created");
-					let presentators: Presentators[] = await createPresentators(tx, institution.id, Array.from({ length: numberOfItems.presentators }, () => ({ name: faker.person.fullName() })));
+					const presentators: Presentators[] = await createPresentators(tx, institution.id, Array.from({ length: numberOfItems.presentators }, () => ({ name: faker.person.fullName() })));
 					console.log("\nPresentators created");
-					let subjects: Subjects[] = await createSubjects(tx, institution.id, Array.from({ length: numberOfItems.subjects }, () => ({ name: faker.lorem.word(), subjectId: faker.lorem.word() + faker.number.int() })));
+					const subjects: Subjects[] = await createSubjects(tx, institution.id, Array.from({ length: numberOfItems.subjects }, () => ({ name: faker.lorem.word(), subjectId: faker.lorem.word() + faker.number.int() })));
 					console.log("\nSubjects created");
-					let rooms: Rooms[] = await createRooms(tx, institution.id, Array.from({ length: numberOfItems.rooms }, () => ({ name: faker.lorem.word() })));
+					const rooms: Rooms[] = await createRooms(tx, institution.id, Array.from({ length: numberOfItems.rooms }, () => ({ name: faker.lorem.word() })));
 					console.log("\nRooms created");
-					let timetables: TimeTables[] = await createTimeTables(tx, institution.id, Array.from({ length: numberOfItems.timeTables }, () => ({ name: faker.lorem.word() })));
+					const timetables: TimeTables[] = await createTimeTables(tx, institution.id, Array.from({ length: numberOfItems.timeTables }, () => ({ name: faker.lorem.word() })));
 					console.log("\nTimetables created");
-					let appointments: ExtendedAppointments[] = new Array<ExtendedAppointments>();
+					const appointments: ExtendedAppointments[] = new Array<ExtendedAppointments>();
 					for (let i = 0; i < numberOfItems.appointments; i++) {
 						appointments.push({
 							start: faker.date.anytime(),
 							end: faker.date.anytime(),
 							isCancelled: faker.datatype.boolean(),
-							subject: faker.helpers.arrayElements(subjects, 1)[0],
+							subject: faker.helpers.arrayElements(subjects, 1)[0]!,
 							timetables: faker.helpers.arrayElements(timetables, 1),
 							rooms: faker.helpers.arrayElements(rooms, 2),
 							presentators: faker.helpers.arrayElements(presentators, 2).map((presentator) => {
@@ -277,7 +277,7 @@ async function createInstitution(prisma: Omit<PrismaClient<Prisma.PrismaClientOp
 
 async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, presentators: { name: string }[]): Promise<Presentators[]> {
 	try {
-		let result: Presentators[] = await Promise.all(presentators.map(async (presentator: { name: string }, index) => {
+		const result: Presentators[] = await Promise.all(presentators.map(async (presentator: { name: string }, index) => {
 			return await prisma.presentators.create({
 				data: {
 					name: presentator.name,
@@ -306,7 +306,7 @@ async function createPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientO
 
 async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, subjects: { name: string, subjectId: string }[]): Promise<Subjects[]> {
 	try {
-		let result: Subjects[] = await Promise.all(subjects.map(async (subject: { name: string, subjectId: string }, index) => {
+		const result: Subjects[] = await Promise.all(subjects.map(async (subject: { name: string, subjectId: string }, index) => {
 			return await prisma.subjects.create({
 				data: {
 					name: subject.name,
@@ -336,7 +336,7 @@ async function createSubjects(prisma: Omit<PrismaClient<Prisma.PrismaClientOptio
 
 async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, rooms: { name: string }[]): Promise<Rooms[]> {
 	try {
-		let result: Rooms[] = await Promise.all(rooms.map(async (room: { name: string }, index) => {
+		const result: Rooms[] = await Promise.all(rooms.map(async (room: { name: string }, index) => {
 			return await prisma.rooms.create({
 				data: {
 					name: room.name,
@@ -365,7 +365,7 @@ async function createRooms(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions,
 
 async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, events: { title: string, date: Date }[]): Promise<Events[]> {
 	try {
-		let result: Events[] = await Promise.all(events.map(async (event: { title: string, date: Date }, index) => {
+		const result: Events[] = await Promise.all(events.map(async (event: { title: string, date: Date }, index) => {
 			return await prisma.events.create({
 				data: {
 					title: event.title,
@@ -395,7 +395,7 @@ async function createEvents(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions
 
 async function createTimeTables(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, timeTables: { name: string }[]): Promise<TimeTables[]> {
 	try {
-		let result: TimeTables[] = await Promise.all(timeTables.map(async (timeTable: { name: string }, index) => {
+		const result: TimeTables[] = await Promise.all(timeTables.map(async (timeTable: { name: string }, index) => {
 			return await prisma.timeTables.create({
 				data: {
 					name: timeTable.name,
@@ -424,16 +424,16 @@ async function createTimeTables(prisma: Omit<PrismaClient<Prisma.PrismaClientOpt
 
 async function createAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, appointments: ExtendedAppointments[]): Promise<void> {
 	for (let i = 0; i < appointments.length; i++) {
-		let appointment: Appointments = await prisma.appointments.create({
+		const appointment: Appointments = await prisma.appointments.create({
 			data: {
 				subject: {
 					connect: {
-						id: appointments[i].subject.id,
+						id: appointments[i]!.subject.id,
 						institutionId: institutionId,
 					}
 				},
 				rooms: {
-					connect: appointments[i].rooms.map((room) => {
+					connect: appointments[i]!.rooms.map((room) => {
 						return {
 							id: room?.id,
 							institutionId: institutionId,
@@ -441,23 +441,23 @@ async function createAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientO
 					}),
 				},
 				timetables: {
-					connect: appointments[i].timetables.map((timetable) => {
+					connect: appointments[i]!.timetables.map((timetable) => {
 						return {
 							id: timetable?.id,
 							institutionId: institutionId,
 						}
 					}),
 				},
-				start: new Date(appointments[i].start),
-				end: new Date(appointments[i].end),
-				isCancelled: appointments[i].isCancelled,
+				start: new Date(appointments[i]!.start),
+				end: new Date(appointments[i]!.end),
+				isCancelled: appointments[i]!.isCancelled,
 			}
 		}).catch((e) => {
 			console.log("\n");
 			throw new Error("Cannot create appointment. It may be due to not defining any. Error occured at " + i + "\nError: " + e);
 		})
-		if (appointments[i].presentators.length > 0 && appointment) {
-			await presentatorsToAppointments(prisma, institutionId, appointment.id, appointments[i].presentators);
+		if (appointments[i]!.presentators.length > 0 && appointment) {
+			await presentatorsToAppointments(prisma, institutionId, appointment.id, appointments[i]!.presentators);
 		}
 	}
 }
@@ -496,8 +496,8 @@ async function createUsersForPresentators(prisma: Omit<PrismaClient<Prisma.Prism
 		for (let i = 0; i < users.length; i++) {
 			await prisma.users.create({
 				data: {
-					email: users[i].email,
-					password: await hash(users[i].password, 10),
+					email: users[i]!.email,
+					password: await hash(users[i]!.password, 10),
 				}
 			}).catch((e) => {
 				if (e instanceof PrismaClientKnownRequestError) {
@@ -514,7 +514,7 @@ async function createUsersForPresentators(prisma: Omit<PrismaClient<Prisma.Prism
 					role: Roles.PRESENTATOR,
 					user: {
 						connect: {
-							email: users[i].email,
+							email: users[i]!.email,
 						},
 					},
 					institution: {
@@ -524,7 +524,7 @@ async function createUsersForPresentators(prisma: Omit<PrismaClient<Prisma.Prism
 					},
 					presentator: {
 						connect: {
-							name: users[i].name,
+							name: users[i]!.name,
 						}
 					}
 				}
