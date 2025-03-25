@@ -4,17 +4,17 @@ import { User } from '@app/interfaces/User.interface';
 
 @Controller('logout')
 export class LogoutController {
-	constructor(private readonly logoutService: LogoutService) { }
+  constructor(private readonly logoutService: LogoutService) {}
 
-	@Post()
-	@HttpCode(200)
-	logout(@Req() req: (Request & { token: string })) {
-		return this.logoutService.logout(req.token);
-	}
+  @Post()
+  @HttpCode(200)
+  logout(@Req() req: Request & { token: string }): Promise<void> {
+    return this.logoutService.logout(req.token);
+  }
 
-	@Post('all')
-	@HttpCode(200)
-	logoutGlobally(@Req() req: (Request & { user: User })) {
-		return this.logoutService.logoutGlobally(req.user.id);
-	}
+  @Post('all')
+  @HttpCode(200)
+  logoutGlobally(@Req() req: Request & { user: User }): Promise<void> {
+    return this.logoutService.logoutGlobally(req.user.id);
+  }
 }

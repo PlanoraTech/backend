@@ -3,17 +3,17 @@ import { PrismaService } from '@app/prisma/prisma.service';
 import { EventsService } from './events.service';
 
 describe('EventsService', () => {
-	let service: EventsService;
+  let service: EventsService;
 
-	beforeEach(async () => {
-		const module: TestingModule = await Test.createTestingModule({
-			providers: [EventsService, PrismaService],
-		}).compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [EventsService, PrismaService],
+    }).compile();
 
-		service = module.get<EventsService>(EventsService);
-	});
+    service = module.get<EventsService>(EventsService);
+  });
 
-	it('should be defined', () => {
-		expect(service).toBeDefined();
-	});
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 });

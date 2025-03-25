@@ -4,7 +4,7 @@ import { EventsService } from './events.service';
 import { EventsController } from './events.controller';
 
 @Module({
-	controllers: [EventsController],
-	providers: [EventsService, PrismaService],
+  controllers: [EventsController],
+  providers: [EventsService, PrismaService],
 })
-export class EventsModule { }
+export class EventsModule {}

@@ -1,7 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { AppointmentsController, AppointmentsFromTimeTablesController } from './appointments.controller';
-import { AppointmentsFromTimeTablesService, AppointmentsService } from './appointments.service';
+import {
+  AppointmentsController,
+  AppointmentsFromTimeTablesController,
+} from './appointments.controller';
+import {
+  AppointmentsFromTimeTablesService,
+  AppointmentsService,
+} from './appointments.service';
 
 describe('AppointmentsController', () => {
   let controller: AppointmentsController;
@@ -29,7 +35,9 @@ describe('AppointmentsFromTimeTablesController', () => {
       providers: [AppointmentsFromTimeTablesService, PrismaService],
     }).compile();
 
-    controller = module.get<AppointmentsFromTimeTablesController>(AppointmentsFromTimeTablesController);
+    controller = module.get<AppointmentsFromTimeTablesController>(
+      AppointmentsFromTimeTablesController,
+    );
   });
 
   it('should be defined', () => {

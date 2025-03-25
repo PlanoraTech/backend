@@ -8,22 +8,22 @@ import { User } from '@app/interfaces/User.interface';
 
 @Controller('login')
 export class LoginController {
-	constructor(private readonly loginService: LoginService) { }
+  constructor(private readonly loginService: LoginService) {}
 
-	@Post()
-	@HttpCode(200)
-	@Access(AccessType.PUBLIC)
-	login(@Body() loginDto: LoginDto): Promise<Login> {
-		return this.loginService.loginByEmailAndPassword(loginDto);
-	}
+  @Post()
+  @HttpCode(200)
+  @Access(AccessType.PUBLIC)
+  login(@Body() loginDto: LoginDto): Promise<Login> {
+    return this.loginService.loginByEmailAndPassword(loginDto);
+  }
 
-	@Post('auto')
-	@HttpCode(200)
-	autologin(@Req() req: (Request & { user: User })) {
-		return {
-			user: {
-				institutions: req.user.institutions,
-			},
-		}
-	}
+  @Post('auto')
+  @HttpCode(200)
+  autologin(@Req() req: Request & { user: User }): Login {
+    return {
+      user: {
+        institutions: req.user.institutions,
+      },
+    };
+  }
 }

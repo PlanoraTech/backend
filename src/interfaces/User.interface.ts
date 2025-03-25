@@ -1,10 +1,10 @@
-import { Roles } from "@prisma/client"
+import { Roles } from '@prisma/client';
 
-export interface User { 
-    id: string, 
-    institutions: { 
-        institutionId: string, 
-        role: Roles, 
-        presentatorId: string | null 
-    }[] 
+export interface User {
+  id: string;
+  institutions: {
+    institutionId: string;
+    role: Roles;
+    presentatorId: string | null;
+  }[];
 }
