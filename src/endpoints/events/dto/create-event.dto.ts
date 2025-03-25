@@ -1,5 +1,5 @@
-import { Type } from "class-transformer";
 import { IsDate, IsNotEmpty, IsString, Length, MinDate } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class CreateEventDto {
     @IsString()
@@ -7,7 +7,8 @@ export class CreateEventDto {
     @Length(3, 128)
     title: string;
 
-    @Type(() => Date)
+    @IsNotEmpty()
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @MinDate(new Date())
     date: Date;
