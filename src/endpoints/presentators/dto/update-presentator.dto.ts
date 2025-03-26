@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePresentatorDto } from './create-presentator.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdatePresentatorDto extends PartialType(CreatePresentatorDto) {}
+export class UpdatePresentatorDto {
+    @IsNotEmpty()
+    @IsString()
+    id: string;
+}
