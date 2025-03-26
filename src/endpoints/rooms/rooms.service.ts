@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { Rooms } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
@@ -95,46 +96,138 @@ export class RoomsFromAppointmentsService {
         dataService: AppointmentsDataService,
         roomId: string,
     ): Promise<void> {
-        await this.prisma.appointments.update({
-            select: {
-                id: true,
-            },
-            data: {
-                rooms: {
-                    connect: {
-                        id: roomId,
-                        institutionId: institutionId,
-                    },
+        const appointment: { start: Date; end: Date } =
+            await this.prisma.appointments.findUniqueOrThrow({
+                select: {
+                    start: true,
+                    end: true,
                 },
-            },
-            where: {
-                id: dataService.appointmentId,
-                timetables: {
-                    some: {
-                        id: dataService.timetableId,
-                        institutionId: institutionId,
+                where: {
+                    id: dataService.appointmentId,
+                    timetables: {
+                        some: {
+                            id: dataService.timetableId,
+                            institutionId: institutionId,
+                        },
                     },
-                },
-                rooms: {
-                    some: {
-                        id: dataService.roomId,
-                        institutionId: institutionId,
+                    rooms: {
+                        some: {
+                            id: dataService.roomId,
+                            institutionId: institutionId,
+                        },
                     },
-                },
-                presentators: {
-                    some: {
-                        presentator: {
-                            id: dataService.presentatorId,
-                            institutions: {
-                                some: {
-                                    id: institutionId,
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: dataService.presentatorId,
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
                                 },
                             },
                         },
                     },
                 },
-            },
-        });
+            });
+        const appointments: { id: string }[] =
+            await this.prisma.appointments.findMany({
+                select: {
+                    id: true,
+                },
+                where: {
+                    id: {
+                        not: dataService.appointmentId,
+                    },
+                    timetables: {
+                        some: {
+                            institutionId: institutionId,
+                        },
+                    },
+                    rooms: {
+                        some: {
+                            id: roomId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    start: {
+                        gte: appointment.start,
+                        lte: appointment.end,
+                    },
+                    end: {
+                        gte: appointment.start,
+                        lte: appointment.end,
+                    },
+                },
+            });
+        if (appointments.length > 0) {
+            throw new ConflictException(
+                'This room is already assigned to an appointment when this appointment is scheduled',
+            );
+        }
+        await this.prisma.appointments
+            .update({
+                select: {
+                    id: true,
+                },
+                data: {
+                    rooms: {
+                        connect: {
+                            id: roomId,
+                            institutionId: institutionId,
+                        },
+                    },
+                },
+                where: {
+                    id: dataService.appointmentId,
+                    timetables: {
+                        some: {
+                            id: dataService.timetableId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    rooms: {
+                        some: {
+                            id: dataService.roomId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: dataService.presentatorId,
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            })
+            .catch((e) => {
+                if (e instanceof PrismaClientKnownRequestError) {
+                    switch (e.code) {
+                        case 'P2002':
+                            throw new ConflictException(
+                                'This room is already assigned to this appointment',
+                            );
+                    }
+                }
+                throw e;
+            });
     }
 
     async findAll(
