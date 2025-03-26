@@ -49,7 +49,7 @@ import { NotificationsModule } from './endpoints/notifications/notifications.mod
                 path: 'presentators/:substitutePresentatorId/substitutions',
                 module: SubstitutionsModule,
               },
-            ]
+            ],
           },
           {
             path: ':institutionId/subjects',
@@ -71,8 +71,8 @@ import { NotificationsModule } from './endpoints/notifications/notifications.mod
             path: ':institutionId/users',
             module: UsersModule,
           },
-        ]
-      }
+        ],
+      },
     ]),
     ThrottlerModule.forRoot([
       {
@@ -89,7 +89,7 @@ import { NotificationsModule } from './endpoints/notifications/notifications.mod
         name: 'long',
         ttl: 60000,
         limit: 200,
-      }
+      },
     ]),
   ],
   providers: [
@@ -109,4 +109,4 @@ import { NotificationsModule } from './endpoints/notifications/notifications.mod
     PrismaService,
   ],
 })
-export class AppModule { }
+export class AppModule {}
