@@ -6,6 +6,7 @@ import {
     Patch,
     Param,
     Delete,
+    ParseArrayPipe,
 } from '@nestjs/common';
 import {
     AccessType,
@@ -25,6 +26,7 @@ import {
     UpdateSubstitutionDto,
     UpdateSubstitutionsDto,
 } from './dto/update-substitution.dto';
+import { UpdatePresentatorDto } from './dto/update-presentator.dto';
 
 @Controller('presentators')
 export class PresentatorsController {
@@ -149,6 +151,33 @@ export class PresentatorsFromAppointmentsController {
                 appointmentId: appointmentId,
             },
             id,
+        );
+    }
+
+    @Patch()
+    update(
+        @Param('institutionId') institutionId: string,
+        @Param('timetableId') timetableId: string,
+        @Param('presentatorId') presentatorId: string,
+        @Param('roomId') roomId: string,
+        @Param('appointmentId') appointmentId: string,
+        @Body(
+            new ParseArrayPipe({
+                items: UpdatePresentatorDto,
+                forbidNonWhitelisted: true,
+            }),
+        )
+        updatePresentatorDto: UpdatePresentatorDto[],
+    ): Promise<void> {
+        return this.presentatorsService.update(
+            institutionId,
+            {
+                timetableId: timetableId,
+                presentatorId: presentatorId,
+                roomId: roomId,
+                appointmentId: appointmentId,
+            },
+            updatePresentatorDto,
         );
     }
 

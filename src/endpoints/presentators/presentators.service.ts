@@ -9,11 +9,12 @@ import { PushNotificationsService } from '@app/push-notifications/push-notificat
 import { Presentators, Roles } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
-import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
 import {
     UpdateSubstitutionDto,
     UpdateSubstitutionsDto,
 } from './dto/update-substitution.dto';
+import { UpdatePresentatorDto } from './dto/update-presentator.dto';
+import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
 
 const presentatorsSelect = {
     name: true,
@@ -595,6 +596,120 @@ export class PresentatorsFromAppointmentsService {
                         : `Substitution for ${presentator.name} has been cancelled for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start.toLocaleDateString()} ${appointment.appointment.start.toLocaleTimeString()} - ${appointment.appointment.end.toLocaleTimeString()}`,
                 },
             );
+        });
+    }
+
+    async update(
+        institutionId: string,
+        dataService: AppointmentsDataService,
+        updatePresentatorDto: UpdatePresentatorDto[],
+    ): Promise<void> {
+        const appointment: { start: Date; end: Date } =
+            await this.prisma.appointments.findUniqueOrThrow({
+                select: {
+                    start: true,
+                    end: true,
+                },
+                where: {
+                    id: dataService.appointmentId,
+                    timetables: {
+                        some: {
+                            id: dataService.timetableId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    rooms: {
+                        some: {
+                            id: dataService.roomId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: dataService.presentatorId,
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+        const appointments: { id: string }[] =
+            await this.prisma.appointments.findMany({
+                select: {
+                    id: true,
+                },
+                where: {
+                    id: {
+                        not: dataService.appointmentId,
+                    },
+                    timetables: {
+                        some: {
+                            institutionId: institutionId,
+                        },
+                    },
+                    rooms: {
+                        some: {
+                            institutionId: institutionId,
+                        },
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: {
+                                    in: updatePresentatorDto.map(
+                                        (presentator) => {
+                                            return presentator.id;
+                                        },
+                                    ),
+                                },
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    start: {
+                        gte: appointment.start,
+                        lte: appointment.end,
+                    },
+                    end: {
+                        gte: appointment.start,
+                        lte: appointment.end,
+                    },
+                },
+            });
+        if (appointments.length > 0) {
+            throw new ConflictException(
+                'One or more of the presentators are already assigned to an appointment during the time period this appointment is scheduled',
+            );
+        }
+        await this.prisma.$transaction(async (prisma) => {
+            await prisma.presentatorsToAppointments.deleteMany({
+                where: {
+                    appointmentId: dataService.appointmentId,
+                    presentatorId: {
+                        not: dataService.presentatorId,
+                    },
+                },
+            });
+            await prisma.presentatorsToAppointments.createMany({
+                data: updatePresentatorDto
+                    .filter((presentator) => {
+                        presentator.id != dataService.presentatorId;
+                    })
+                    .map((presentator) => ({
+                        appointmentId: dataService.appointmentId,
+                        presentatorId: presentator.id,
+                        isSubstituted: false,
+                    })),
+            });
         });
     }
 
