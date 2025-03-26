@@ -5,7 +5,7 @@ import { LoginService } from './login.service';
 import { LoginController } from './login.controller';
 
 @Module({
-  controllers: [LoginController],
-  providers: [LoginService, SecretService, PrismaService],
+    controllers: [LoginController],
+    providers: [LoginService, SecretService, PrismaService],
 })
 export class LoginModule {}

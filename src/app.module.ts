@@ -21,92 +21,92 @@ import { ProfileModule } from './endpoints/profile/profile.module';
 import { NotificationsModule } from './endpoints/notifications/notifications.module';
 
 @Module({
-  imports: [
-    InstitutionsModule,
-    PresentatorsModule,
-    SubstitutionsModule,
-    SubjectsModule,
-    RoomsModule,
-    TimeTablesModule,
-    EventsModule,
-    AppointmentsModule,
-    UsersModule,
-    RegisterModule,
-    LoginModule,
-    LogoutModule,
-    ProfileModule,
-    NotificationsModule,
-    RouterModule.register([
-      {
-        path: 'institutions',
-        module: InstitutionsModule,
-        children: [
-          {
-            path: ':institutionId',
-            module: PresentatorsModule,
-            children: [
-              {
-                path: 'presentators/:substitutePresentatorId/substitutions',
-                module: SubstitutionsModule,
-              },
-            ],
-          },
-          {
-            path: ':institutionId/subjects',
-            module: SubjectsModule,
-          },
-          {
-            path: ':institutionId',
-            module: RoomsModule,
-          },
-          {
-            path: ':institutionId/events',
-            module: EventsModule,
-          },
-          {
-            path: ':institutionId',
-            module: TimeTablesModule,
-          },
-          {
-            path: ':institutionId/users',
-            module: UsersModule,
-          },
-        ],
-      },
-    ]),
-    ThrottlerModule.forRoot([
-      {
-        name: 'short',
-        ttl: 1000,
-        limit: 50,
-      },
-      {
-        name: 'medium',
-        ttl: 10000,
-        limit: 100,
-      },
-      {
-        name: 'long',
-        ttl: 60000,
-        limit: 200,
-      },
-    ]),
-  ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PermissionsGuard,
-    },
-    SecretService,
-    PrismaService,
-  ],
+    imports: [
+        InstitutionsModule,
+        PresentatorsModule,
+        SubstitutionsModule,
+        SubjectsModule,
+        RoomsModule,
+        TimeTablesModule,
+        EventsModule,
+        AppointmentsModule,
+        UsersModule,
+        RegisterModule,
+        LoginModule,
+        LogoutModule,
+        ProfileModule,
+        NotificationsModule,
+        RouterModule.register([
+            {
+                path: 'institutions',
+                module: InstitutionsModule,
+                children: [
+                    {
+                        path: ':institutionId',
+                        module: PresentatorsModule,
+                        children: [
+                            {
+                                path: 'presentators/:substitutePresentatorId/substitutions',
+                                module: SubstitutionsModule,
+                            },
+                        ],
+                    },
+                    {
+                        path: ':institutionId/subjects',
+                        module: SubjectsModule,
+                    },
+                    {
+                        path: ':institutionId',
+                        module: RoomsModule,
+                    },
+                    {
+                        path: ':institutionId/events',
+                        module: EventsModule,
+                    },
+                    {
+                        path: ':institutionId',
+                        module: TimeTablesModule,
+                    },
+                    {
+                        path: ':institutionId/users',
+                        module: UsersModule,
+                    },
+                ],
+            },
+        ]),
+        ThrottlerModule.forRoot([
+            {
+                name: 'short',
+                ttl: 1000,
+                limit: 50,
+            },
+            {
+                name: 'medium',
+                ttl: 10000,
+                limit: 100,
+            },
+            {
+                name: 'long',
+                ttl: 60000,
+                limit: 200,
+            },
+        ]),
+    ],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: AuthGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: PermissionsGuard,
+        },
+        SecretService,
+        PrismaService,
+    ],
 })
 export class AppModule {}

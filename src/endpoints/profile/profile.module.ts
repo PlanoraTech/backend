@@ -5,7 +5,7 @@ import { ProfileService } from './profile.service';
 import { ProfileController } from './profile.controller';
 
 @Module({
-  controllers: [ProfileController],
-  providers: [ProfileService, SecretService, PrismaService],
+    controllers: [ProfileController],
+    providers: [ProfileService, SecretService, PrismaService],
 })
 export class ProfileModule {}

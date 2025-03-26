@@ -4,18 +4,20 @@ import { SubstitutionsController } from './substitutions.controller';
 import { SubstitutionsService } from './substitutions.service';
 
 describe('SubstitutionController', () => {
-  let controller: SubstitutionsController;
+    let controller: SubstitutionsController;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [SubstitutionsController],
-      providers: [SubstitutionsService, PrismaService],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            controllers: [SubstitutionsController],
+            providers: [SubstitutionsService, PrismaService],
+        }).compile();
 
-    controller = module.get<SubstitutionsController>(SubstitutionsController);
-  });
+        controller = module.get<SubstitutionsController>(
+            SubstitutionsController,
+        );
+    });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(controller).toBeDefined();
+    });
 });

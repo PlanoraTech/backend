@@ -4,17 +4,17 @@ import { SecretService } from '@app/auth/secret/secret.service';
 import { RegisterService } from './register.service';
 
 describe('RegisterService', () => {
-  let service: RegisterService;
+    let service: RegisterService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [RegisterService, SecretService, PrismaService],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [RegisterService, SecretService, PrismaService],
+        }).compile();
 
-    service = module.get<RegisterService>(RegisterService);
-  });
+        service = module.get<RegisterService>(RegisterService);
+    });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
 });

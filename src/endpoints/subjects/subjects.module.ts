@@ -4,7 +4,7 @@ import { SubjectsService } from './subjects.service';
 import { SubjectsController } from './subjects.controller';
 
 @Module({
-  controllers: [SubjectsController],
-  providers: [SubjectsService, PrismaService],
+    controllers: [SubjectsController],
+    providers: [SubjectsService, PrismaService],
 })
 export class SubjectsModule {}

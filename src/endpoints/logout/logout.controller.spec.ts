@@ -4,18 +4,18 @@ import { LogoutController } from './logout.controller';
 import { LogoutService } from './logout.service';
 
 describe('LogoutController', () => {
-  let controller: LogoutController;
+    let controller: LogoutController;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [LogoutController],
-      providers: [LogoutService, PrismaService],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            controllers: [LogoutController],
+            providers: [LogoutService, PrismaService],
+        }).compile();
 
-    controller = module.get<LogoutController>(LogoutController);
-  });
+        controller = module.get<LogoutController>(LogoutController);
+    });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(controller).toBeDefined();
+    });
 });

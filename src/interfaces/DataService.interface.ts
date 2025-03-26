@@ -1,9 +1,9 @@
 export interface DataService {
-  timetableId?: string;
-  presentatorId?: string;
-  roomId?: string;
+    timetableId?: string;
+    presentatorId?: string;
+    roomId?: string;
 }
 
 export interface AppointmentsDataService extends DataService {
-  appointmentId: string;
+    appointmentId: string;
 }
