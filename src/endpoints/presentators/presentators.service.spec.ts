@@ -5,18 +5,22 @@ import { PushNotificationsService } from '@app/push-notifications/push-notificat
 import { PresentatorsService } from './presentators.service';
 
 describe('PresentatorsService', () => {
-  let service: PresentatorsService;
+    let service: PresentatorsService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
-      providers: [PresentatorsService, PushNotificationsService, PrismaService],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            imports: [HttpModule],
+            providers: [
+                PresentatorsService,
+                PushNotificationsService,
+                PrismaService,
+            ],
+        }).compile();
 
-    service = module.get<PresentatorsService>(PresentatorsService);
-  });
+        service = module.get<PresentatorsService>(PresentatorsService);
+    });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
 });

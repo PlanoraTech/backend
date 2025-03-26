@@ -4,7 +4,7 @@ import { SubstitutionsService } from './substitutions.service';
 import { SubstitutionsController } from './substitutions.controller';
 
 @Module({
-  controllers: [SubstitutionsController],
-  providers: [SubstitutionsService, PrismaService],
+    controllers: [SubstitutionsController],
+    providers: [SubstitutionsService, PrismaService],
 })
 export class SubstitutionsModule {}

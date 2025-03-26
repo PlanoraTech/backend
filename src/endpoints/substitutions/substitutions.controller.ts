@@ -6,26 +6,30 @@ import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
 
 @Controller()
 export class SubstitutionsController {
-  constructor(private readonly substitutionsService: SubstitutionsService) {}
+    constructor(private readonly substitutionsService: SubstitutionsService) {}
 
-  @Get()
-  @Permission([Permissions.READ])
-  @SpecialPermission([SpecialPermissions.SUBSTITUTE])
-  findAll(
-    @Param('institutionId') institutionId: string,
-    @Param('substitutePresentatorId') presentatorId: string,
-  ): Promise<Substitutions[]> {
-    return this.substitutionsService.findAll(institutionId, presentatorId);
-  }
+    @Get()
+    @Permission([Permissions.READ])
+    @SpecialPermission([SpecialPermissions.SUBSTITUTE])
+    findAll(
+        @Param('institutionId') institutionId: string,
+        @Param('substitutePresentatorId') presentatorId: string,
+    ): Promise<Substitutions[]> {
+        return this.substitutionsService.findAll(institutionId, presentatorId);
+    }
 
-  @Get(':id')
-  @Permission([Permissions.READ])
-  @SpecialPermission([SpecialPermissions.SUBSTITUTE])
-  findOne(
-    @Param('institutionId') institutionId: string,
-    @Param('substitutePresentatorId') presentatorId: string,
-    @Param('id') id: string,
-  ): Promise<Substitutions> {
-    return this.substitutionsService.findOne(institutionId, presentatorId, id);
-  }
+    @Get(':id')
+    @Permission([Permissions.READ])
+    @SpecialPermission([SpecialPermissions.SUBSTITUTE])
+    findOne(
+        @Param('institutionId') institutionId: string,
+        @Param('substitutePresentatorId') presentatorId: string,
+        @Param('id') id: string,
+    ): Promise<Substitutions> {
+        return this.substitutionsService.findOne(
+            institutionId,
+            presentatorId,
+            id,
+        );
+    }
 }

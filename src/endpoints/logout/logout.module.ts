@@ -4,7 +4,7 @@ import { LogoutService } from './logout.service';
 import { LogoutController } from './logout.controller';
 
 @Module({
-  controllers: [LogoutController],
-  providers: [LogoutService, PrismaService],
+    controllers: [LogoutController],
+    providers: [LogoutService, PrismaService],
 })
 export class LogoutModule {}

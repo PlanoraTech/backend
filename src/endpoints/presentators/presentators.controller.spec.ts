@@ -6,19 +6,23 @@ import { PresentatorsController } from './presentators.controller';
 import { PresentatorsService } from './presentators.service';
 
 describe('PresentatorsController', () => {
-  let controller: PresentatorsController;
+    let controller: PresentatorsController;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
-      controllers: [PresentatorsController],
-      providers: [PresentatorsService, PushNotificationsService, PrismaService],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            imports: [HttpModule],
+            controllers: [PresentatorsController],
+            providers: [
+                PresentatorsService,
+                PushNotificationsService,
+                PrismaService,
+            ],
+        }).compile();
 
-    controller = module.get<PresentatorsController>(PresentatorsController);
-  });
+        controller = module.get<PresentatorsController>(PresentatorsController);
+    });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(controller).toBeDefined();
+    });
 });
