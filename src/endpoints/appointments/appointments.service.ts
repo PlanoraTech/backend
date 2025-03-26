@@ -196,6 +196,9 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
     createAppointmentDto: CreateAppointmentDto,
   ): Promise<void> {
     await this.prisma.appointments.create({
+      select: {
+        id: true,
+      },
       data: {
         start: new Date(createAppointmentDto.start),
         end: new Date(createAppointmentDto.end),

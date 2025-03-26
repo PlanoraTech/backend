@@ -106,6 +106,9 @@ export class TimeTablesFromAppointmentsService {
     timetableId: string,
   ): Promise<void> {
     await this.prisma.appointments.update({
+      select: {
+        id: true,
+      },
       data: {
         timetables: {
           connect: {
@@ -240,6 +243,9 @@ export class TimeTablesFromAppointmentsService {
     timetableId: string,
   ): Promise<void> {
     await this.prisma.appointments.update({
+      select: {
+        id: true,
+      },
       data: {
         timetables: {
           disconnect: {

@@ -26,6 +26,9 @@ export class PushNotificationsService {
   private async deleteToken(token: string): Promise<void> {
     await this.prisma.notificationTokens
       .delete({
+        select: {
+          id: true,
+        },
         where: {
           token: token,
         },

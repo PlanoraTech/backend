@@ -11,7 +11,7 @@ export class RegisterService {
   ) {}
 
   async create(registerDto: RegisterDto): Promise<{ token: string }> {
-    const user = await this.prisma.users
+    const user: { id: string } = await this.prisma.users
       .create({
         select: {
           id: true,

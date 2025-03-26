@@ -4,6 +4,12 @@ import { Events } from '@prisma/client';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
+const eventsSelect = {
+  title: true,
+  date: true,
+  institutionId: false,
+};
+
 @Injectable()
 export class EventsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -13,6 +19,9 @@ export class EventsService {
     createEventDto: CreateEventDto,
   ): Promise<void> {
     await this.prisma.events.create({
+      select: {
+        id: true,
+      },
       data: {
         ...createEventDto,
         institutionId: institutionId,
@@ -22,6 +31,10 @@ export class EventsService {
 
   async findAll(institutionId: string): Promise<Events[]> {
     return await this.prisma.events.findMany({
+      select: {
+        id: true,
+        ...eventsSelect,
+      },
       where: {
         institutionId: institutionId,
       },
@@ -30,6 +43,10 @@ export class EventsService {
 
   async findOne(institutionId: string, id: string): Promise<Events> {
     return await this.prisma.events.findUniqueOrThrow({
+      select: {
+        id: true,
+        ...eventsSelect,
+      },
       where: {
         id: id,
         institutionId: institutionId,
@@ -43,6 +60,9 @@ export class EventsService {
     updateEventDto: UpdateEventDto,
   ): Promise<void> {
     await this.prisma.events.update({
+      select: {
+        id: true,
+      },
       where: {
         id: id,
         institutionId: institutionId,
@@ -56,6 +76,9 @@ export class EventsService {
 
   async remove(institutionId: string, id: string): Promise<void> {
     await this.prisma.events.delete({
+      select: {
+        id: true,
+      },
       where: {
         id: id,
         institutionId: institutionId,

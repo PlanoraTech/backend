@@ -9,6 +9,9 @@ export class UsersService {
 
   async add(institutionId: string, userDto: UserDto): Promise<void> {
     await this.prisma.usersToInstitutions.create({
+      select: {
+        institutionId: true,
+      },
       data: {
         user: {
           connect: {
@@ -51,6 +54,9 @@ export class UsersService {
 
   async remove(institutionId: string, id: string): Promise<void> {
     await this.prisma.usersToInstitutions.delete({
+      select: {
+        institutionId: true,
+      },
       where: {
         userId_institutionId: {
           userId: id,

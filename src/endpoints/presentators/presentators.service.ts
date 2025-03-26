@@ -33,6 +33,9 @@ export class PresentatorsService {
     await this.prisma.$transaction(async (prisma) => {
       await prisma.presentators
         .create({
+          select: {
+            id: true,
+          },
           data: {
             name: createPresentatorDto.name,
             institutions: {
@@ -54,6 +57,9 @@ export class PresentatorsService {
       if (createPresentatorDto.email) {
         await prisma.usersToInstitutions
           .create({
+            select: {
+              institutionId: true,
+            },
             data: {
               role: Roles.PRESENTATOR,
               user: {
@@ -221,6 +227,9 @@ export class PresentatorsService {
 
   async remove(institutionId: string, id: string): Promise<void> {
     await this.prisma.usersToInstitutions.delete({
+      select: {
+        institutionId: true,
+      },
       where: {
         presentatorId: id,
         institution: {
@@ -265,6 +274,9 @@ export class PresentatorsFromAppointmentsService {
     presentatorId: string,
   ): Promise<void> {
     await this.prisma.appointments.update({
+      select: {
+        id: true,
+      },
       data: {
         presentators: {
           connect: {
@@ -471,6 +483,9 @@ export class PresentatorsFromAppointmentsService {
         });
       await prisma.appointments
         .update({
+          select: {
+            id: true,
+          },
           data: {
             isCancelled: true,
           },
@@ -526,6 +541,9 @@ export class PresentatorsFromAppointmentsService {
     presentatorId: string,
   ): Promise<void> {
     await this.prisma.appointments.update({
+      select: {
+        id: true,
+      },
       data: {
         presentators: {
           disconnect: {

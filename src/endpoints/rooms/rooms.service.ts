@@ -96,6 +96,9 @@ export class RoomsFromAppointmentsService {
     roomId: string,
   ): Promise<void> {
     await this.prisma.appointments.update({
+      select: {
+        id: true,
+      },
       data: {
         rooms: {
           connect: {
@@ -292,6 +295,9 @@ export class RoomsFromAppointmentsService {
     roomId: string,
   ): Promise<void> {
     await this.prisma.appointments.update({
+      select: {
+        id: true,
+      },
       data: {
         rooms: {
           disconnect: {
