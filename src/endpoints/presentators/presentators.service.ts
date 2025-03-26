@@ -183,28 +183,28 @@ export class PresentatorsService {
                     },
                 },
             });
-			await prisma.appointments.updateMany({
-				data: {
-					isCancelled: true,
-				},
-				where: {
-					id: {
-						in: appointments.map((appointment) => appointment.id),
-					},
-					presentators: {
-						every: {
-							presentator: {
-								institutions: {
-									some: {
-										id: institutionId,
-									},
-								},
-							},
-							isSubstituted: true,
-						},
-					},
-				},
-			});
+            await prisma.appointments.updateMany({
+                data: {
+                    isCancelled: true,
+                },
+                where: {
+                    id: {
+                        in: appointments.map((appointment) => appointment.id),
+                    },
+                    presentators: {
+                        every: {
+                            presentator: {
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
+                                },
+                            },
+                            isSubstituted: true,
+                        },
+                    },
+                },
+            });
         });
         const presentator: { name: string } =
             await this.prisma.presentators.findUniqueOrThrow({
@@ -272,99 +272,107 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
         presentatorId: string,
     ): Promise<void> {
-		const appointment: { start: Date, end: Date } = await this.prisma.appointments.findUniqueOrThrow({
-			select: {
-				start: true,
-				end: true,
-			},
-			where: {
-				id: dataService.appointmentId,
-				timetables: {
-					some: {
-						id: dataService.timetableId,
-						institutionId: institutionId,
-					},
-				},
-				rooms: {
-					some: {
-						id: dataService.roomId,
-						institutionId: institutionId,
-					},
-				},
-				presentators: {
-					some: {
-						presentator: {
-							id: dataService.presentatorId,
-							institutions: {
-								some: {
-									id: institutionId,
-								},
-							},
-						},
-					},
-				},
-			},
-		});
-		const appointments: {id: string}[] = await this.prisma.appointments.findMany({
-			select: {
-				id: true,
-			},
-			where: {
-				id: {
-					not: dataService.appointmentId
-				},
-				timetables: {
-					some: {
-						institutionId: institutionId,
-					},
-				},
-				rooms: {
-					some: {
-						institutionId: institutionId,
-					},
-				},
-				presentators: {
-					some: {
-						presentator: {
-							id: presentatorId,
-							institutions: {
-								some: {
-									id: institutionId,
-								},
-							},
-						},
-					},
-				},
-				start: {
-					gte: appointment.start,
-					lte: appointment.end,
-				},
-				end: {
-					gte: appointment.start,
-					lte: appointment.end,
-				},
-			}
-		});
-		if (appointments.length === 0) {
-			await this.prisma.presentatorsToAppointments.create({
-				select: {
-					presentatorId: true,
-				},
-				data: {
-					appointmentId: dataService.appointmentId,
-					presentatorId: presentatorId,
-					isSubstituted: false,
-				},
-			}).catch((e) => {
-				if (e instanceof PrismaClientKnownRequestError) {
-					switch (e.code) {
-						case 'P2002':
-							throw new ConflictException('The presentator is already assigned to this appointment');
-					}
-				}
-			});
-		}
-		throw new ConflictException('The presentator is already assigned to an appointment when this appointment is scheduled');
+        const appointment: { start: Date; end: Date } =
+            await this.prisma.appointments.findUniqueOrThrow({
+                select: {
+                    start: true,
+                    end: true,
+                },
+                where: {
+                    id: dataService.appointmentId,
+                    timetables: {
+                        some: {
+                            id: dataService.timetableId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    rooms: {
+                        some: {
+                            id: dataService.roomId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: dataService.presentatorId,
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+        const appointments: { id: string }[] =
+            await this.prisma.appointments.findMany({
+                select: {
+                    id: true,
+                },
+                where: {
+                    id: {
+                        not: dataService.appointmentId,
+                    },
+                    timetables: {
+                        some: {
+                            institutionId: institutionId,
+                        },
+                    },
+                    rooms: {
+                        some: {
+                            institutionId: institutionId,
+                        },
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: presentatorId,
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    start: {
+                        gte: appointment.start,
+                        lte: appointment.end,
+                    },
+                    end: {
+                        gte: appointment.start,
+                        lte: appointment.end,
+                    },
+                },
+            });
+        if (appointments.length > 0) {
+            throw new ConflictException(
+                'This presentator is already assigned to an appointment during the time period this appointment is scheduled',
+            );
+        }
+        await this.prisma.presentatorsToAppointments
+            .create({
+                select: {
+                    presentatorId: true,
+                },
+                data: {
+                    appointmentId: dataService.appointmentId,
+                    presentatorId: presentatorId,
+                    isSubstituted: false,
+                },
+            })
+            .catch((e) => {
+                if (e instanceof PrismaClientKnownRequestError) {
+                    switch (e.code) {
+                        case 'P2002':
+                            throw new ConflictException(
+                                'This presentator is already assigned to this appointment',
+                            );
+                    }
+                }
+            });
     }
 
     async findAll(
