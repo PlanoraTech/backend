@@ -186,7 +186,7 @@ export class PresentatorsFromAppointmentsController {
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
     ): Promise<void> {
-        return this.presentatorsService.add(
+        return this.presentatorsService.remove(
             institutionId,
             {
                 timetableId: timetableId,

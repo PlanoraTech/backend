@@ -372,6 +372,7 @@ export class PresentatorsFromAppointmentsService {
                             );
                     }
                 }
+                throw e;
             });
     }
 
@@ -602,43 +603,32 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
         presentatorId: string,
     ): Promise<void> {
-        await this.prisma.appointments.update({
-            select: {
-                id: true,
-            },
-            data: {
-                presentators: {
-                    disconnect: {
-                        presentatorId_appointmentId: {
-                            presentatorId: presentatorId,
-                            appointmentId: dataService.appointmentId,
+        await this.prisma.presentatorsToAppointments.delete({
+            where: {
+                presentatorId_appointmentId: {
+                    presentatorId: presentatorId,
+                    appointmentId: dataService.appointmentId,
+                },
+                presentator: {
+                    id: presentatorId,
+                    institutions: {
+                        some: {
+                            id: institutionId,
                         },
                     },
                 },
-            },
-            where: {
-                id: dataService.appointmentId,
-                timetables: {
-                    some: {
-                        id: dataService.timetableId,
-                        institutionId: institutionId,
+                appointment: {
+                    id: dataService.appointmentId,
+                    timetables: {
+                        some: {
+                            id: dataService.timetableId,
+                            institutionId: institutionId,
+                        },
                     },
-                },
-                rooms: {
-                    some: {
-                        id: dataService.roomId,
-                        institutionId: institutionId,
-                    },
-                },
-                presentators: {
-                    some: {
-                        presentator: {
-                            id: dataService.presentatorId,
-                            institutions: {
-                                some: {
-                                    id: institutionId,
-                                },
-                            },
+                    rooms: {
+                        some: {
+                            id: dataService.roomId,
+                            institutionId: institutionId,
                         },
                     },
                 },
