@@ -13,7 +13,7 @@ import {
     UpdateSubstitutionDto,
     UpdateSubstitutionsDto,
 } from './dto/update-substitution.dto';
-import { UpdatePresentatorDto } from './dto/update-presentator.dto';
+import { UpdateMassDto } from '@app/dto/update-mass.dto';
 import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
 
 const presentatorsSelect = {
@@ -273,40 +273,72 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
         presentatorId: string,
     ): Promise<void> {
-        const appointment: { start: Date; end: Date } =
-            await this.prisma.appointments.findUniqueOrThrow({
+        await this.prisma.presentators
+            .findUniqueOrThrow({
                 select: {
-                    start: true,
-                    end: true,
+                    id: true,
                 },
                 where: {
-                    id: dataService.appointmentId,
-                    timetables: {
-                        some: {
-                            id: dataService.timetableId,
-                            institutionId: institutionId,
-                        },
+                    id: presentatorId,
+                },
+            })
+            .catch((e) => {
+                if (e instanceof PrismaClientKnownRequestError) {
+                    switch (e.code) {
+                        case 'P2025':
+                            throw new NotFoundException(
+                                'A presentator with the given id does not exists',
+                            );
+                    }
+                }
+                throw e;
+            });
+        const appointment: { start: Date; end: Date } =
+            await this.prisma.appointments
+                .findUniqueOrThrow({
+                    select: {
+                        start: true,
+                        end: true,
                     },
-                    rooms: {
-                        some: {
-                            id: dataService.roomId,
-                            institutionId: institutionId,
+                    where: {
+                        id: dataService.appointmentId,
+                        timetables: {
+                            some: {
+                                id: dataService.timetableId,
+                                institutionId: institutionId,
+                            },
                         },
-                    },
-                    presentators: {
-                        some: {
-                            presentator: {
-                                id: dataService.presentatorId,
-                                institutions: {
-                                    some: {
-                                        id: institutionId,
+                        rooms: {
+                            some: {
+                                id: dataService.roomId,
+                                institutionId: institutionId,
+                            },
+                        },
+                        presentators: {
+                            some: {
+                                presentator: {
+                                    id: dataService.presentatorId,
+                                    institutions: {
+                                        some: {
+                                            id: institutionId,
+                                        },
                                     },
                                 },
                             },
                         },
                     },
-                },
-            });
+                })
+                .catch((e) => {
+                    if (e instanceof PrismaClientKnownRequestError) {
+                        switch (e.code) {
+                            case 'P2025':
+                                throw new NotFoundException(
+                                    'Appointment does not exists',
+                                );
+                        }
+                    }
+                    throw e;
+                });
         const appointments: { id: string }[] =
             await this.prisma.appointments.findMany({
                 select: {
@@ -602,7 +634,7 @@ export class PresentatorsFromAppointmentsService {
     async update(
         institutionId: string,
         dataService: AppointmentsDataService,
-        updatePresentatorDto: UpdatePresentatorDto[],
+        updateMassDto: UpdateMassDto[],
     ): Promise<void> {
         const appointment: { start: Date; end: Date } =
             await this.prisma.appointments.findUniqueOrThrow({
@@ -661,11 +693,9 @@ export class PresentatorsFromAppointmentsService {
                         some: {
                             presentator: {
                                 id: {
-                                    in: updatePresentatorDto.map(
-                                        (presentator) => {
-                                            return presentator.id;
-                                        },
-                                    ),
+                                    in: updateMassDto.map((presentator) => {
+                                        return presentator.id;
+                                    }),
                                 },
                                 institutions: {
                                     some: {
@@ -700,7 +730,7 @@ export class PresentatorsFromAppointmentsService {
                 },
             });
             await prisma.presentatorsToAppointments.createMany({
-                data: updatePresentatorDto
+                data: updateMassDto
                     .filter((presentator) => {
                         presentator.id != dataService.presentatorId;
                     })
@@ -719,6 +749,9 @@ export class PresentatorsFromAppointmentsService {
         presentatorId: string,
     ): Promise<void> {
         await this.prisma.presentatorsToAppointments.delete({
+            select: {
+                presentatorId: true,
+            },
             where: {
                 presentatorId_appointmentId: {
                     presentatorId: presentatorId,

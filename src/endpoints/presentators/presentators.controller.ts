@@ -26,7 +26,7 @@ import {
     UpdateSubstitutionDto,
     UpdateSubstitutionsDto,
 } from './dto/update-substitution.dto';
-import { UpdatePresentatorDto } from './dto/update-presentator.dto';
+import { UpdateMassDto } from '@app/dto/update-mass.dto';
 
 @Controller('presentators')
 export class PresentatorsController {
@@ -163,11 +163,11 @@ export class PresentatorsFromAppointmentsController {
         @Param('appointmentId') appointmentId: string,
         @Body(
             new ParseArrayPipe({
-                items: UpdatePresentatorDto,
+                items: UpdateMassDto,
                 forbidNonWhitelisted: true,
             }),
         )
-        updatePresentatorDto: UpdatePresentatorDto[],
+        updateMassDto: UpdateMassDto[],
     ): Promise<void> {
         return this.presentatorsService.update(
             institutionId,
@@ -177,7 +177,7 @@ export class PresentatorsFromAppointmentsController {
                 roomId: roomId,
                 appointmentId: appointmentId,
             },
-            updatePresentatorDto,
+            updateMassDto,
         );
     }
 
