@@ -6,6 +6,7 @@ import {
     Patch,
     Param,
     Delete,
+    ParseArrayPipe,
 } from '@nestjs/common';
 import {
     AccessType,
@@ -25,6 +26,7 @@ import {
     UpdateSubstitutionDto,
     UpdateSubstitutionsDto,
 } from './dto/update-substitution.dto';
+import { UpdateMassDto } from '@app/dto/update-mass.dto';
 
 @Controller('presentators')
 export class PresentatorsController {
@@ -152,6 +154,33 @@ export class PresentatorsFromAppointmentsController {
         );
     }
 
+    @Patch()
+    update(
+        @Param('institutionId') institutionId: string,
+        @Param('timetableId') timetableId: string,
+        @Param('presentatorId') presentatorId: string,
+        @Param('roomId') roomId: string,
+        @Param('appointmentId') appointmentId: string,
+        @Body(
+            new ParseArrayPipe({
+                items: UpdateMassDto,
+                forbidNonWhitelisted: true,
+            }),
+        )
+        updateMassDto: UpdateMassDto[],
+    ): Promise<void> {
+        return this.presentatorsService.update(
+            institutionId,
+            {
+                timetableId: timetableId,
+                presentatorId: presentatorId,
+                roomId: roomId,
+                appointmentId: appointmentId,
+            },
+            updateMassDto,
+        );
+    }
+
     @Patch(':substitutePresentatorId/substitute')
     @Permission([Permissions.READ])
     @SpecialPermission([SpecialPermissions.SUBSTITUTE])
@@ -186,7 +215,7 @@ export class PresentatorsFromAppointmentsController {
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
     ): Promise<void> {
-        return this.presentatorsService.add(
+        return this.presentatorsService.remove(
             institutionId,
             {
                 timetableId: timetableId,
