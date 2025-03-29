@@ -9,6 +9,7 @@ async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
         logger: new ConsoleLogger({
             prefix: 'Planora',
+            logLevels: process.env.DEBUG ? undefined : ['log', 'warn', 'error'],
         }),
     });
     app.enableCors({
