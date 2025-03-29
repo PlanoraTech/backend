@@ -5,6 +5,8 @@ import { Substitutions } from '@prisma/client';
 const substitutionsSelect = {
     from: true,
     to: true,
+    status: true,
+    presentatorId: false,
 };
 
 @Injectable()
@@ -21,13 +23,11 @@ export class SubstitutionsService {
                 ...substitutionsSelect,
             },
             where: {
-                presentators: {
-                    some: {
-                        id: presentatorId,
-                        institutions: {
-                            some: {
-                                id: institutionId,
-                            },
+                presentator: {
+                    id: presentatorId,
+                    institutions: {
+                        some: {
+                            id: institutionId,
                         },
                     },
                 },
@@ -47,13 +47,11 @@ export class SubstitutionsService {
             },
             where: {
                 id: id,
-                presentators: {
-                    some: {
-                        id: presentatorId,
-                        institutions: {
-                            some: {
-                                id: institutionId,
-                            },
+                presentator: {
+                    id: presentatorId,
+                    institutions: {
+                        some: {
+                            id: institutionId,
                         },
                     },
                 },

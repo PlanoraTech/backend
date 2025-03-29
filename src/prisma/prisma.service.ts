@@ -13,17 +13,17 @@ export class PrismaService extends PrismaClient {
         });
     }
     async onModuleInit() {
-        this.$on('query' as never, (event: {message: string}) => {
+        this.$on('query' as never, (event: { message: string }) => {
             Logger.debug(event, PrismaService.name);
         });
-        this.$on('info' as never, (event: {message: string}) => {
+        this.$on('info' as never, (event: { message: string }) => {
             Logger.log(event.message, PrismaService.name);
         });
-        this.$on('warn' as never, (event: {message: string}) => {
+        this.$on('warn' as never, (event: { message: string }) => {
             Logger.warn(event.message, PrismaService.name);
         });
-        this.$on('error' as never, (event: {message: string}) => {
-            Logger.error(event.message, PrismaService.name)
+        this.$on('error' as never, (event: { message: string }) => {
+            Logger.error(event.message, PrismaService.name);
         });
         await this.$connect();
     }

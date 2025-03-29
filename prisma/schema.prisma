@@ -62,6 +62,8 @@ model Institutions {
     timetables   TimeTables[]
     events       Events[]
     users        UsersToInstitutions[]
+
+    @@index([access])
 }
 
 model Presentators {
@@ -74,10 +76,14 @@ model Presentators {
 }
 
 model Substitutions {
-    id           String         @id @default(uuid())
-    from         DateTime
-    to           DateTime
-    presentators Presentators[]
+    id            String       @id @default(uuid())
+    from          DateTime
+    to            DateTime
+    status        Boolean      @default(true)
+    presentator   Presentators @relation(fields: [presentatorId], references: [id])
+    presentatorId String
+
+    @@index([presentatorId])
 }
 
 model Subjects {
@@ -87,6 +93,8 @@ model Subjects {
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
+
+    @@index([institutionId])
 }
 
 model Rooms {
@@ -95,6 +103,8 @@ model Rooms {
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
+
+    @@index([institutionId])
 }
 
 model Events {
@@ -103,6 +113,8 @@ model Events {
     date          DateTime
     institution   Institutions @relation(fields: [institutionId], references: [id])
     institutionId String
+
+    @@index([institutionId])
 }
 
 model TimeTables {
@@ -111,6 +123,8 @@ model TimeTables {
     appointments  Appointments[]
     institution   Institutions   @relation(fields: [institutionId], references: [id])
     institutionId String
+
+    @@index([institutionId])
 }
 
 model Appointments {
@@ -123,6 +137,8 @@ model Appointments {
     end          DateTime
     isCancelled  Boolean                      @default(false)
     timetables   TimeTables[]
+
+    @@index([subjectId, start, end])
 }
 
 model PresentatorsToAppointments {
@@ -133,6 +149,7 @@ model PresentatorsToAppointments {
     isSubstituted Boolean
 
     @@id([presentatorId, appointmentId])
+    @@index([isSubstituted])
 }
 
 model Users {
@@ -168,11 +185,13 @@ model Tokens {
     expiry DateTime @default(now())
     user   Users    @relation(fields: [userId], references: [id])
     userId String
+
+    @@index([token, userId])
 }
 
 model NotificationTokens {
-    id          String   @id @default(uuid())
-    token       String   @unique
-    user        Users    @relation(fields: [userId], references: [id])
-    userId      String
+    id     String @id @default(uuid())
+    token  String @unique
+    user   Users  @relation(fields: [userId], references: [id])
+    userId String
 }
