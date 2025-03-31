@@ -23,7 +23,9 @@ async function bootstrap(): Promise<void> {
 
     const config = new DocumentBuilder()
         .setTitle('Planora API')
-        .setVersion('In-dev 0.0.1')
+        .setVersion('In-dev 0.5')
+        .addBasicAuth()
+        .addBearerAuth()
         .build();
     const documentFactory = (): OpenAPIObject =>
         SwaggerModule.createDocument(app, config);
