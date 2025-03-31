@@ -137,78 +137,194 @@ export class PresentatorsService {
         id: string,
         substitutionDto: UpdateSubstitutionsDto,
     ): Promise<void> {
-        const appointments: { id: string }[] =
-            await this.prisma.appointments.findMany({
-                select: {
-                    id: true,
+        const presentator = await this.prisma.presentators.findUniqueOrThrow({
+            select: {
+                id: true,
+                name: true,
+            },
+            where: {
+                id: id,
+                institutions: {
+                    some: {
+                        id: institutionId,
+                    },
                 },
-                where: {
-                    start: {
-                        gte: new Date(substitutionDto.from),
-                        lte: new Date(substitutionDto.to),
-                    },
-                    end: {
-                        gte: new Date(substitutionDto.from),
-                        lte: new Date(substitutionDto.to),
-                    },
-                    presentators: {
-                        some: {
-                            presentator: {
-                                id: id,
-                                institutions: {
-                                    some: {
-                                        id: institutionId,
-                                    },
+            },
+        });
+
+        const appointments = await this.prisma.appointments.findMany({
+            select: {
+                id: true,
+            },
+            where: {
+                start: {
+                    gte: new Date(substitutionDto.from),
+                    lte: new Date(substitutionDto.to),
+                },
+                end: {
+                    gte: new Date(substitutionDto.from),
+                    lte: new Date(substitutionDto.to),
+                },
+                presentators: {
+                    some: {
+                        presentator: {
+                            id: id,
+                            institutions: {
+                                some: {
+                                    id: institutionId,
                                 },
                             },
                         },
                     },
                 },
-            });
+            },
+        });
+
         if (appointments.length === 0) {
             throw new NotFoundException(
                 'No appointments were found for this period',
             );
         }
-        const substitutions: { id: string }[] =
-            await this.prisma.substitutions.findMany({
-                select: {
-                    id: true,
-                },
-                where: {
-                    presentatorId: id,
-                    from: {
-                        gte: new Date(substitutionDto.from),
-                        lte: new Date(substitutionDto.to),
-                    },
-                    to: {
-                        gte: new Date(substitutionDto.from),
-                        lte: new Date(substitutionDto.to),
-                    },
-                    status: substitutionDto.isSubstituted,
-                },
-            });
-        if (substitutions.length > 0) {
-            throw new ConflictException(
-                'A substitution has already been set for this time period',
-            );
-        }
+
+        const existingSubstitutions = await this.prisma.substitutions.findMany({
+            where: {
+                presentatorId: id,
+                status: substitutionDto.isSubstituted,
+            },
+            orderBy: {
+                from: 'asc',
+            },
+        });
+
         await this.prisma.$transaction(async (prisma) => {
-            await prisma.substitutions.create({
-                select: {
-                    id: true,
-                },
-                data: {
-                    from: new Date(substitutionDto.from),
-                    to: new Date(substitutionDto.to),
-                    status: substitutionDto.isSubstituted,
-                    presentator: {
-                        connect: {
-                            id: id,
-                        },
+            if (substitutionDto.isSubstituted) {
+                const overlappingOrAdjacentSubs = existingSubstitutions.filter(
+                    (sub) => {
+                        const isAdjacent =
+                            sub.to.getTime() ===
+                                substitutionDto.from.getTime() ||
+                            sub.from.getTime() === substitutionDto.to.getTime();
+
+                        const isOverlapping =
+                            sub.from <= substitutionDto.to &&
+                            sub.to >= substitutionDto.from;
+
+                        return isAdjacent || isOverlapping;
                     },
-                },
-            });
+                );
+
+                if (overlappingOrAdjacentSubs.length > 0) {
+                    const allDates = [
+                        ...overlappingOrAdjacentSubs
+                            .map((sub) => [sub.from, sub.to])
+                            .flat(),
+                        substitutionDto.from,
+                        substitutionDto.to,
+                    ];
+
+                    const mergedFrom = new Date(
+                        Math.min(...allDates.map((d) => d.getTime())),
+                    );
+                    const mergedTo = new Date(
+                        Math.max(...allDates.map((d) => d.getTime())),
+                    );
+
+                    await prisma.substitutions.deleteMany({
+                        where: {
+                            id: {
+                                in: overlappingOrAdjacentSubs.map(
+                                    (sub) => sub.id,
+                                ),
+                            },
+                        },
+                    });
+
+                    await prisma.substitutions.create({
+                        data: {
+                            from: mergedFrom,
+                            to: mergedTo,
+                            status: true,
+                            presentator: {
+                                connect: {
+                                    id: id,
+                                },
+                            },
+                        },
+                    });
+                } else {
+                    await prisma.substitutions.create({
+                        data: {
+                            from: new Date(substitutionDto.from),
+                            to: new Date(substitutionDto.to),
+                            status: true,
+                            presentator: {
+                                connect: {
+                                    id: id,
+                                },
+                            },
+                        },
+                    });
+                }
+            } else {
+                const overlappingSubs = existingSubstitutions.filter(
+                    (sub) =>
+                        sub.from <= substitutionDto.to &&
+                        sub.to >= substitutionDto.from,
+                );
+
+                for (const sub of overlappingSubs) {
+                    if (
+                        substitutionDto.from > sub.from &&
+                        substitutionDto.to < sub.to
+                    ) {
+                        await prisma.substitutions.delete({
+                            where: { id: sub.id },
+                        });
+
+                        await prisma.substitutions.create({
+                            data: {
+                                from: sub.from,
+                                to: new Date(substitutionDto.from),
+                                status: true,
+                                presentator: { connect: { id } },
+                            },
+                        });
+
+                        await prisma.substitutions.create({
+                            data: {
+                                from: new Date(substitutionDto.to),
+                                to: sub.to,
+                                status: true,
+                                presentator: { connect: { id } },
+                            },
+                        });
+                    } else if (
+                        substitutionDto.from <= sub.from &&
+                        substitutionDto.to < sub.to
+                    ) {
+                        await prisma.substitutions.update({
+                            where: { id: sub.id },
+                            data: { from: new Date(substitutionDto.to) },
+                        });
+                    } else if (
+                        substitutionDto.from > sub.from &&
+                        substitutionDto.to >= sub.to
+                    ) {
+                        await prisma.substitutions.update({
+                            where: { id: sub.id },
+                            data: { to: new Date(substitutionDto.from) },
+                        });
+                    } else if (
+                        substitutionDto.from <= sub.from &&
+                        substitutionDto.to >= sub.to
+                    ) {
+                        await prisma.substitutions.delete({
+                            where: { id: sub.id },
+                        });
+                    }
+                }
+            }
+
             await prisma.presentatorsToAppointments.updateMany({
                 data: {
                     isSubstituted: substitutionDto.isSubstituted,
@@ -228,25 +344,14 @@ export class PresentatorsService {
                 },
             });
         });
-        const presentator: { name: string } =
-            await this.prisma.presentators.findUniqueOrThrow({
-                select: {
-                    name: true,
-                },
-                where: {
-                    id: id,
-                    institutions: {
-                        some: {
-                            id: institutionId,
-                        },
-                    },
-                },
-            });
+
         await this.pushNotificationsService.sendNotificationToPushServer(
             await this.pushNotificationsService.getPushNotificationTokens(),
             {
-                title: 'Substitution',
-                body: `${presentator.name} has been substituted between ${substitutionDto.from} and ${substitutionDto.to}`,
+                title: substitutionDto.isSubstituted
+                    ? 'Absence Added'
+                    : 'Presence Added',
+                body: `${presentator.name} has been ${substitutionDto.isSubstituted ? 'marked absent' : 'marked present'} between ${substitutionDto.from.toLocaleString()} and ${substitutionDto.to.toLocaleString()}`,
             },
         );
     }
