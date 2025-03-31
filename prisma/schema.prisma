@@ -80,7 +80,6 @@ model Substitutions {
     id            String       @id @default(uuid())
     from          DateTime
     to            DateTime
-    status        Boolean      @default(true)
     presentator   Presentators @relation(fields: [presentatorId], references: [id])
     presentatorId String
 
