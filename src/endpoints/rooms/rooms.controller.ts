@@ -6,12 +6,14 @@ import {
     Patch,
     Param,
     Delete,
+    ParseArrayPipe,
 } from '@nestjs/common';
 import { AccessType, Rooms } from '@prisma/client';
 import { RoomsFromAppointmentsService, RoomsService } from './rooms.service';
 import { Access } from '@app/decorators/access.decorator';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { UpdateMassDto } from '@app/dto/update-mass.dto';
 
 @Controller('rooms')
 export class RoomsController {
@@ -126,6 +128,33 @@ export class RoomsFromAppointmentsController {
         );
     }
 
+    @Patch()
+    update(
+        @Param('institutionId') institutionId: string,
+        @Param('timetableId') timetableId: string,
+        @Param('presentatorId') presentatorId: string,
+        @Param('roomId') roomId: string,
+        @Param('appointmentId') appointmentId: string,
+        @Body(
+            new ParseArrayPipe({
+                items: UpdateMassDto,
+                forbidNonWhitelisted: true,
+            }),
+        )
+        updateMassDto: UpdateMassDto[],
+    ): Promise<void> {
+        return this.roomsService.update(
+            institutionId,
+            {
+                timetableId: timetableId,
+                presentatorId: presentatorId,
+                roomId: roomId,
+                appointmentId: appointmentId,
+            },
+            updateMassDto,
+        );
+    }
+
     @Delete(':id')
     remove(
         @Param('institutionId') institutionId: string,
@@ -135,7 +164,7 @@ export class RoomsFromAppointmentsController {
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
     ): Promise<void> {
-        return this.roomsService.add(
+        return this.roomsService.remove(
             institutionId,
             {
                 timetableId: timetableId,
