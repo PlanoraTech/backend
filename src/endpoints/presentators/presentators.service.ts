@@ -166,7 +166,9 @@ export class PresentatorsService {
                 },
             });
         if (appointments.length === 0) {
-            throw new NotFoundException('No appointments were found for this period')
+            throw new NotFoundException(
+                'No appointments were found for this period',
+            );
         }
         const substitutions: { id: string }[] =
             await this.prisma.substitutions.findMany({
@@ -183,6 +185,7 @@ export class PresentatorsService {
                         gte: new Date(substitutionDto.from),
                         lte: new Date(substitutionDto.to),
                     },
+                    status: substitutionDto.isSubstituted,
                 },
             });
         if (substitutions.length > 0) {
@@ -282,7 +285,7 @@ export class PresentatorsService {
                     }
                     throw e;
                 });
-        })
+        });
     }
 }
 
@@ -577,7 +580,18 @@ export class PresentatorsFromAppointmentsService {
         presentatorId: string,
         substitutionDto: UpdateSubstitutionDto,
     ): Promise<void> {
-        const query = await this.prisma.presentatorsToAppointments
+        const query: {
+            presentator: {
+                name: string;
+            };
+            appointment: {
+                start: Date;
+                end: Date;
+                subject: {
+                    name: string;
+                };
+            };
+        } = await this.prisma.presentatorsToAppointments
             .update({
                 select: {
                     appointment: {
@@ -587,15 +601,15 @@ export class PresentatorsFromAppointmentsService {
                             subject: {
                                 select: {
                                     name: true,
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     },
                     presentator: {
                         select: {
                             name: true,
-                        }
-                    }
+                        },
+                    },
                 },
                 data: {
                     isSubstituted: substitutionDto.isSubstituted,
@@ -711,6 +725,13 @@ export class PresentatorsFromAppointmentsService {
                     },
                 },
             });
+        if (
+            !updateMassDto.every((presentator) => {
+                return presentators.find((p) => p.id === presentator.id);
+            })
+        ) {
+            throw new NotFoundException('One or more room IDs were invalid');
+        }
         const appointment: {
             start: Date;
             end: Date;
