@@ -137,35 +137,75 @@ export class PresentatorsService {
         id: string,
         substitutionDto: UpdateSubstitutionsDto,
     ): Promise<void> {
-        await this.prisma.$transaction(async (prisma) => {
-            const appointments: { id: string }[] =
-                await prisma.appointments.findMany({
-                    select: {
-                        id: true,
+        const appointments: { id: string }[] =
+            await this.prisma.appointments.findMany({
+                select: {
+                    id: true,
+                },
+                where: {
+                    start: {
+                        gte: new Date(substitutionDto.from),
+                        lte: new Date(substitutionDto.to),
                     },
-                    where: {
-                        start: {
-                            gte: new Date(substitutionDto.from),
-                            lte: new Date(substitutionDto.to),
-                        },
-                        end: {
-                            gte: new Date(substitutionDto.from),
-                            lte: new Date(substitutionDto.to),
-                        },
-                        presentators: {
-                            some: {
-                                presentator: {
-                                    id: id,
-                                    institutions: {
-                                        some: {
-                                            id: institutionId,
-                                        },
+                    end: {
+                        gte: new Date(substitutionDto.from),
+                        lte: new Date(substitutionDto.to),
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: id,
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
                                     },
                                 },
                             },
                         },
                     },
-                });
+                },
+            });
+        if (appointments.length === 0) {
+            throw new NotFoundException('No appointments were found for this period')
+        }
+        const substitutions: { id: string }[] =
+            await this.prisma.substitutions.findMany({
+                select: {
+                    id: true,
+                },
+                where: {
+                    presentatorId: id,
+                    from: {
+                        gte: new Date(substitutionDto.from),
+                        lte: new Date(substitutionDto.to),
+                    },
+                    to: {
+                        gte: new Date(substitutionDto.from),
+                        lte: new Date(substitutionDto.to),
+                    },
+                },
+            });
+        if (substitutions.length > 0) {
+            throw new ConflictException(
+                'A substitution has already been set for this time period',
+            );
+        }
+        await this.prisma.$transaction(async (prisma) => {
+            await prisma.substitutions.create({
+                select: {
+                    id: true,
+                },
+                data: {
+                    from: new Date(substitutionDto.from),
+                    to: new Date(substitutionDto.to),
+                    status: substitutionDto.isSubstituted,
+                    presentator: {
+                        connect: {
+                            id: id,
+                        },
+                    },
+                },
+            });
             await prisma.presentatorsToAppointments.updateMany({
                 data: {
                     isSubstituted: substitutionDto.isSubstituted,
@@ -184,28 +224,6 @@ export class PresentatorsService {
                     },
                 },
             });
-            await prisma.appointments.updateMany({
-                data: {
-                    isCancelled: true,
-                },
-                where: {
-                    id: {
-                        in: appointments.map((appointment) => appointment.id),
-                    },
-                    presentators: {
-                        every: {
-                            presentator: {
-                                institutions: {
-                                    some: {
-                                        id: institutionId,
-                                    },
-                                },
-                            },
-                            isSubstituted: true,
-                        },
-                    },
-                },
-            });
         });
         const presentator: { name: string } =
             await this.prisma.presentators.findUniqueOrThrow({
@@ -214,6 +232,11 @@ export class PresentatorsService {
                 },
                 where: {
                     id: id,
+                    institutions: {
+                        some: {
+                            id: institutionId,
+                        },
+                    },
                 },
             });
         await this.pushNotificationsService.sendNotificationToPushServer(
@@ -226,38 +249,40 @@ export class PresentatorsService {
     }
 
     async remove(institutionId: string, id: string): Promise<void> {
-        await this.prisma.usersToInstitutions.delete({
-            select: {
-                institutionId: true,
-            },
-            where: {
-                presentatorId: id,
-                institution: {
-                    id: institutionId,
-                },
-            },
-        });
-        await this.prisma.presentators
-            .delete({
+        await this.prisma.$transaction(async (prisma) => {
+            await prisma.usersToInstitutions.delete({
                 select: {
-                    id: true,
+                    institutionId: true,
                 },
                 where: {
-                    id: id,
-                    institutions: {
-                        none: {},
+                    presentatorId: id,
+                    institution: {
+                        id: institutionId,
                     },
                 },
-            })
-            .catch((e) => {
-                if (e instanceof PrismaClientKnownRequestError) {
-                    switch (e.code) {
-                        case 'P2025':
-                            return;
-                    }
-                }
-                throw e;
             });
+            await prisma.presentators
+                .delete({
+                    select: {
+                        id: true,
+                    },
+                    where: {
+                        id: id,
+                        institutions: {
+                            none: {},
+                        },
+                    },
+                })
+                .catch((e) => {
+                    if (e instanceof PrismaClientKnownRequestError) {
+                        switch (e.code) {
+                            case 'P2025':
+                                return;
+                        }
+                    }
+                    throw e;
+                });
+        })
     }
 }
 
@@ -273,13 +298,43 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
         presentatorId: string,
     ): Promise<void> {
-        await this.prisma.presentators
+        const presentator: { name: string } = await this.prisma.presentators
             .findUniqueOrThrow({
                 select: {
-                    id: true,
+                    name: true,
                 },
                 where: {
                     id: presentatorId,
+                    appointments: {
+                        some: {
+                            appointment: {
+                                timetables: {
+                                    some: {
+                                        id: dataService.timetableId,
+                                        institutionId: institutionId,
+                                    },
+                                },
+                                rooms: {
+                                    some: {
+                                        id: dataService.roomId,
+                                        institutionId: institutionId,
+                                    },
+                                },
+                                presentators: {
+                                    some: {
+                                        presentator: {
+                                            id: dataService.presentatorId,
+                                            institutions: {
+                                                some: {
+                                                    id: institutionId,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
             })
             .catch((e) => {
@@ -293,52 +348,60 @@ export class PresentatorsFromAppointmentsService {
                 }
                 throw e;
             });
-        const appointment: { start: Date; end: Date } =
-            await this.prisma.appointments
-                .findUniqueOrThrow({
-                    select: {
-                        start: true,
-                        end: true,
+        const appointment: {
+            start: Date;
+            end: Date;
+            subject: { name: string };
+        } = await this.prisma.appointments
+            .findUniqueOrThrow({
+                select: {
+                    start: true,
+                    end: true,
+                    subject: {
+                        select: {
+                            name: true,
+                        },
                     },
-                    where: {
-                        id: dataService.appointmentId,
-                        timetables: {
-                            some: {
-                                id: dataService.timetableId,
-                                institutionId: institutionId,
-                            },
+                },
+                where: {
+                    id: dataService.appointmentId,
+                    timetables: {
+                        some: {
+                            id: dataService.timetableId,
+                            institutionId: institutionId,
                         },
-                        rooms: {
-                            some: {
-                                id: dataService.roomId,
-                                institutionId: institutionId,
-                            },
+                    },
+                    rooms: {
+                        some: {
+                            id: dataService.roomId,
+                            institutionId: institutionId,
                         },
-                        presentators: {
-                            some: {
-                                presentator: {
-                                    id: dataService.presentatorId,
-                                    institutions: {
-                                        some: {
-                                            id: institutionId,
-                                        },
+                    },
+                    presentators: {
+                        some: {
+                            presentator: {
+                                id: dataService.presentatorId,
+                                institutions: {
+                                    some: {
+                                        id: institutionId,
                                     },
                                 },
                             },
                         },
                     },
-                })
-                .catch((e) => {
-                    if (e instanceof PrismaClientKnownRequestError) {
-                        switch (e.code) {
-                            case 'P2025':
-                                throw new NotFoundException(
-                                    'Appointment does not exists',
-                                );
-                        }
+                },
+            })
+            .catch((e) => {
+                if (e instanceof PrismaClientKnownRequestError) {
+                    switch (e.code) {
+                        case 'P2025':
+                            throw new NotFoundException(
+                                'Appointment does not exists',
+                            );
                     }
-                    throw e;
-                });
+                }
+                throw e;
+            });
         const appointments: { id: string }[] =
             await this.prisma.appointments.findMany({
                 select: {
@@ -407,6 +470,13 @@ export class PresentatorsFromAppointmentsService {
                 }
                 throw e;
             });
+        await this.pushNotificationsService.sendNotificationToPushServer(
+            await this.pushNotificationsService.getPushNotificationTokens(),
+            {
+                title: 'Appointment update',
+                body: `${presentator.name} has been added to ${appointment.subject.name}: ${appointment.start.toLocaleDateString()} ${appointment.start.toLocaleTimeString()} - ${appointment.end.toLocaleTimeString()}`,
+            },
+        );
     }
 
     async findAll(
@@ -507,128 +577,83 @@ export class PresentatorsFromAppointmentsService {
         presentatorId: string,
         substitutionDto: UpdateSubstitutionDto,
     ): Promise<void> {
-        await this.prisma.$transaction(async (prisma) => {
-            const appointment: {
-                appointment: {
-                    start: Date;
-                    end: Date;
-                    subject: { name: string };
-                };
-            } = await prisma.presentatorsToAppointments
-                .update({
-                    select: {
-                        appointment: {
-                            select: {
-                                start: true,
-                                end: true,
-                                subject: {
-                                    select: {
-                                        name: true,
-                                    },
-                                },
-                            },
-                        },
+        const query = await this.prisma.presentatorsToAppointments
+            .update({
+                select: {
+                    appointment: {
+                        select: {
+                            start: true,
+                            end: true,
+                            subject: {
+                                select: {
+                                    name: true,
+                                }
+                            }
+                        }
                     },
-                    data: {
-                        isSubstituted: substitutionDto.isSubstituted,
-                    },
-                    where: {
-                        presentatorId_appointmentId: {
-                            presentatorId: presentatorId,
-                            appointmentId: dataService.appointmentId,
-                        },
-                        appointment: {
-                            id: dataService.appointmentId,
-                            timetables: {
-                                some: {
-                                    id: dataService.timetableId,
-                                    institutionId: institutionId,
-                                },
-                            },
-                            rooms: {
-                                some: {
-                                    id: dataService.roomId,
-                                    institutionId: institutionId,
-                                },
-                            },
-                            presentators: {
-                                some: {
-                                    presentator: {
-                                        id: dataService.presentatorId,
-                                        institutions: {
-                                            some: {
-                                                id: institutionId,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                })
-                .catch((e) => {
-                    if (e instanceof PrismaClientKnownRequestError) {
-                        switch (e.code) {
-                            case 'P2025':
-                                throw new ForbiddenException(
-                                    'The presentator is not assigned to the appointment',
-                                );
+                    presentator: {
+                        select: {
+                            name: true,
                         }
                     }
-                    throw e;
-                });
-            await prisma.appointments
-                .update({
-                    select: {
-                        id: true,
+                },
+                data: {
+                    isSubstituted: substitutionDto.isSubstituted,
+                },
+                where: {
+                    presentatorId_appointmentId: {
+                        presentatorId: presentatorId,
+                        appointmentId: dataService.appointmentId,
                     },
-                    data: {
-                        isCancelled: true,
-                    },
-                    where: {
+                    appointment: {
                         id: dataService.appointmentId,
+                        timetables: {
+                            some: {
+                                id: dataService.timetableId,
+                                institutionId: institutionId,
+                            },
+                        },
+                        rooms: {
+                            some: {
+                                id: dataService.roomId,
+                                institutionId: institutionId,
+                            },
+                        },
                         presentators: {
-                            every: {
+                            some: {
                                 presentator: {
+                                    id: dataService.presentatorId,
                                     institutions: {
                                         some: {
                                             id: institutionId,
                                         },
                                     },
                                 },
-                                isSubstituted: true,
                             },
                         },
                     },
-                })
-                .catch((e) => {
-                    if (e instanceof PrismaClientKnownRequestError) {
-                        switch (e.code) {
-                            case 'P2025':
-                                return;
-                        }
-                    }
-                    throw e;
-                });
-            const presentator: { name: string } =
-                await this.prisma.presentators.findUniqueOrThrow({
-                    select: {
-                        name: true,
-                    },
-                    where: {
-                        id: presentatorId,
-                    },
-                });
-            await this.pushNotificationsService.sendNotificationToPushServer(
-                await this.pushNotificationsService.getPushNotificationTokens(),
-                {
-                    title: 'Substitution',
-                    body: substitutionDto.isSubstituted
-                        ? `${presentator.name} has been substituted for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start.toLocaleDateString()} ${appointment.appointment.start.toLocaleTimeString()} - ${appointment.appointment.end.toLocaleTimeString()}`
-                        : `Substitution for ${presentator.name} has been cancelled for the following appointment: ${appointment.appointment.subject.name} ${appointment.appointment.start.toLocaleDateString()} ${appointment.appointment.start.toLocaleTimeString()} - ${appointment.appointment.end.toLocaleTimeString()}`,
                 },
-            );
-        });
+            })
+            .catch((e) => {
+                if (e instanceof PrismaClientKnownRequestError) {
+                    switch (e.code) {
+                        case 'P2025':
+                            throw new ForbiddenException(
+                                'This presentator is not assigned to this appointment',
+                            );
+                    }
+                }
+                throw e;
+            });
+        await this.pushNotificationsService.sendNotificationToPushServer(
+            await this.pushNotificationsService.getPushNotificationTokens(),
+            {
+                title: 'Substitution',
+                body: substitutionDto.isSubstituted
+                    ? `${query.presentator.name} has been substituted for the following appointment: ${query.appointment.subject.name} ${query.appointment.start.toLocaleDateString()} ${query.appointment.start.toLocaleTimeString()} - ${query.appointment.end.toLocaleTimeString()}`
+                    : `Substitution for ${query.presentator.name} has been cancelled for the following appointment: ${query.appointment.subject.name} ${query.appointment.start.toLocaleDateString()} ${query.appointment.start.toLocaleTimeString()} - ${query.appointment.end.toLocaleTimeString()}`,
+            },
+        );
     }
 
     async update(
@@ -636,11 +661,70 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
         updateMassDto: UpdateMassDto[],
     ): Promise<void> {
-        const appointment: { start: Date; end: Date } =
-            await this.prisma.appointments.findUniqueOrThrow({
+        const presentators: { id: string; name: string }[] =
+            await this.prisma.presentators.findMany({
+                select: {
+                    id: true,
+                    name: true,
+                },
+                where: {
+                    id: {
+                        in: updateMassDto.map((presentator) => {
+                            return presentator.id;
+                        }),
+                    },
+                    appointments: {
+                        some: {
+                            appointment: {
+                                id: dataService.appointmentId,
+                                timetables: {
+                                    some: {
+                                        id: dataService.timetableId,
+                                        institutionId: institutionId,
+                                    },
+                                },
+                                rooms: {
+                                    some: {
+                                        id: dataService.presentatorId,
+                                        institutionId: institutionId,
+                                    },
+                                },
+                                presentators: {
+                                    some: {
+                                        presentator: {
+                                            id: dataService.presentatorId,
+                                            institutions: {
+                                                some: {
+                                                    id: institutionId,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    institutions: {
+                        some: {
+                            id: institutionId,
+                        },
+                    },
+                },
+            });
+        const appointment: {
+            start: Date;
+            end: Date;
+            subject: { name: string };
+        } = await this.prisma.appointments
+            .findUniqueOrThrow({
                 select: {
                     start: true,
                     end: true,
+                    subject: {
+                        select: {
+                            name: true,
+                        },
+                    },
                 },
                 where: {
                     id: dataService.appointmentId,
@@ -669,6 +753,17 @@ export class PresentatorsFromAppointmentsService {
                         },
                     },
                 },
+            })
+            .catch((e) => {
+                if (e instanceof PrismaClientKnownRequestError) {
+                    switch (e.code) {
+                        case 'P2025':
+                            throw new NotFoundException(
+                                'Appointment does not exists',
+                            );
+                    }
+                }
+                throw e;
             });
         const appointments: { id: string }[] =
             await this.prisma.appointments.findMany({
@@ -730,17 +825,22 @@ export class PresentatorsFromAppointmentsService {
                 },
             });
             await prisma.presentatorsToAppointments.createMany({
-                data: updateMassDto
-                    .filter((presentator) => {
-                        presentator.id != dataService.presentatorId;
-                    })
-                    .map((presentator) => ({
-                        appointmentId: dataService.appointmentId,
-                        presentatorId: presentator.id,
-                        isSubstituted: false,
-                    })),
+                data: updateMassDto.map((presentator) => ({
+                    appointmentId: dataService.appointmentId,
+                    presentatorId: presentator.id,
+                    isSubstituted: false,
+                })),
             });
         });
+        await this.pushNotificationsService.sendNotificationToPushServer(
+            await this.pushNotificationsService.getPushNotificationTokens(),
+            {
+                title: 'Appointment update',
+                body: `${presentators.map((presentator) => {
+                    return presentator.name;
+                })} has been added to ${appointment.subject.name}: ${appointment.start.toLocaleDateString()} ${appointment.start.toLocaleTimeString()} - ${appointment.end.toLocaleTimeString()}`,
+            },
+        );
     }
 
     async remove(
@@ -748,9 +848,27 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
         presentatorId: string,
     ): Promise<void> {
-        await this.prisma.presentatorsToAppointments.delete({
+        const query: {
+            presentator: { name: string };
+            appointment: { start: Date; end: Date; subject: { name: string } };
+        } = await this.prisma.presentatorsToAppointments.delete({
             select: {
-                presentatorId: true,
+                presentator: {
+                    select: {
+                        name: true,
+                    },
+                },
+                appointment: {
+                    select: {
+                        start: true,
+                        end: true,
+                        subject: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
             },
             where: {
                 presentatorId_appointmentId: {
@@ -782,5 +900,12 @@ export class PresentatorsFromAppointmentsService {
                 },
             },
         });
+        await this.pushNotificationsService.sendNotificationToPushServer(
+            await this.pushNotificationsService.getPushNotificationTokens(),
+            {
+                title: 'Appointment update',
+                body: `${query.presentator.name} has been removed from ${query.appointment.subject.name}: ${query.appointment.start.toLocaleDateString()} ${query.appointment.start.toLocaleTimeString()} - ${query.appointment.end.toLocaleTimeString()}`,
+            },
+        );
     }
 }
