@@ -8,9 +8,16 @@ import {
     Delete,
     ParseArrayPipe,
 } from '@nestjs/common';
-import { AccessType, Rooms } from '@prisma/client';
+import {
+    AccessType,
+    Permissions,
+    Rooms,
+    SpecialPermissions,
+} from '@prisma/client';
 import { RoomsFromAppointmentsService, RoomsService } from './rooms.service';
 import { Access } from '@app/decorators/access.decorator';
+import { Permission } from '@app/decorators/permission.decorator';
+import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { UpdateMassDto } from '@app/dto/update-mass.dto';
@@ -129,6 +136,8 @@ export class RoomsFromAppointmentsController {
     }
 
     @Patch()
+    @Permission([Permissions.READ])
+    @SpecialPermission([SpecialPermissions.CHANGE_ROOM])
     update(
         @Param('institutionId') institutionId: string,
         @Param('timetableId') timetableId: string,
