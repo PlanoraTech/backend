@@ -201,6 +201,39 @@ export class RoomsFromAppointmentsController {
     }
 
     /**
+     * Retrieves a list of available rooms for a given timetable and appointment.
+     *
+     * @remarks This operation checks for rooms that are currently unoccupied during
+     * the specified appointment time. It allows users to find alternative rooms
+     * based on scheduling constraints.
+     */
+    @Get('available')
+    @Permission([Permissions.READ])
+    @SpecialPermission([SpecialPermissions.CHANGE_ROOM])
+    @ApiOkResponse({ description: 'Successfully retrieved available rooms.' })
+    @ApiForbiddenResponse({
+        description:
+            'Forbidden. You do not have permission to access available rooms.',
+    })
+    @ApiNotFoundResponse({
+        description: 'No available rooms found for the given parameters.',
+    })
+    findAvailableRooms(
+        @Param('institutionId') institutionId: string,
+        @Param('timetableId') timetableId: string,
+        @Param('presentatorId') presentatorId: string,
+        @Param('roomId') roomId: string,
+        @Param('appointmentId') appointmentId: string,
+    ): Promise<Rooms[]> {
+        return this.roomsService.findAvailableRooms(institutionId, {
+            timetableId: timetableId,
+            presentatorId: presentatorId,
+            roomId: roomId,
+            appointmentId: appointmentId,
+        });
+    }
+
+    /**
      * Retrieve a specific room assigned to an appointment.
      *
      * @remarks This operation fetches a specific room assigned to an appointment.
