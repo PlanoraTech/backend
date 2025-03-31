@@ -42,16 +42,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         if (exception instanceof PrismaClientKnownRequestError) {
             switch (exception.code) {
                 case 'P2001':
+                case 'P2003':
+                case 'P2015':
+                case 'P2025':
                     exception = new NotFoundException();
                     break;
                 case 'P2002':
                     exception = new ConflictException();
-                    break;
-                case 'P2015':
-                    exception = new NotFoundException();
-                    break;
-                case 'P2025':
-                    exception = new NotFoundException();
                     break;
                 default:
                     exception = new InternalServerErrorException();
