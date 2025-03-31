@@ -132,7 +132,8 @@ export class RoomsFromAppointmentsService {
                         },
                     },
                 },
-            }).catch((e) => {
+            })
+            .catch((e) => {
                 if (e instanceof PrismaClientKnownRequestError) {
                     switch (e.code) {
                         case 'P2025':
@@ -191,7 +192,7 @@ export class RoomsFromAppointmentsService {
                     switch (e.code) {
                         case 'P2025':
                             throw new NotFoundException(
-                                'Appointment does not exists',
+                                'Appointment not found',
                             );
                     }
                 }
@@ -391,59 +392,100 @@ export class RoomsFromAppointmentsService {
     ): Promise<Rooms[]> {
         return await this.prisma.$transaction(async (prisma) => {
             const appointment: { start: Date; end: Date } =
-                await prisma.appointments.findUniqueOrThrow({
-                    select: {
-                        start: true,
-                        end: true,
-                    },
-                    where: {
-                        id: dataService.appointmentId,
-                        timetables: {
-                            some: {
-                                id: dataService.timetableId,
-                                institutionId: institutionId,
-                            },
+                await prisma.appointments
+                    .findUniqueOrThrow({
+                        select: {
+                            start: true,
+                            end: true,
                         },
-                        rooms: {
-                            some: {
-                                id: dataService.roomId,
-                                institutionId: institutionId,
+                        where: {
+                            id: dataService.appointmentId,
+                            timetables: {
+                                some: {
+                                    id: dataService.timetableId,
+                                    institutionId: institutionId,
+                                },
                             },
-                        },
-                        presentators: {
-                            some: {
-                                presentator: {
-                                    id: dataService.presentatorId,
-                                    institutions: {
-                                        some: {
-                                            id: institutionId,
+                            rooms: {
+                                some: {
+                                    id: dataService.roomId,
+                                    institutionId: institutionId,
+                                },
+                            },
+                            presentators: {
+                                some: {
+                                    presentator: {
+                                        id: dataService.presentatorId,
+                                        institutions: {
+                                            some: {
+                                                id: institutionId,
+                                            },
                                         },
                                     },
                                 },
                             },
                         },
-                    },
-                });
+                    })
+                    .catch((e) => {
+                        if (e instanceof PrismaClientKnownRequestError) {
+                            switch (e.code) {
+                                case 'P2025':
+                                    throw new NotFoundException(
+                                        'Appointment not found',
+                                    );
+                            }
+                        }
+                        throw e;
+                    });
             return await prisma.rooms.findMany({
                 select: {
                     id: true,
                     ...roomsSelect,
                 },
                 where: {
-                    institutionId: institutionId,
-                    appointments: {
-                        some: {
-                            start: {
-                                lte: appointment.start,
-                            },
-                            end: {
-                                gte: appointment.end,
-                            },
-                        },
-                        none: {
-                            isCancelled: false,
-                        },
+                    id: {
+                        not: dataService.roomId,
                     },
+                    institutionId: institutionId,
+                    OR: [
+                        {
+                            appointments: {
+                                none: {},
+                            },
+                        },
+                        {
+                            appointments: {
+                                some: {
+                                    start: {
+                                        gte: appointment.start,
+                                        lte: appointment.end,
+                                    },
+                                    end: {
+                                        gte: appointment.start,
+                                        lte: appointment.end,
+                                    },
+                                    isCancelled: true,
+                                },
+                            },
+                        },
+                        {
+                            appointments: {
+                                none: {
+                                    start: {
+                                        gte: appointment.start,
+                                        lte: appointment.end,
+                                    },
+                                    end: {
+                                        gte: appointment.start,
+                                        lte: appointment.end,
+                                    },
+                                },
+                                every: {
+                                    isCancelled: false,
+                                }
+                            },
+                        },
+                    ],
                 },
             });
         });
@@ -503,49 +545,51 @@ export class RoomsFromAppointmentsService {
             throw new NotFoundException('One or more room IDs were invalid');
         }
         const appointment: { start: Date; end: Date } =
-            await this.prisma.appointments.findUniqueOrThrow({
-                select: {
-                    start: true,
-                    end: true,
-                },
-                where: {
-                    id: dataService.appointmentId,
-                    timetables: {
-                        some: {
-                            id: dataService.timetableId,
-                            institutionId: institutionId,
-                        },
+            await this.prisma.appointments
+                .findUniqueOrThrow({
+                    select: {
+                        start: true,
+                        end: true,
                     },
-                    rooms: {
-                        some: {
-                            id: dataService.roomId,
-                            institutionId: institutionId,
+                    where: {
+                        id: dataService.appointmentId,
+                        timetables: {
+                            some: {
+                                id: dataService.timetableId,
+                                institutionId: institutionId,
+                            },
                         },
-                    },
-                    presentators: {
-                        some: {
-                            presentator: {
-                                id: dataService.presentatorId,
-                                institutions: {
-                                    some: {
-                                        id: institutionId,
+                        rooms: {
+                            some: {
+                                id: dataService.roomId,
+                                institutionId: institutionId,
+                            },
+                        },
+                        presentators: {
+                            some: {
+                                presentator: {
+                                    id: dataService.presentatorId,
+                                    institutions: {
+                                        some: {
+                                            id: institutionId,
+                                        },
                                     },
                                 },
                             },
                         },
                     },
-                },
-            }).catch((e) => {
-                if (e instanceof PrismaClientKnownRequestError) {
-                    switch (e.code) {
-                        case 'P2025':
-                            throw new NotFoundException(
-                                'Appointment does not exists',
-                            );
+                })
+                .catch((e) => {
+                    if (e instanceof PrismaClientKnownRequestError) {
+                        switch (e.code) {
+                            case 'P2025':
+                                throw new NotFoundException(
+                                    'Appointment not found',
+                                );
+                        }
                     }
-                }
-                throw e;
-            });
+                    throw e;
+                });
         const appointments: { id: string }[] =
             await this.prisma.appointments.findMany({
                 select: {
