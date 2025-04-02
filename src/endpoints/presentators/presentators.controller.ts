@@ -46,7 +46,7 @@ export class PresentatorsController {
      *
      * @remarks This operation creates a new presentator under a specified institution.
      */
-    @Post()
+    @Post(':id')
     @ApiOkResponse({ description: 'Successfully created the presentator.' })
     @ApiForbiddenResponse({
         description:
@@ -54,10 +54,12 @@ export class PresentatorsController {
     })
     create(
         @Param('institutionId') institutionId: string,
+        @Param('id') userId: string,
         @Body() createPresentatorDto: CreatePresentatorDto,
     ): Promise<void> {
         return this.presentatorsService.create(
             institutionId,
+            userId,
             createPresentatorDto,
         );
     }
