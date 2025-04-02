@@ -30,17 +30,8 @@ export class UsersService {
     async findAll(institutionId: string): Promise<Partial<Users>[]> {
         return await this.prisma.users.findMany({
             select: {
+                id: true,
                 email: true,
-                institutions: {
-                    select: {
-                        institution: {
-                            select: {
-                                name: true,
-                            },
-                        },
-                        role: true,
-                    },
-                },
             },
             where: {
                 institutions: {

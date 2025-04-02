@@ -7,7 +7,10 @@ import {
 import { PrismaService } from '@app/prisma/prisma.service';
 import { PushNotificationsService } from '@app/push-notifications/push-notifications.service';
 import { Presentators, Roles } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import {
+    PrismaClientKnownRequestError,
+    PrismaClientUnknownRequestError,
+} from '@prisma/client/runtime/library';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import {
     UpdateSubstitutionDto,
@@ -29,6 +32,7 @@ export class PresentatorsService {
 
     async create(
         institutionId: string,
+        userId: string,
         createPresentatorDto: CreatePresentatorDto,
     ): Promise<void> {
         await this.prisma.$transaction(async (prisma) => {
@@ -55,7 +59,7 @@ export class PresentatorsService {
                     }
                     throw e;
                 });
-            if (createPresentatorDto.email) {
+            if (userId) {
                 await prisma.usersToInstitutions
                     .create({
                         select: {
@@ -65,7 +69,7 @@ export class PresentatorsService {
                             role: Roles.PRESENTATOR,
                             user: {
                                 connect: {
-                                    email: createPresentatorDto.email,
+                                    id: userId,
                                 },
                             },
                             institution: {
@@ -92,6 +96,12 @@ export class PresentatorsService {
                                         'The given email is not assigned to an account',
                                     );
                             }
+                        } else if (
+                            e instanceof PrismaClientUnknownRequestError
+                        ) {
+                            throw new ConflictException(
+                                'You are possibly trying to connect a user with a presentator that has already been connected',
+                            );
                         }
                         throw e;
                     });

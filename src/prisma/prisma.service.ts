@@ -12,7 +12,7 @@ export class PrismaService extends PrismaClient {
             ],
         });
     }
-    async onModuleInit() {
+    async onModuleInit(): Promise<void> {
         this.$on('query' as never, (event: { message: string }) => {
             Logger.debug(event, PrismaService.name);
         });
@@ -25,6 +25,5 @@ export class PrismaService extends PrismaClient {
         this.$on('error' as never, (event: { message: string }) => {
             Logger.error(event.message, PrismaService.name);
         });
-        await this.$connect();
     }
 }
