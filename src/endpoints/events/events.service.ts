@@ -23,7 +23,8 @@ export class EventsService {
                 id: true,
             },
             data: {
-                ...createEventDto,
+                title: createEventDto.title,
+                date: new Date(createEventDto.date),
                 institutionId: institutionId,
             },
         });
