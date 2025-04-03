@@ -1,31 +1,48 @@
 # Setup
+
 ## Requirements
-NodeJS 22 || 23
-PostgreSQL
+
+Before you begin, ensure that you have the following software installed:
+
+- **Node.js** (version 22.0.0 or higher)
+- **PostgreSQL** (version 17 or higher)
 
 ## Steps
-### Install NodeJS (one of the version listed above) and PostgreSQL
-Everything will work with the default settings
 
-### Create a user in pgAdmin called planora with the password planora (Optional)
-This is not a required step, but this is how the example .env file is configured
+### 1. Install Node.js and PostgreSQL
+Make sure you have one of the required versions of Node.js and PostgreSQL installed. Everything should work with the default settings.
 
-### Install package dependencies of the project with npm
-```
+### 2. (Optional) Create a User in pgAdmin
+
+This step is optional, but if you choose to follow the example `.env` file configuration, you can create a user in pgAdmin with the following details:
+
+- **Username**: `planora`
+- **Password**: `planora`
+
+> **Note**: This is not a required step, but it matches the configuration provided in the example `.env` file.
+
+### 3. Install Project Dependencies
+
+Run the following command to install the package dependencies:
+
+```bash
 npm i
 ```
 
-### Create the database from Prisma schema
+### 4. Create the Database from Prisma Schema
+Use Prisma to create the database by running:
 ```
 npx prisma db push
 ```
 
-### Run the seeder to fill up the database with data
+### 5. Run the Seeder to Fill the Database with Data
+To populate the database with data, run the seeder:
 ```
 npm run seed
 ```
 
-### Lastly, run the backend in dev mode
+### 6. Run the Backend in Development Mode
+Finally, to start the backend in development mode, use the following command:
 ```
 npm run start:dev
 ```
