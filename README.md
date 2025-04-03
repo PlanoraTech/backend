@@ -7,7 +7,7 @@ Before you begin, ensure that you have the following software installed:
 - **Node.js** (version 22 or higher): Ensure that Node.js and npm are installed on your machine. You can download them [here](https://nodejs.org/).
 - **PostgreSQL** (version 17 or higher): Ensure that PostgreSQL is installed on your machine. You can download it [here](https://www.postgresql.org/)
 
-## Steps
+## Steps to Run the App
 
 ### 1. Install Node.js and PostgreSQL
 Make sure you have one of the required versions of Node.js and PostgreSQL installed. Everything should work with the default settings.
