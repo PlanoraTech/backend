@@ -10,7 +10,7 @@ Before you begin, ensure that you have the following software installed:
 ## Steps to Run the App
 
 ### 1. Install Node.js and PostgreSQL
-Make sure you have one of the required versions of Node.js and PostgreSQL installed. Everything should work with the default settings.
+Make sure you have at least the required versions of Node.js and PostgreSQL installed. Everything should work with the default settings.
 
 ### 2. (Optional) Create a User in pgAdmin
 
