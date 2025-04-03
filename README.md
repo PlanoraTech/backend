@@ -21,7 +21,14 @@ This step is optional, but if you choose to follow the example `.env` file confi
 
 > **Note**: This is not a required step, but it matches the configuration provided in the example `.env` file.
 
-### 3. Install Project Dependencies
+### 3. Clone the Repository
+Clone the project repository to your local machine:
+```bash
+git clone <repository-url>
+cd <project-directory>
+```
+
+### 4. Install Project Dependencies
 
 Run the following command to install the package dependencies:
 
@@ -29,19 +36,19 @@ Run the following command to install the package dependencies:
 npm i
 ```
 
-### 4. Create the Database from Prisma Schema
+### 5. Create the Database from Prisma Schema
 Use Prisma to create the database by running:
 ```
 npx prisma db push
 ```
 
-### 5. Run the Seeder to Fill the Database with Data
+### 6. Run the Seeder to Fill the Database with Data
 To populate the database with data, run the seeder:
 ```
 npm run seed
 ```
 
-### 6. Run the Backend in Development Mode
+### 7. Run the Backend in Development Mode
 Finally, to start the backend in development mode, use the following command:
 ```
 npm run start:dev
