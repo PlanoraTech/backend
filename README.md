@@ -1,11 +1,11 @@
 # Setup
 
-## Requirements
+## Prerequisites
 
 Before you begin, ensure that you have the following software installed:
 
-- **Node.js** (version 22.0.0 or higher)
-- **PostgreSQL** (version 17 or higher)
+- **Node.js** (version 22 or higher): Ensure that Node.js and npm are installed on your machine. You can download them [here](https://nodejs.org/).
+- **PostgreSQL** (version 17 or higher): Ensure that PostgreSQL is installed on your machine. You can download it [here](https://www.postgresql.org/)
 
 ## Steps
 
