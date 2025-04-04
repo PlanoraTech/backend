@@ -202,7 +202,6 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
             data: {
                 start: new Date(createAppointmentDto.start),
                 end: new Date(createAppointmentDto.end),
-                isCancelled: createAppointmentDto.isCancelled,
                 subject: {
                     connect: {
                         id: createAppointmentDto.subjectId,

@@ -1,5 +1,4 @@
 import {
-    IsBoolean,
     IsDate,
     IsNotEmpty,
     IsString,
@@ -22,9 +21,6 @@ export class CreateAppointmentDto {
     @MinDate(new Date())
     @Validate(IsAfterOrEqual, ['start'])
     end: Date;
-
-    @IsBoolean()
-    isCancelled: boolean;
 
     @IsNotEmpty()
     @IsString()
