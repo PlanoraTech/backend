@@ -28,6 +28,7 @@ type ExtendedInstitutions = (Institutions & {
 	users: {
 		name: string,
 		email: string,
+		role: Roles,
 		password: string,
 	}[],
 });
@@ -145,7 +146,7 @@ async function seed(): Promise<void> {
 					await createAppointments(tx, institution.id, appointments);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nAppointments created");
-					await createUsersForPresentators(tx, institution.id, predefinedData[i]!.users);
+					await createUsers(tx, institution.id, predefinedData[i]!.users);
 					progress += (100 / predefinedData.length) / 7;
 					console.log("\nUsers created");
 				},
@@ -491,7 +492,7 @@ async function presentatorsToAppointments(prisma: Omit<PrismaClient<Prisma.Prism
 	}
 }
 
-async function createUsersForPresentators(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, users: { name: string, email: string, password: string }[]): Promise<void> {
+async function createUsers(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">, institutionId: string, users: { name: string, email: string, role: Roles, password: string }[]): Promise<void> {
 	try {
 		for (let i = 0; i < users.length; i++) {
 			await prisma.users.create({
@@ -511,7 +512,7 @@ async function createUsersForPresentators(prisma: Omit<PrismaClient<Prisma.Prism
 			})
 			await prisma.usersToInstitutions.create({
 				data: {
-					role: Roles.PRESENTATOR,
+					role: users[i]!.role,
 					user: {
 						connect: {
 							email: users[i]!.email,
@@ -522,11 +523,11 @@ async function createUsersForPresentators(prisma: Omit<PrismaClient<Prisma.Prism
 							id: institutionId,
 						},
 					},
-					presentator: {
+					presentator: (users[i]!.name) ? {
 						connect: {
 							name: users[i]!.name,
 						}
-					}
+					} : undefined,
 				}
 			}).catch((e) => {
 				if (e instanceof PrismaClientKnownRequestError) {
