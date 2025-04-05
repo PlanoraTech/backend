@@ -3189,14 +3189,26 @@
     ],
     "users": [
         {
+            "email": "test@test.com",
+            "password": "test"
+        },
+        {
             "email": "merenyi@petrik.hu",
+            "role": "PRESENTATOR",
             "password": "merenyim",
             "name": "Merényi Miklós"
         },
         {
             "email": "jabelko@petrik.hu",
+            "role": "PRESENTATOR",
             "password": "jabelkocsa",
             "name": "Jabelkó-Tolnai Csilla Anna"
+        },
+        {
+            "email": "galberey@petrik.hu",
+            "role": "DIRECTOR",
+            "password": "galbcs",
+            "name": "Gál-Berey Csilla"
         }
     ]
 }
