@@ -231,6 +231,40 @@ export class PresentatorsFromAppointmentsController {
     }
 
     /**
+     * Retrieves a list of available presentators for a given timetable and appointment.
+     *
+     * @remarks This operation checks for presentators that are currently unoccupied during
+     * the specified appointment time. It allows users to find alternative presentators
+     * based on scheduling constraints.
+     */
+    @Get('available')
+    @ApiOkResponse({
+        description:
+            'Successfully retrieved all presentators for the appointment.',
+    })
+    @ApiForbiddenResponse({
+        description: 'Forbidden. You do not have permission to view this data.',
+    })
+    @ApiNotFoundResponse({ description: 'Appointment not found.' })
+    findAvailablePresentators(
+        @Param('institutionId') institutionId: string,
+        @Param('timetableId') timetableId: string,
+        @Param('presentatorId') presentatorId: string,
+        @Param('roomId') roomId: string,
+        @Param('appointmentId') appointmentId: string,
+    ): Promise<Presentators[]> {
+        return this.presentatorsService.findAvailablePresentators(
+            institutionId,
+            {
+                timetableId: timetableId,
+                presentatorId: presentatorId,
+                roomId: roomId,
+                appointmentId: appointmentId,
+            },
+        );
+    }
+
+    /**
      * Retrieve a specific presentator assigned to an appointment.
      *
      * @remarks This operation fetches a specific presentator based on their ID, associated with a given appointment.

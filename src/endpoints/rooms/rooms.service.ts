@@ -382,52 +382,60 @@ export class RoomsFromAppointmentsService {
         dataService: AppointmentsDataService,
     ): Promise<Rooms[]> {
         return await this.prisma.$transaction(async (prisma) => {
-            const appointment: { start: Date; end: Date } =
-                await prisma.appointments
-                    .findUniqueOrThrow({
-                        select: {
-                            start: true,
-                            end: true,
+            const appointment: {
+                start: Date;
+                end: Date;
+                rooms: { id: string }[];
+            } = await prisma.appointments
+                .findUniqueOrThrow({
+                    select: {
+                        start: true,
+                        end: true,
+                        rooms: {
+                            select: {
+                                id: true,
+                            },
                         },
-                        where: {
-                            id: dataService.appointmentId,
-                            timetables: {
-                                some: {
-                                    id: dataService.timetableId,
-                                    institutionId: institutionId,
-                                },
+                    },
+                    where: {
+                        id: dataService.appointmentId,
+                        timetables: {
+                            some: {
+                                id: dataService.timetableId,
+                                institutionId: institutionId,
                             },
-                            rooms: {
-                                some: {
-                                    id: dataService.roomId,
-                                    institutionId: institutionId,
-                                },
+                        },
+                        rooms: {
+                            some: {
+                                id: dataService.roomId,
+                                institutionId: institutionId,
                             },
-                            presentators: {
-                                some: {
-                                    presentator: {
-                                        id: dataService.presentatorId,
-                                        institutions: {
-                                            some: {
-                                                id: institutionId,
-                                            },
+                        },
+                        presentators: {
+                            some: {
+                                presentator: {
+                                    id: dataService.presentatorId,
+                                    institutions: {
+                                        some: {
+                                            id: institutionId,
                                         },
                                     },
                                 },
                             },
                         },
-                    })
-                    .catch((e) => {
-                        if (e instanceof PrismaClientKnownRequestError) {
-                            switch (e.code) {
-                                case 'P2025':
-                                    throw new NotFoundException(
-                                        'Appointment not found',
-                                    );
-                            }
+                    },
+                })
+                .catch((e) => {
+                    if (e instanceof PrismaClientKnownRequestError) {
+                        switch (e.code) {
+                            case 'P2025':
+                                throw new NotFoundException(
+                                    'Appointment not found',
+                                );
                         }
-                        throw e;
-                    });
+                    }
+                    throw e;
+                });
             return await prisma.rooms.findMany({
                 select: {
                     id: true,
@@ -435,7 +443,7 @@ export class RoomsFromAppointmentsService {
                 },
                 where: {
                     id: {
-                        not: dataService.roomId,
+                        notIn: appointment.rooms.map((room) => room.id),
                     },
                     institutionId: institutionId,
                     OR: [
@@ -470,9 +478,7 @@ export class RoomsFromAppointmentsService {
                                         gte: appointment.start,
                                         lte: appointment.end,
                                     },
-                                },
-                                every: {
-                                    isCancelled: false,
+                                    isCancelled: true,
                                 },
                             },
                         },
