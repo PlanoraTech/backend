@@ -9,8 +9,12 @@ Before you begin, ensure that you have the following software installed:
 
 ## Steps to Run the App
 
-### 1. Install Node.js and PostgreSQL
-Make sure you have at least the required versions of Node.js and PostgreSQL installed. Everything should work with the default settings.
+### 1. Clone the Repository
+Clone the project repository to your local machine:
+```bash
+git clone <repository-url>
+cd <project-directory>
+```
 
 ### 2. (Optional) Create a User in pgAdmin
 
@@ -21,14 +25,7 @@ This step is optional, but if you choose to follow the example `.env` file confi
 
 > **Note**: This is not a required step, but it matches the configuration provided in the example `.env` file.
 
-### 3. Clone the Repository
-Clone the project repository to your local machine:
-```bash
-git clone <repository-url>
-cd <project-directory>
-```
-
-### 4. Install Project Dependencies
+### 3. Install Project Dependencies
 
 Run the following command to install the package dependencies:
 
@@ -36,19 +33,19 @@ Run the following command to install the package dependencies:
 npm i
 ```
 
-### 5. Create the Database from Prisma Schema
+### 4. Create the Database from Prisma Schema
 Use Prisma to create the database by running:
 ```
 npx prisma db push
 ```
 
-### 6. Run the Seeder to Fill the Database with Data
+### 5. Run the Seeder to Fill the Database with Data
 To populate the database with data, run the seeder:
 ```
 npm run seed
 ```
 
-### 7. Run the Backend in Development Mode
+### 6. Run the Backend in Development Mode
 Finally, to start the backend in development mode, use the following command:
 ```
 npm run start:dev
