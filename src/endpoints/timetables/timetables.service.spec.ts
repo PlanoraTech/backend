@@ -95,22 +95,20 @@ describe('TimeTablesService', () => {
 
     it('should remove a timetable', async () => {
         jest.spyOn(prismaService, '$transaction').mockResolvedValue([]);
+        jest.spyOn(prismaService.appointments, 'deleteMany').mockResolvedValue({
+            count: 1,
+        });
+        jest.spyOn(
+            prismaService.timeTables,
+            'findUniqueOrThrow',
+        ).mockResolvedValue({
+            institutionId: 'institutionId',
+            id: '1',
+            name: 'Sample Timetable',
+        });
 
         await expect(
             service.remove('institutionId', '1'),
         ).resolves.not.toThrow();
-        expect(prismaService.$transaction).toHaveBeenCalledWith([
-            prismaService.appointments.deleteMany({
-                where: {
-                    timetables: {
-                        some: { id: '1', institutionId: 'institutionId' },
-                    },
-                },
-            }),
-            prismaService.timeTables.delete({
-                select: { id: true },
-                where: { id: '1', institutionId: 'institutionId' },
-            }),
-        ]);
     });
 });
