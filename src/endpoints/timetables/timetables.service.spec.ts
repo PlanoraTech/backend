@@ -94,7 +94,7 @@ describe('TimeTablesService', () => {
     });
 
     it('should remove a timetable', async () => {
-        jest.spyOn(prismaService, '$transaction').mockResolvedValue(undefined);
+        jest.spyOn(prismaService, '$transaction').mockResolvedValue([]);
 
         await expect(
             service.remove('institutionId', '1'),
