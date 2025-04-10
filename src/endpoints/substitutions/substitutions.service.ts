@@ -5,7 +5,6 @@ import { Substitutions } from '@prisma/client';
 const substitutionsSelect = {
     from: true,
     to: true,
-    status: true,
     presentatorId: false,
 };
 
