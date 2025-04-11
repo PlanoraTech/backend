@@ -1,3 +1,4 @@
+![Image](https://github.com/user-attachments/assets/429968dc-036d-46be-ace2-c39ba5023bf2)
 # Planora
 This repository contains the core framework of **Planora**, a comprehensive all-in-one institution management system.
 
@@ -58,3 +59,21 @@ npm run start:dev
 Swagger API documentation is available at: `<backend-url>/api`
 
 > Replace `<backend-url>` with the actual backend URL (e.g., `http://localhost:3000/api`)
+
+## Default Accounts
+
+The seeder generates the following accounts by default:
+
+| Name                            | Role         | Email Address                | Password         |
+|---------------------------------|--------------|------------------------------|------------------|
+|             **-**               | USER         | diak@petrik.hu               | diak             |
+| **Merényi Miklós**              | PRESENTATOR  | merenyi.miklos@petrik.hu     | merenyimiklos    |
+| **Jabelkó-Tolnai Csilla Anna**  | PRESENTATOR  | tolnai@petrik.hu             | tolnaicsilla     |
+| **Gál-Berey Csilla**            | DIRECTOR     | galberey@petrik.hu           | galbereycsilla   |
+
+
+## Unit tests
+To test whether the app passes every automatic unit test, use the following command:
+```bash
+npm run test
+```
