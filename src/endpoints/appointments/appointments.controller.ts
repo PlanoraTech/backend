@@ -119,10 +119,12 @@ export class AppointmentsFromTimeTablesController extends AppointmentsController
     })
     create(
         @Param('institutionId') institutionId: string,
+        @Param('timetableId') timetableId: string,
         @Body() createAppointmentDto: CreateAppointmentDto,
-    ): Promise<void> {
+    ): Promise<{ id: string }> {
         return this.appointmentsService.create(
             institutionId,
+            timetableId,
             createAppointmentDto,
         );
     }

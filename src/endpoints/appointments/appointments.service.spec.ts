@@ -109,7 +109,7 @@ describe('AppointmentsFromTimeTablesService', () => {
             isCancelled: false,
         });
         await expect(
-            service.create('institutionId', {
+            service.create('institutionId', 'timetableId', {
                 start: new Date('2023-01-01'),
                 end: new Date('2023-01-02'),
                 subjectId: 'subjectId',

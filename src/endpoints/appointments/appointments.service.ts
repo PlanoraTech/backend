@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { Appointments } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { DataService } from '@app/interfaces/DataService.interface';
@@ -193,23 +194,40 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
     }
     async create(
         institutionId: string,
+        timetableId: string,
         createAppointmentDto: CreateAppointmentDto,
-    ): Promise<void> {
-        await this.prisma.appointments.create({
-            select: {
-                id: true,
-            },
-            data: {
-                start: new Date(createAppointmentDto.start),
-                end: new Date(createAppointmentDto.end),
-                subject: {
-                    connect: {
-                        id: createAppointmentDto.subjectId,
-                        institutionId: institutionId,
+    ): Promise<{ id: string }> {
+        return await this.prisma.appointments
+            .create({
+                select: {
+                    id: true,
+                },
+                data: {
+                    start: new Date(createAppointmentDto.start),
+                    end: new Date(createAppointmentDto.end),
+                    subject: {
+                        connect: {
+                            id: createAppointmentDto.subjectId,
+                            institutionId: institutionId,
+                        },
+                    },
+                    timetables: {
+                        connect: {
+                            id: timetableId,
+                            institutionId: institutionId,
+                        },
                     },
                 },
-            },
-        });
+            })
+            .catch((e) => {
+                if (e instanceof PrismaClientKnownRequestError) {
+                    switch (e.code) {
+                        case 'P2025':
+                            throw new NotFoundException('Subject not found');
+                    }
+                }
+                throw e;
+            });
     }
 
     async update(
