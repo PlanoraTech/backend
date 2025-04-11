@@ -119,9 +119,11 @@ describe('AppointmentsFromTimeTablesController', () => {
     });
 
     it('should create an appointment', async () => {
-        jest.spyOn(service, 'create').mockResolvedValue();
+        jest.spyOn(service, 'create').mockResolvedValue({
+            id: 'appointmentId',
+        });
         await expect(
-            controller.create('institutionId', {
+            controller.create('institutionId', 'timetableId', {
                 start: new Date('2023-01-01'),
                 end: new Date('2023-01-02'),
                 subjectId: 'subjectId',
