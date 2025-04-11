@@ -478,7 +478,7 @@ export class RoomsFromAppointmentsService {
                                         gte: appointment.start,
                                         lte: appointment.end,
                                     },
-                                    isCancelled: true,
+                                    isCancelled: false,
                                 },
                             },
                         },
