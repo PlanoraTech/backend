@@ -678,12 +678,17 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
     ): Promise<Presentators[]> {
         return await this.prisma.$transaction(async (prisma) => {
-            const appointment: { start: Date; end: Date } =
+            const appointment: { start: Date; end: Date, presentators: { presentatorId: string }[] } =
                 await prisma.appointments
                     .findUniqueOrThrow({
                         select: {
                             start: true,
                             end: true,
+                            presentators: {
+                                select: {
+                                    presentatorId: true,
+                                }
+                            }
                         },
                         where: {
                             id: dataService.appointmentId,
@@ -731,7 +736,7 @@ export class PresentatorsFromAppointmentsService {
                 },
                 where: {
                     id: {
-                        not: dataService.presentatorId,
+                        notIn: appointment.presentators.map((presentator) => presentator.presentatorId),
                     },
                     OR: [
                         {
@@ -761,14 +766,14 @@ export class PresentatorsFromAppointmentsService {
                                 none: {
                                     appointment: {
                                         start: {
-                                            lte: appointment.start,
-                                            gte: appointment.end,
+                                            gte: appointment.start,
+                                            lte: appointment.end,
                                         },
                                         end: {
                                             gte: appointment.start,
                                             lte: appointment.end,
                                         },
-                                        isCancelled: true,
+                                        isCancelled: false,
                                     },
                                 },
                             },
