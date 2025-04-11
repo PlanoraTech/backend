@@ -3189,25 +3189,25 @@
     ],
     "users": [
         {
-            "email": "test@test.com",
-            "password": "test"
+            "email": "diak@petrik.hu",
+            "password": "diak"
         },
         {
-            "email": "merenyi@petrik.hu",
+            "email": "merenyi.miklos@petrik.hu",
             "role": "PRESENTATOR",
-            "password": "merenyim",
+            "password": "merenyimiklos",
             "name": "Merényi Miklós"
         },
         {
-            "email": "jabelko@petrik.hu",
+            "email": "tolnai@petrik.hu",
             "role": "PRESENTATOR",
-            "password": "jabelkocsa",
+            "password": "tolnaicsilla",
             "name": "Jabelkó-Tolnai Csilla Anna"
         },
         {
             "email": "galberey@petrik.hu",
             "role": "DIRECTOR",
-            "password": "galbcs",
+            "password": "galbereycsilla",
             "name": "Gál-Berey Csilla"
         }
     ]
