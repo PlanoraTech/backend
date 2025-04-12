@@ -274,11 +274,6 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
         timetableId: string,
         id: string,
     ): Promise<void> {
-        await this.prisma.presentatorsToAppointments.deleteMany({
-            where: {
-                appointmentId: id,
-            },
-        });
         await this.prisma.appointments.delete({
             select: {
                 id: true,

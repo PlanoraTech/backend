@@ -80,7 +80,7 @@ model Substitutions {
     id            String       @id @default(uuid())
     from          DateTime
     to            DateTime
-    presentator   Presentators @relation(fields: [presentatorId], references: [id])
+    presentator   Presentators @relation(fields: [presentatorId], references: [id], onDelete: Cascade)
     presentatorId String
 
     @@index([presentatorId])
@@ -91,7 +91,7 @@ model Subjects {
     name          String
     subjectId     String
     appointments  Appointments[]
-    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    institution   Institutions   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
     institutionId String
 
     @@index([institutionId])
@@ -101,7 +101,7 @@ model Rooms {
     id            String         @id @default(uuid())
     name          String
     appointments  Appointments[]
-    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    institution   Institutions   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
     institutionId String
 
     @@index([institutionId])
@@ -111,7 +111,7 @@ model Events {
     id            String       @id @default(uuid())
     title         String
     date          DateTime
-    institution   Institutions @relation(fields: [institutionId], references: [id])
+    institution   Institutions @relation(fields: [institutionId], references: [id], onDelete: Cascade)
     institutionId String
 
     @@index([institutionId])
@@ -121,7 +121,7 @@ model TimeTables {
     id            String         @id @default(uuid())
     name          String
     appointments  Appointments[]
-    institution   Institutions   @relation(fields: [institutionId], references: [id])
+    institution   Institutions   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
     institutionId String
 
     @@index([institutionId])
@@ -142,9 +142,9 @@ model Appointments {
 }
 
 model PresentatorsToAppointments {
-    presentator   Presentators @relation(fields: [presentatorId], references: [id])
+    presentator   Presentators @relation(fields: [presentatorId], references: [id], onDelete: Cascade)
     presentatorId String
-    appointment   Appointments @relation(fields: [appointmentId], references: [id])
+    appointment   Appointments @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
     appointmentId String
     isSubstituted Boolean
 
@@ -162,9 +162,9 @@ model Users {
 }
 
 model UsersToInstitutions {
-    user          Users         @relation(fields: [userId], references: [id])
+    user          Users         @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String
-    institution   Institutions  @relation(fields: [institutionId], references: [id])
+    institution   Institutions  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
     institutionId String
     role          Roles         @default(USER)
     presentator   Presentators? @relation(fields: [presentatorId], references: [id])
@@ -183,7 +183,7 @@ model Tokens {
     id     String   @id @default(uuid())
     token  String   @unique
     expiry DateTime @default(now())
-    user   Users    @relation(fields: [userId], references: [id])
+    user   Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String
 
     @@index([token, userId])
@@ -192,6 +192,6 @@ model Tokens {
 model NotificationTokens {
     id     String @id @default(uuid())
     token  String @unique
-    user   Users  @relation(fields: [userId], references: [id])
+    user   Users  @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String
 }
