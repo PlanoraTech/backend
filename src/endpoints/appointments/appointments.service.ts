@@ -101,19 +101,19 @@ export class AppointmentsService {
                     },
                 ],
                 where: {
-                    timetables: {
+                    timetables: (dataService.timetableId) ? {
                         some: {
                             id: dataService.timetableId,
                             institutionId: institutionId,
                         },
-                    },
-                    rooms: {
+                    } : undefined,
+                    rooms: (dataService.roomId) ? {
                         some: {
                             id: dataService.roomId,
                             institutionId: institutionId,
                         },
-                    },
-                    presentators: {
+                    } : undefined,
+                    presentators: (dataService.presentatorId) ? {
                         some: {
                             presentator: {
                                 id: dataService.presentatorId,
@@ -124,7 +124,7 @@ export class AppointmentsService {
                                 },
                             },
                         },
-                    },
+                    } : undefined,
                 },
             });
         return appointments.map((appointment) => ({
@@ -150,19 +150,19 @@ export class AppointmentsService {
                 },
                 where: {
                     id: id,
-                    timetables: {
+                    timetables: (dataService.timetableId) ? {
                         some: {
                             id: dataService.timetableId,
                             institutionId: institutionId,
                         },
-                    },
-                    rooms: {
+                    } : undefined,
+                    rooms: (dataService.roomId) ? {
                         some: {
                             id: dataService.roomId,
                             institutionId: institutionId,
                         },
-                    },
-                    presentators: {
+                    } : undefined,
+                    presentators: (dataService.presentatorId) ? {
                         some: {
                             presentator: {
                                 id: dataService.presentatorId,
@@ -173,7 +173,7 @@ export class AppointmentsService {
                                 },
                             },
                         },
-                    },
+                    } : undefined,
                 },
             });
         return {
@@ -274,11 +274,6 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
         timetableId: string,
         id: string,
     ): Promise<void> {
-        await this.prisma.presentatorsToAppointments.deleteMany({
-            where: {
-                appointmentId: id,
-            },
-        });
         await this.prisma.appointments.delete({
             select: {
                 id: true,

@@ -72,18 +72,18 @@ export class TimeTablesService {
     }
 
     async remove(institutionId: string, id: string): Promise<void> {
-        await this.prisma.$transaction([
-            this.prisma.appointments.deleteMany({
+        await this.prisma.$transaction(async (prisma) => {
+            await prisma.appointments.deleteMany({
                 where: {
                     timetables: {
-                        some: {
+                        every: {
                             id: id,
                             institutionId: institutionId,
                         },
                     },
                 },
-            }),
-            this.prisma.timeTables.delete({
+            });
+            await prisma.timeTables.delete({
                 select: {
                     id: true,
                 },
@@ -91,8 +91,8 @@ export class TimeTablesService {
                     id: id,
                     institutionId: institutionId,
                 },
-            }),
-        ]);
+            });
+        });
     }
 }
 

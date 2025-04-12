@@ -37,18 +37,18 @@ export class PermissionsGuard implements CanActivate {
         if (!request.params.institutionId) {
             return true;
         }
-        const permissions: Permissions[] =
-            this.reflector.get<Permissions[]>(
-                Permission,
-                context.getHandler(),
-            ) ?? Object.values(Permissions);
-        const specialPermissions: SpecialPermissions[] =
-            this.reflector.get<SpecialPermissions[]>(
-                SpecialPermission,
-                context.getHandler(),
-            ) ?? [];
-
+        
         if (request.user) {
+            const permissions: Permissions[] =
+                this.reflector.get<Permissions[]>(
+                    Permission,
+                    context.getHandler(),
+                ) ?? Object.values(Permissions);
+            const specialPermissions: SpecialPermissions[] =
+                this.reflector.get<SpecialPermissions[]>(
+                    SpecialPermission,
+                    context.getHandler(),
+                ) ?? [];
             const institutionConnectionToUser:
                 | {
                       institutionId: string;

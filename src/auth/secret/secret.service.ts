@@ -102,8 +102,7 @@ export class SecretService {
                 throw e;
             });
         return {
-            id: query.user.id,
-            institutions: query.user.institutions,
+            ...query.user,
         };
     }
 
