@@ -57,23 +57,20 @@ interface ExtendedAppointments extends Appointments {
         id: string;
         name: string;
     }[];
+    presentators: {
+        id: string;
+        name: string;
+        isSubstituted: boolean;
+    }[];
 }
 
 interface ExtendedAppointmentsWithPrismaPresentators
-    extends ExtendedAppointments {
+    extends Omit<ExtendedAppointments, 'presentators'> {
     presentators: {
         presentator: {
             id: string;
             name: string;
         };
-        isSubstituted: boolean;
-    }[];
-}
-
-interface ExtendedAppointmentsWithPresentators extends ExtendedAppointments {
-    presentators: {
-        id: string;
-        name: string;
         isSubstituted: boolean;
     }[];
 }
@@ -85,7 +82,7 @@ export class AppointmentsService {
     async findAll(
         institutionId: string,
         dataService: DataService,
-    ): Promise<ExtendedAppointmentsWithPresentators[]> {
+    ): Promise<ExtendedAppointments[]> {
         const appointments: ExtendedAppointmentsWithPrismaPresentators[] =
             await this.prisma.appointments.findMany({
                 select: {
@@ -101,30 +98,36 @@ export class AppointmentsService {
                     },
                 ],
                 where: {
-                    timetables: (dataService.timetableId) ? {
-                        some: {
-                            id: dataService.timetableId,
-                            institutionId: institutionId,
-                        },
-                    } : undefined,
-                    rooms: (dataService.roomId) ? {
-                        some: {
-                            id: dataService.roomId,
-                            institutionId: institutionId,
-                        },
-                    } : undefined,
-                    presentators: (dataService.presentatorId) ? {
-                        some: {
-                            presentator: {
-                                id: dataService.presentatorId,
-                                institutions: {
-                                    some: {
-                                        id: institutionId,
-                                    },
-                                },
-                            },
-                        },
-                    } : undefined,
+                    timetables: dataService.timetableId
+                        ? {
+                              some: {
+                                  id: dataService.timetableId,
+                                  institutionId: institutionId,
+                              },
+                          }
+                        : undefined,
+                    rooms: dataService.roomId
+                        ? {
+                              some: {
+                                  id: dataService.roomId,
+                                  institutionId: institutionId,
+                              },
+                          }
+                        : undefined,
+                    presentators: dataService.presentatorId
+                        ? {
+                              some: {
+                                  presentator: {
+                                      id: dataService.presentatorId,
+                                      institutions: {
+                                          some: {
+                                              id: institutionId,
+                                          },
+                                      },
+                                  },
+                              },
+                          }
+                        : undefined,
                 },
             });
         return appointments.map((appointment) => ({
@@ -141,7 +144,7 @@ export class AppointmentsService {
         institutionId: string,
         dataService: DataService,
         id: string,
-    ): Promise<ExtendedAppointmentsWithPresentators> {
+    ): Promise<ExtendedAppointments> {
         const appointment: ExtendedAppointmentsWithPrismaPresentators =
             await this.prisma.appointments.findUniqueOrThrow({
                 select: {
@@ -150,30 +153,36 @@ export class AppointmentsService {
                 },
                 where: {
                     id: id,
-                    timetables: (dataService.timetableId) ? {
-                        some: {
-                            id: dataService.timetableId,
-                            institutionId: institutionId,
-                        },
-                    } : undefined,
-                    rooms: (dataService.roomId) ? {
-                        some: {
-                            id: dataService.roomId,
-                            institutionId: institutionId,
-                        },
-                    } : undefined,
-                    presentators: (dataService.presentatorId) ? {
-                        some: {
-                            presentator: {
-                                id: dataService.presentatorId,
-                                institutions: {
-                                    some: {
-                                        id: institutionId,
-                                    },
-                                },
-                            },
-                        },
-                    } : undefined,
+                    timetables: dataService.timetableId
+                        ? {
+                              some: {
+                                  id: dataService.timetableId,
+                                  institutionId: institutionId,
+                              },
+                          }
+                        : undefined,
+                    rooms: dataService.roomId
+                        ? {
+                              some: {
+                                  id: dataService.roomId,
+                                  institutionId: institutionId,
+                              },
+                          }
+                        : undefined,
+                    presentators: dataService.presentatorId
+                        ? {
+                              some: {
+                                  presentator: {
+                                      id: dataService.presentatorId,
+                                      institutions: {
+                                          some: {
+                                              id: institutionId,
+                                          },
+                                      },
+                                  },
+                              },
+                          }
+                        : undefined,
                 },
             });
         return {

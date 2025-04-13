@@ -37,7 +37,7 @@ export class PermissionsGuard implements CanActivate {
         if (!request.params.institutionId) {
             return true;
         }
-        
+
         if (request.user) {
             const permissions: Permissions[] =
                 this.reflector.get<Permissions[]>(
