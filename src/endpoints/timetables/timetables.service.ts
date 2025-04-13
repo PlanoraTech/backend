@@ -119,30 +119,36 @@ export class TimeTablesFromAppointmentsService {
             },
             where: {
                 id: dataService.appointmentId,
-                timetables: {
-                    some: {
-                        id: dataService.timetableId,
-                        institutionId: institutionId,
-                    },
-                },
-                rooms: {
-                    some: {
-                        id: dataService.roomId,
-                        institutionId: institutionId,
-                    },
-                },
-                presentators: {
-                    some: {
-                        presentator: {
-                            id: dataService.presentatorId,
-                            institutions: {
-                                some: {
-                                    id: institutionId,
-                                },
-                            },
-                        },
-                    },
-                },
+                timetables: dataService.timetableId
+                    ? {
+                          some: {
+                              id: dataService.timetableId,
+                              institutionId: institutionId,
+                          },
+                      }
+                    : undefined,
+                rooms: dataService.roomId
+                    ? {
+                          some: {
+                              id: dataService.roomId,
+                              institutionId: institutionId,
+                          },
+                      }
+                    : undefined,
+                presentators: dataService.presentatorId
+                    ? {
+                          some: {
+                              presentator: {
+                                  id: dataService.presentatorId,
+                                  institutions: {
+                                      some: {
+                                          id: institutionId,
+                                      },
+                                  },
+                              },
+                          },
+                      }
+                    : undefined,
             },
         });
     }
@@ -161,30 +167,36 @@ export class TimeTablesFromAppointmentsService {
                 appointments: {
                     some: {
                         id: dataService.appointmentId,
-                        timetables: {
-                            some: {
-                                id: dataService.timetableId,
-                                institutionId: institutionId,
-                            },
-                        },
-                        rooms: {
-                            some: {
-                                id: dataService.roomId,
-                                institutionId: institutionId,
-                            },
-                        },
-                        presentators: {
-                            some: {
-                                presentator: {
-                                    id: dataService.presentatorId,
-                                    institutions: {
-                                        some: {
-                                            id: institutionId,
-                                        },
-                                    },
-                                },
-                            },
-                        },
+                        timetables: dataService.timetableId
+                            ? {
+                                  some: {
+                                      id: dataService.timetableId,
+                                      institutionId: institutionId,
+                                  },
+                              }
+                            : undefined,
+                        rooms: dataService.roomId
+                            ? {
+                                  some: {
+                                      id: dataService.roomId,
+                                      institutionId: institutionId,
+                                  },
+                              }
+                            : undefined,
+                        presentators: dataService.presentatorId
+                            ? {
+                                  some: {
+                                      presentator: {
+                                          id: dataService.presentatorId,
+                                          institutions: {
+                                              some: {
+                                                  id: institutionId,
+                                              },
+                                          },
+                                      },
+                                  },
+                              }
+                            : undefined,
                     },
                 },
             },
@@ -207,30 +219,36 @@ export class TimeTablesFromAppointmentsService {
                 appointments: {
                     some: {
                         id: dataService.appointmentId,
-                        timetables: {
-                            some: {
-                                id: dataService.timetableId,
-                                institutionId: institutionId,
-                            },
-                        },
-                        rooms: {
-                            some: {
-                                id: dataService.roomId,
-                                institutionId: institutionId,
-                            },
-                        },
-                        presentators: {
-                            some: {
-                                presentator: {
-                                    id: dataService.presentatorId,
-                                    institutions: {
-                                        some: {
-                                            id: institutionId,
-                                        },
-                                    },
-                                },
-                            },
-                        },
+                        timetables: dataService.timetableId
+                            ? {
+                                  some: {
+                                      id: dataService.timetableId,
+                                      institutionId: institutionId,
+                                  },
+                              }
+                            : undefined,
+                        rooms: dataService.roomId
+                            ? {
+                                  some: {
+                                      id: dataService.roomId,
+                                      institutionId: institutionId,
+                                  },
+                              }
+                            : undefined,
+                        presentators: dataService.presentatorId
+                            ? {
+                                  some: {
+                                      presentator: {
+                                          id: dataService.presentatorId,
+                                          institutions: {
+                                              some: {
+                                                  id: institutionId,
+                                              },
+                                          },
+                                      },
+                                  },
+                              }
+                            : undefined,
                     },
                 },
             },
@@ -256,30 +274,36 @@ export class TimeTablesFromAppointmentsService {
             },
             where: {
                 id: dataService.appointmentId,
-                timetables: {
-                    some: {
-                        id: dataService.timetableId,
-                        institutionId: institutionId,
-                    },
-                },
-                rooms: {
-                    some: {
-                        id: dataService.roomId,
-                        institutionId: institutionId,
-                    },
-                },
-                presentators: {
-                    some: {
-                        presentator: {
-                            id: dataService.presentatorId,
-                            institutions: {
-                                some: {
-                                    id: institutionId,
-                                },
-                            },
-                        },
-                    },
-                },
+                timetables: dataService.timetableId
+                    ? {
+                          some: {
+                              id: dataService.timetableId,
+                              institutionId: institutionId,
+                          },
+                      }
+                    : undefined,
+                rooms: dataService.roomId
+                    ? {
+                          some: {
+                              id: dataService.roomId,
+                              institutionId: institutionId,
+                          },
+                      }
+                    : undefined,
+                presentators: dataService.presentatorId
+                    ? {
+                          some: {
+                              presentator: {
+                                  id: dataService.presentatorId,
+                                  institutions: {
+                                      some: {
+                                          id: institutionId,
+                                      },
+                                  },
+                              },
+                          },
+                      }
+                    : undefined,
             },
         });
     }
