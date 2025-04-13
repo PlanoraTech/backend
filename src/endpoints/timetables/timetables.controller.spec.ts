@@ -37,6 +37,7 @@ describe('TimeTablesController', () => {
             {
                 id: 'timetableId',
                 name: 'Timetable Name',
+                version: 'B',
                 institutionId: 'institutionId',
             },
         ];
@@ -49,6 +50,7 @@ describe('TimeTablesController', () => {
         const timetable = {
             id: 'timetableId',
             name: 'Timetable Name',
+            version: 'B',
             institutionId: 'institutionId',
         };
         jest.spyOn(service, 'findOne').mockResolvedValue(timetable);

@@ -26,6 +26,7 @@ describe('TimeTablesService', () => {
         jest.spyOn(prismaService.timeTables, 'create').mockResolvedValue({
             id: '1',
             name: 'Timetable 1',
+            version: 'B',
             institutionId: 'institutionId',
         });
 
@@ -40,7 +41,7 @@ describe('TimeTablesService', () => {
 
     it('should retrieve all timetables', async () => {
         const timetables = [
-            { id: '1', name: 'Timetable 1', institutionId: 'institutionId' },
+            { id: '1', name: 'Timetable 1', version: 'B', institutionId: 'institutionId' },
         ];
         jest.spyOn(prismaService.timeTables, 'findMany').mockResolvedValue(
             timetables,
@@ -49,7 +50,7 @@ describe('TimeTablesService', () => {
         const result = await service.findAll('institutionId');
         expect(result).toEqual(timetables);
         expect(prismaService.timeTables.findMany).toHaveBeenCalledWith({
-            select: { id: true, name: true, institutionId: false },
+            select: { id: true, name: true, version: true, institutionId: false },
             where: { institutionId: 'institutionId' },
         });
     });
@@ -58,6 +59,7 @@ describe('TimeTablesService', () => {
         const timetable = {
             id: '1',
             name: 'Timetable 1',
+            version: 'B',
             institutionId: 'institutionId',
         };
         jest.spyOn(
@@ -69,7 +71,7 @@ describe('TimeTablesService', () => {
         expect(result).toEqual(timetable);
         expect(prismaService.timeTables.findUniqueOrThrow).toHaveBeenCalledWith(
             {
-                select: { id: true, name: true, institutionId: false },
+                select: { id: true, name: true, version: true, institutionId: false },
                 where: { id: '1', institutionId: 'institutionId' },
             },
         );
@@ -80,6 +82,7 @@ describe('TimeTablesService', () => {
         jest.spyOn(prismaService.timeTables, 'update').mockResolvedValue({
             id: '1',
             name: 'Timetable 1',
+            version: 'B',
             institutionId: 'institutionId',
         });
 
@@ -105,6 +108,7 @@ describe('TimeTablesService', () => {
             institutionId: 'institutionId',
             id: '1',
             name: 'Sample Timetable',
+            version: 'B',
         });
 
         await expect(

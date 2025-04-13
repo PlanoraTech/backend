@@ -8,5 +8,5 @@ export class CreateTimeTableDto {
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    version: string;
+    version?: string;
 }
