@@ -7,6 +7,7 @@ import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
 
 const timeTablesSelect = {
     name: true,
+    version: true,
     institutionId: false,
 };
 
