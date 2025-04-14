@@ -41,7 +41,12 @@ describe('TimeTablesService', () => {
 
     it('should retrieve all timetables', async () => {
         const timetables = [
-            { id: '1', name: 'Timetable 1', version: 'B', institutionId: 'institutionId' },
+            {
+                id: '1',
+                name: 'Timetable 1',
+                version: 'B',
+                institutionId: 'institutionId',
+            },
         ];
         jest.spyOn(prismaService.timeTables, 'findMany').mockResolvedValue(
             timetables,
@@ -50,7 +55,12 @@ describe('TimeTablesService', () => {
         const result = await service.findAll('institutionId');
         expect(result).toEqual(timetables);
         expect(prismaService.timeTables.findMany).toHaveBeenCalledWith({
-            select: { id: true, name: true, version: true, institutionId: false },
+            select: {
+                id: true,
+                name: true,
+                version: true,
+                institutionId: false,
+            },
             where: { institutionId: 'institutionId' },
         });
     });
@@ -71,7 +81,12 @@ describe('TimeTablesService', () => {
         expect(result).toEqual(timetable);
         expect(prismaService.timeTables.findUniqueOrThrow).toHaveBeenCalledWith(
             {
-                select: { id: true, name: true, version: true, institutionId: false },
+                select: {
+                    id: true,
+                    name: true,
+                    version: true,
+                    institutionId: false,
+                },
                 where: { id: '1', institutionId: 'institutionId' },
             },
         );

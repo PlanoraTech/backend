@@ -4,7 +4,10 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { DataService } from '@app/interfaces/dataservice.interface';
-import { ExtendedAppointments, ExtendedAppointmentsWithPrismaPresentators } from './interfaces/extendedappointments.interface';
+import {
+    ExtendedAppointments,
+    ExtendedAppointmentsWithPrismaPresentators,
+} from './interfaces/extendedappointments.interface';
 
 const appointmentsSelect = {
     subjectId: false,

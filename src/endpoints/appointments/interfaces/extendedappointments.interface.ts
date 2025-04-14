@@ -1,4 +1,4 @@
-import { Appointments } from "@prisma/client";
+import { Appointments } from '@prisma/client';
 
 export interface ExtendedAppointments extends Appointments {
     subject: {
