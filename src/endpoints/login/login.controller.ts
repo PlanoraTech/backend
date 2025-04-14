@@ -9,7 +9,7 @@ import { LoginService } from './login.service';
 import { Access } from '@app/decorators/access.decorator';
 import { LoginDto } from './dto/login.dto';
 import { Login } from './interfaces/login.interface';
-import { User } from '@app/interfaces/user';
+import { User } from '@app/interfaces/user.interface';
 
 @ApiTags('Login')
 @Controller('login')

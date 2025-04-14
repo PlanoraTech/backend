@@ -1,4 +1,4 @@
-import { User } from '@app/interfaces/user';
+import { User } from '@app/interfaces/user.interface';
 
 export interface Login {
     user: Partial<User>;

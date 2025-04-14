@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { User } from '@app/interfaces/user';
+import { User } from '@app/interfaces/user.interface';
 
 @ApiTags('Notifications')
 @ApiBearerAuth()

@@ -4,7 +4,7 @@ import { Appointments } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { DataService } from '@app/interfaces/dataservice';
+import { DataService } from '@app/interfaces/dataservice.interface';
 
 const appointmentsSelect = {
     subjectId: false,

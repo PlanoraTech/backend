@@ -3,7 +3,7 @@ import { PrismaService } from '@app/prisma/prisma.service';
 import { TimeTables } from '@prisma/client';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
-import { AppointmentsDataService } from '@app/interfaces/dataservice';
+import { AppointmentsDataService } from '@app/interfaces/dataservice.interface';
 
 const timeTablesSelect = {
     name: true,

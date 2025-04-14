@@ -3,7 +3,7 @@ import { PrismaService } from '@app/prisma/prisma.service';
 import { SecretService } from '@app/auth/secret/secret.service';
 import { LoginDto } from './dto/login.dto';
 import { Login } from './interfaces/login.interface';
-import { User } from '@app/interfaces/user';
+import { User } from '@app/interfaces/user.interface';
 
 @Injectable()
 export class LoginService {
