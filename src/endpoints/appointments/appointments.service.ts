@@ -1,10 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Appointments } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { DataService } from '@app/interfaces/dataservice.interface';
+import {
+    ExtendedAppointments,
+    ExtendedAppointmentsWithPrismaPresentators,
+} from './interfaces/extendedappointments.interface';
 
 const appointmentsSelect = {
     subjectId: false,
@@ -42,38 +45,6 @@ const appointmentsSelect = {
         },
     },
 };
-
-interface ExtendedAppointments extends Appointments {
-    subject: {
-        id: string;
-        name: string;
-        subjectId: string;
-    };
-    rooms: {
-        id: string;
-        name: string;
-    }[];
-    timetables: {
-        id: string;
-        name: string;
-    }[];
-    presentators: {
-        id: string;
-        name: string;
-        isSubstituted: boolean;
-    }[];
-}
-
-interface ExtendedAppointmentsWithPrismaPresentators
-    extends Omit<ExtendedAppointments, 'presentators'> {
-    presentators: {
-        presentator: {
-            id: string;
-            name: string;
-        };
-        isSubstituted: boolean;
-    }[];
-}
 
 @Injectable()
 export class AppointmentsService {

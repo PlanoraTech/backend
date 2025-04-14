@@ -4,7 +4,7 @@ export class CreateTimeTableDto {
     @IsString()
     @IsNotEmpty()
     name: string;
-    
+
     @IsString()
     @IsNotEmpty()
     @IsOptional()
