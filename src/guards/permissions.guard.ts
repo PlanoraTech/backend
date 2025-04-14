@@ -15,7 +15,7 @@ import {
 } from '@prisma/client';
 import { Permission } from '@app/decorators/permission.decorator';
 import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
-import { User } from '@app/interfaces/User.interface';
+import { User } from '@app/interfaces/user.interface';
 import { SecretService } from '@app/auth/secret/secret.service';
 
 @Injectable()

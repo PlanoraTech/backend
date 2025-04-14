@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Notification } from './interfaces/Notification.interface';
+import { Notification } from './interfaces/notification.interface';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';

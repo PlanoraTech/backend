@@ -6,7 +6,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { LogoutService } from './logout.service';
-import { User } from '@app/interfaces/User.interface';
+import { User } from '@app/interfaces/user.interface';
 
 @ApiTags('Logout')
 @ApiBearerAuth()

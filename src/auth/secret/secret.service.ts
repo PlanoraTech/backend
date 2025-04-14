@@ -3,7 +3,7 @@ import { PrismaService } from '@app/prisma/prisma.service';
 import { AccessType, RolesToPermissions } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { compare, hash } from 'bcrypt';
-import { User } from '@app/interfaces/User.interface';
+import { User } from '@app/interfaces/user.interface';
 
 export enum TokenExpiry {
     DAY = 1000 * 60 * 60 * 24,

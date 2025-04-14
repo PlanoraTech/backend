@@ -4,7 +4,7 @@ import {
     AppointmentsFromTimeTablesService,
     AppointmentsService,
 } from './appointments.service';
-import { DataService } from '@app/interfaces/DataService.interface';
+import { DataService } from '@app/interfaces/dataservice.interface';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 

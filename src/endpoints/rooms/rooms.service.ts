@@ -13,7 +13,7 @@ import { PushNotificationsService } from '@app/push-notifications/push-notificat
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { UpdateMassDto } from '@app/dto/update-mass.dto';
-import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
+import { AppointmentsDataService } from '@app/interfaces/dataservice.interface';
 
 const roomsSelect = {
     name: true,
