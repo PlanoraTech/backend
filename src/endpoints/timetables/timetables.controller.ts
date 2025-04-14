@@ -49,6 +49,30 @@ export class TimeTablesController {
     }
 
     /**
+     * Clones a new timetable.
+     *
+     * @remarks
+     * This endpoint allows cloning an existing timetable with all of its appointments under a specified institution.
+     */
+    @Post(':id/clone')
+    @ApiOkResponse({ description: 'Successfully cloned the timetable.' })
+    @ApiForbiddenResponse({
+        description:
+            'Forbidden. You do not have permission to clone a timetable.',
+    })
+    clone(
+        @Param('institutionId') institutionId: string,
+        @Param('id') id: string,
+        @Body() updateTimeTableDto: UpdateTimeTableDto,
+    ): Promise<void> {
+        return this.timetablesService.clone(
+            institutionId,
+            id,
+            updateTimeTableDto,
+        );
+    }
+
+    /**
      * Retrieve all timetables for a given institution.
      *
      * @remarks

@@ -30,6 +30,46 @@ export class TimeTablesService {
         });
     }
 
+    async clone(
+        institutionId: string,
+        id: string,
+        updateTimetableDto: UpdateTimeTableDto,
+    ): Promise<void> {
+        await this.prisma.$transaction(async (prisma) => {
+            const timetable: TimeTables & { appointments: { id: string }[] } =
+                await prisma.timeTables.findUniqueOrThrow({
+                    select: {
+                        id: true,
+                        ...timeTablesSelect,
+                        appointments: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                    },
+                    where: {
+                        id: id,
+                        institutionId: institutionId,
+                    },
+                });
+            await prisma.timeTables.create({
+                select: {
+                    id: true,
+                },
+                data: {
+                    institutionId: institutionId,
+                    name: updateTimetableDto.name || timetable.name,
+                    version: updateTimetableDto.version,
+                    appointments: {
+                        connect: timetable.appointments.map((appointment) => ({
+                            id: appointment.id,
+                        })),
+                    },
+                },
+            });
+        });
+    }
+
     async findAll(institutionId: string): Promise<TimeTables[]> {
         return await this.prisma.timeTables.findMany({
             select: {
