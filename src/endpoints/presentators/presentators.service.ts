@@ -18,7 +18,7 @@ import {
     UpdateSubstitutionsDto,
 } from './dto/update-substitution.dto';
 import { UpdateMassDto } from '@app/dto/update-mass.dto';
-import { AppointmentsDataService } from '@app/interfaces/DataService.interface';
+import { AppointmentsDataService } from '@app/interfaces/dataservice';
 
 const presentatorsSelect = {
     name: true,

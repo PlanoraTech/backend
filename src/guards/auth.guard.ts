@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { AccessType } from '@prisma/client';
 import { Access } from '@app/decorators/access.decorator';
-import { User } from '@app/interfaces/User.interface';
+import { User } from '@app/interfaces/user';
 import { SecretService } from '@app/auth/secret/secret.service';
 
 @Injectable()

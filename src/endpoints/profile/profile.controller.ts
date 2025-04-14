@@ -9,7 +9,7 @@ import {
 import { Users } from '@prisma/client';
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { User } from '@app/interfaces/User.interface';
+import { User } from '@app/interfaces/user';
 
 @ApiTags('Profile')
 @ApiBearerAuth()

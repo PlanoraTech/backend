@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { SecretService } from '@app/auth/secret/secret.service';
 import { LoginDto } from './dto/login.dto';
-import { Login } from './interfaces/Login';
-import { User } from '@app/interfaces/User.interface';
+import { Login } from './interfaces/login.interface';
+import { User } from '@app/interfaces/user';
 
 @Injectable()
 export class LoginService {
