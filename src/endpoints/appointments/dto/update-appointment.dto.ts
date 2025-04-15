@@ -5,5 +5,5 @@ import { IsBoolean, IsOptional } from 'class-validator';
 export class UpdateAppointmentDto extends PartialType(CreateAppointmentDto) {
     @IsBoolean()
     @IsOptional()
-    isCancelled: boolean;
+    isCancelled?: boolean;
 }
