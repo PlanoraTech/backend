@@ -13,6 +13,7 @@ import {
     ApiOkResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { AccessType, Subjects } from '@prisma/client';
 import { SubjectsService } from './subjects.service';
@@ -32,7 +33,7 @@ export class SubjectsController {
      * @remarks This operation creates a new subject under a specified institution.
      */
     @Post()
-    @ApiOkResponse({ description: 'Successfully created the subject.' })
+    @ApiCreatedResponse({ description: 'Successfully created the subject.' })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to create a subject.',

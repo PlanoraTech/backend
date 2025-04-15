@@ -7,6 +7,7 @@ import {
     Param,
     Delete,
     ParseArrayPipe,
+    HttpCode,
 } from '@nestjs/common';
 import {
     AccessType,
@@ -20,6 +21,7 @@ import {
     ApiOkResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
 import {
     PresentatorsFromAppointmentsService,
@@ -47,7 +49,9 @@ export class PresentatorsController {
      * @remarks This operation creates a new presentator under a specified institution.
      */
     @Post(':id')
-    @ApiOkResponse({ description: 'Successfully created the presentator.' })
+    @ApiCreatedResponse({
+        description: 'Successfully created the presentator.',
+    })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to create a presentator.',
@@ -172,6 +176,7 @@ export class PresentatorsFromAppointmentsController {
      * @remarks This operation adds a presentator to a specified appointment and timetable.
      */
     @Post(':id')
+    @HttpCode(200)
     @ApiOkResponse({ description: 'Successfully added the presentator.' })
     @ApiForbiddenResponse({
         description:

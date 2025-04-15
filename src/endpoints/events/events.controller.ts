@@ -13,6 +13,7 @@ import {
     ApiOkResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { AccessType, Events } from '@prisma/client';
 import { EventsService } from './events.service';
@@ -32,7 +33,7 @@ export class EventsController {
      * @remarks This operation allows creating a new event under a given institution.
      */
     @Post()
-    @ApiOkResponse({ description: 'Successfully created the event.' })
+    @ApiCreatedResponse({ description: 'Successfully created the event.' })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to create an event.',

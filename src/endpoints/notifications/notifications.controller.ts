@@ -2,8 +2,8 @@ import { Controller, Post, Body, Req } from '@nestjs/common';
 import {
     ApiBearerAuth,
     ApiTags,
-    ApiOkResponse,
     ApiUnauthorizedResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
@@ -21,7 +21,9 @@ export class NotificationsController {
      * @remarks This operation creates a notification for the authenticated user.
      */
     @Post()
-    @ApiOkResponse({ description: 'Notification successfully created.' })
+    @ApiCreatedResponse({
+        description: 'Notification token successfully assigned to user.',
+    })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized. User not authenticated.',
     })
