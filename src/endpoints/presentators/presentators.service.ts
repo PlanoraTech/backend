@@ -216,18 +216,18 @@ export class PresentatorsService {
                         },
                     });
 
+                const adjacentSubstitutions: {
+                    id: string;
+                    from: Date;
+                    to: Date;
+                }[] = substitutions.filter(
+                    (sub) =>
+                        sub.from.getTime() ===
+                            new Date(substitutionDto.from).getTime() &&
+                        sub.to.getTime() ===
+                            new Date(substitutionDto.to).getTime(),
+                );
                 if (substitutionDto.isSubstituted) {
-                    const adjacentSubstitutions: {
-                        id: string;
-                        from: Date;
-                        to: Date;
-                    }[] = substitutions.filter(
-                        (sub) =>
-                            sub.from.getTime() ===
-                                new Date(substitutionDto.from).getTime() &&
-                            sub.to.getTime() ===
-                                new Date(substitutionDto.to).getTime(),
-                    );
                     if (adjacentSubstitutions.length > 0) {
                         throw new ConflictException(
                             'Substitution has been already set for this period',
@@ -268,6 +268,19 @@ export class PresentatorsService {
                         },
                     });
                 } else {
+                    if (adjacentSubstitutions.length > 0) {
+                        await prisma.substitutions.deleteMany({
+                            where: {
+                                id: {
+                                    in: adjacentSubstitutions.map(
+                                        (substitution) => {
+                                            return substitution.id;
+                                        },
+                                    ),
+                                },
+                            },
+                        });
+                    }
                     const overlappingSubstitutions: {
                         id: string;
                         from: Date;
@@ -277,62 +290,34 @@ export class PresentatorsService {
                             sub.from <= new Date(substitutionDto.to) &&
                             sub.to >= new Date(substitutionDto.from),
                     );
-                    for (const sub of overlappingSubstitutions) {
+                    for (const substitution of overlappingSubstitutions) {
+                        await prisma.substitutions.delete({
+                            select: {
+                                id: true,
+                            },
+                            where: {
+                                id: substitution.id,
+                            },
+                        });
                         if (
-                            substitutionDto.from > sub.from &&
-                            substitutionDto.to < sub.to
+                            substitution.from.getTime() <
+                                new Date(substitutionDto.from).getTime() &&
+                            substitution.to.getTime() >
+                                new Date(substitutionDto.to).getTime()
                         ) {
-                            await prisma.substitutions.delete({
-                                select: {
-                                    id: true,
-                                },
-                                where: {
-                                    id: sub.id,
-                                },
-                            });
-
-                            const updatedSubstitutions: {
-                                from: Date;
-                                to: Date;
-                                presentatorId: string;
-                            }[] = [
-                                {
-                                    from: sub.from,
-                                    to: new Date(substitutionDto.from),
-                                    presentatorId: id,
-                                },
-                                {
-                                    from: new Date(substitutionDto.to),
-                                    to: sub.to,
-                                    presentatorId: id,
-                                },
-                            ];
-
                             await prisma.substitutions.createMany({
-                                data: updatedSubstitutions,
-                            });
-                        } else if (
-                            substitutionDto.from <= sub.from &&
-                            substitutionDto.to < sub.to
-                        ) {
-                            await prisma.substitutions.update({
-                                where: { id: sub.id },
-                                data: { from: new Date(substitutionDto.to) },
-                            });
-                        } else if (
-                            substitutionDto.from > sub.from &&
-                            substitutionDto.to >= sub.to
-                        ) {
-                            await prisma.substitutions.update({
-                                where: { id: sub.id },
-                                data: { to: new Date(substitutionDto.from) },
-                            });
-                        } else if (
-                            substitutionDto.from <= sub.from &&
-                            substitutionDto.to >= sub.to
-                        ) {
-                            await prisma.substitutions.delete({
-                                where: { id: sub.id },
+                                data: [
+                                    {
+                                        from: substitution.from,
+                                        to: new Date(substitutionDto.from),
+                                        presentatorId: id,
+                                    },
+                                    {
+                                        from: new Date(substitutionDto.to),
+                                        to: substitution.to,
+                                        presentatorId: id,
+                                    },
+                                ],
                             });
                         }
                     }
