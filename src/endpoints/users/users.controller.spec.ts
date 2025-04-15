@@ -25,7 +25,7 @@ describe('UsersController', () => {
     it('should create a user', async () => {
         jest.spyOn(service, 'add').mockResolvedValue();
         await expect(
-            controller.create('institutionId', {
+            controller.add('institutionId', {
                 email: 'test@example.com',
             } as UserDto),
         ).resolves.not.toThrow();
