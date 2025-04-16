@@ -16,9 +16,10 @@ import {
     ApiNotFoundResponse,
     ApiCreatedResponse,
 } from '@nestjs/swagger';
-import { AccessType, TimeTables } from '@prisma/client';
+import { AccessType, Prisma } from '@prisma/client';
 import {
     TimeTablesFromAppointmentsService,
+    timeTablesSelect,
     TimeTablesService,
 } from './timetables.service';
 import { Access } from '@app/decorators/access.decorator';
@@ -87,9 +88,11 @@ export class TimeTablesController {
         description:
             'Forbidden. You do not have permission to access timetables.',
     })
-    findAll(
-        @Param('institutionId') institutionId: string,
-    ): Promise<TimeTables[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>[]
+    > {
         return this.timetablesService.findAll(institutionId);
     }
 
@@ -112,7 +115,11 @@ export class TimeTablesController {
     findOne(
         @Param('institutionId') institutionId: string,
         @Param('id') id: string,
-    ): Promise<TimeTables> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>
+    > {
         return this.timetablesService.findOne(institutionId, id);
     }
 
@@ -232,7 +239,11 @@ export class TimeTablesFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<TimeTables[]> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>[]
+    > {
         return this.timetablesService.findAll(institutionId, {
             timetableId: timetableId,
             presentatorId: presentatorId,
@@ -264,7 +275,11 @@ export class TimeTablesFromAppointmentsController {
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
-    ): Promise<TimeTables> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>
+    > {
         return this.timetablesService.findOne(
             institutionId,
             {

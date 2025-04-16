@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Substitutions } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-const substitutionsSelect = {
+export const substitutionsSelect: Prisma.SubstitutionsSelect = {
+    id: true,
     from: true,
     to: true,
     presentatorId: false,
@@ -15,10 +16,13 @@ export class SubstitutionsService {
     async findAll(
         institutionId: string,
         presentatorId: string,
-    ): Promise<Substitutions[]> {
+    ): Promise<
+        Prisma.SubstitutionsGetPayload<{
+            select: typeof substitutionsSelect;
+        }>[]
+    > {
         return await this.prisma.substitutions.findMany({
             select: {
-                id: true,
                 ...substitutionsSelect,
             },
             where: {
@@ -38,10 +42,13 @@ export class SubstitutionsService {
         institutionId: string,
         presentatorId: string,
         id: string,
-    ): Promise<Substitutions> {
+    ): Promise<
+        Prisma.SubstitutionsGetPayload<{
+            select: typeof substitutionsSelect;
+        }>
+    > {
         return await this.prisma.substitutions.findUniqueOrThrow({
             select: {
-                id: true,
                 ...substitutionsSelect,
             },
             where: {

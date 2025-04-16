@@ -1,8 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Users } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { SecretService } from '@app/auth/secret/secret.service';
+
+export const profileSelect: Prisma.UsersSelect = {
+    email: true,
+    institutions: {
+        select: {
+            institution: {
+                select: {
+                    name: true,
+                },
+            },
+            role: true,
+        },
+    },
+};
 
 @Injectable()
 export class ProfileService {
@@ -11,20 +25,14 @@ export class ProfileService {
         private readonly secretService: SecretService,
     ) {}
 
-    async get(id: string): Promise<Partial<Users>> {
+    async get(id: string): Promise<
+        Prisma.UsersGetPayload<{
+            select: typeof profileSelect;
+        }>
+    > {
         return await this.prisma.users.findUniqueOrThrow({
             select: {
-                email: true,
-                institutions: {
-                    select: {
-                        institution: {
-                            select: {
-                                name: true,
-                            },
-                        },
-                        role: true,
-                    },
-                },
+                ...profileSelect,
             },
             where: {
                 id: id,

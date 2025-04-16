@@ -12,7 +12,7 @@ import {
 import {
     AccessType,
     Permissions,
-    Presentators,
+    Prisma,
     SpecialPermissions,
 } from '@prisma/client';
 import {
@@ -27,6 +27,7 @@ import {
     PresentatorsFromAppointmentsService,
     PresentatorsService,
 } from './presentators.service';
+import { presentatorsSelect } from './utils/presentators.util';
 import { Access } from '@app/decorators/access.decorator';
 import { Permission } from '@app/decorators/permission.decorator';
 import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
@@ -80,9 +81,11 @@ export class PresentatorsController {
         description:
             'Forbidden. You do not have permission to access presentators.',
     })
-    findAll(
-        @Param('institutionId') institutionId: string,
-    ): Promise<Partial<Presentators>[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return this.presentatorsService.findAll(institutionId);
     }
 
@@ -104,7 +107,11 @@ export class PresentatorsController {
     findOne(
         @Param('institutionId') institutionId: string,
         @Param('id') id: string,
-    ): Promise<Partial<Presentators>> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>
+    > {
         return this.presentatorsService.findOne(institutionId, id);
     }
 
@@ -226,7 +233,11 @@ export class PresentatorsFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<Presentators[]> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return this.presentatorsService.findAll(institutionId, {
             timetableId: timetableId,
             presentatorId: presentatorId,
@@ -257,7 +268,11 @@ export class PresentatorsFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<Presentators[]> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return this.presentatorsService.findAvailablePresentators(
             institutionId,
             {
@@ -294,7 +309,11 @@ export class PresentatorsFromAppointmentsController {
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
-    ): Promise<Presentators> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>
+    > {
         return this.presentatorsService.findOne(
             institutionId,
             {

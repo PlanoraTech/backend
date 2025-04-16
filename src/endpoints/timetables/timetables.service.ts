@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { TimeTables } from '@prisma/client';
+import { Prisma, TimeTables } from '@prisma/client';
 import { CreateTimeTableDto } from './dto/create-timetable.dto';
 import { UpdateTimeTableDto } from './dto/update-timetable.dto';
 import { AppointmentsDataService } from '@app/interfaces/dataservice.interface';
 
-const timeTablesSelect = {
+export const timeTablesSelect: Prisma.TimeTablesSelect = {
+    id: true,
     name: true,
     version: true,
     institutionId: false,
@@ -70,10 +71,13 @@ export class TimeTablesService {
         });
     }
 
-    async findAll(institutionId: string): Promise<TimeTables[]> {
+    async findAll(institutionId: string): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>[]
+    > {
         return await this.prisma.timeTables.findMany({
             select: {
-                id: true,
                 ...timeTablesSelect,
             },
             where: {
@@ -82,10 +86,16 @@ export class TimeTablesService {
         });
     }
 
-    async findOne(institutionId: string, id: string): Promise<TimeTables> {
+    async findOne(
+        institutionId: string,
+        id: string,
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>
+    > {
         return await this.prisma.timeTables.findUniqueOrThrow({
             select: {
-                id: true,
                 ...timeTablesSelect,
             },
             where: {
@@ -197,10 +207,13 @@ export class TimeTablesFromAppointmentsService {
     async findAll(
         institutionId: string,
         dataService: AppointmentsDataService,
-    ): Promise<TimeTables[]> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>[]
+    > {
         return await this.prisma.timeTables.findMany({
             select: {
-                id: true,
                 ...timeTablesSelect,
             },
             where: {
@@ -248,10 +261,13 @@ export class TimeTablesFromAppointmentsService {
         institutionId: string,
         dataService: AppointmentsDataService,
         timetableId: string,
-    ): Promise<TimeTables> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>
+    > {
         return await this.prisma.timeTables.findUniqueOrThrow({
             select: {
-                id: true,
                 ...timeTablesSelect,
             },
             where: {

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Subjects } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 
-const subjectsSelect = {
+export const subjectsSelect: Prisma.SubjectsSelect = {
+    id: true,
     name: true,
     subjectId: true,
     institutionId: false,
@@ -29,10 +30,13 @@ export class SubjectsService {
         });
     }
 
-    async findAll(institutionId: string): Promise<Subjects[]> {
+    async findAll(institutionId: string): Promise<
+        Prisma.SubjectsGetPayload<{
+            select: typeof subjectsSelect;
+        }>[]
+    > {
         return await this.prisma.subjects.findMany({
             select: {
-                id: true,
                 ...subjectsSelect,
             },
             where: {
@@ -41,10 +45,16 @@ export class SubjectsService {
         });
     }
 
-    async findOne(institutionId: string, id: string): Promise<Subjects> {
+    async findOne(
+        institutionId: string,
+        id: string,
+    ): Promise<
+        Prisma.SubjectsGetPayload<{
+            select: typeof subjectsSelect;
+        }>
+    > {
         return await this.prisma.subjects.findUniqueOrThrow({
             select: {
-                id: true,
                 ...subjectsSelect,
             },
             where: {

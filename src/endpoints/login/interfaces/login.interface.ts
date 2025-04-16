@@ -1,6 +1,6 @@
 import { User } from '@app/interfaces/user.interface';
 
 export interface Login {
-    user: Partial<User>;
+    user: User;
     token?: string;
 }

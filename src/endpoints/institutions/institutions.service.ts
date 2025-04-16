@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Institutions } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 
-const institutionsSelect = {
+export const institutionsSelect: Prisma.InstitutionsSelect = {
+    id: true,
     name: true,
     type: true,
     access: true,
@@ -15,19 +16,25 @@ const institutionsSelect = {
 export class InstitutionsService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async findAll(): Promise<Institutions[]> {
+    async findAll(): Promise<
+        Prisma.InstitutionsGetPayload<{
+            select: typeof institutionsSelect;
+        }>[]
+    > {
         return await this.prisma.institutions.findMany({
             select: {
-                id: true,
                 ...institutionsSelect,
             },
         });
     }
 
-    async findOne(id: string): Promise<Institutions> {
+    async findOne(id: string): Promise<
+        Prisma.InstitutionsGetPayload<{
+            select: typeof institutionsSelect;
+        }>
+    > {
         return await this.prisma.institutions.findUniqueOrThrow({
             select: {
-                id: true,
                 ...institutionsSelect,
             },
             where: {

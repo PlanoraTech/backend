@@ -38,6 +38,7 @@ export class LoginService {
         ) {
             return {
                 user: {
+                    id: user.id,
                     institutions: user.institutions,
                 },
                 ...(await this.secretService.createToken(

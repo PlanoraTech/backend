@@ -48,6 +48,7 @@ export class LoginController {
     autologin(@Req() req: Request & { user: User }): Login {
         return {
             user: {
+                id: req.user.id,
                 institutions: req.user.institutions,
             },
         };

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Events } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
-const eventsSelect = {
+export const eventsSelect: Prisma.EventsSelect = {
+    id: true,
     title: true,
     date: true,
     institutionId: false,
@@ -30,10 +31,13 @@ export class EventsService {
         });
     }
 
-    async findAll(institutionId: string): Promise<Events[]> {
+    async findAll(institutionId: string): Promise<
+        Prisma.EventsGetPayload<{
+            select: typeof eventsSelect;
+        }>[]
+    > {
         return await this.prisma.events.findMany({
             select: {
-                id: true,
                 ...eventsSelect,
             },
             where: {
@@ -42,10 +46,16 @@ export class EventsService {
         });
     }
 
-    async findOne(institutionId: string, id: string): Promise<Events> {
+    async findOne(
+        institutionId: string,
+        id: string,
+    ): Promise<
+        Prisma.EventsGetPayload<{
+            select: typeof eventsSelect;
+        }>
+    > {
         return await this.prisma.events.findUniqueOrThrow({
             select: {
-                id: true,
                 ...eventsSelect,
             },
             where: {
