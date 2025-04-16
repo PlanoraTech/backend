@@ -32,7 +32,7 @@ describe('UsersController', () => {
     });
 
     it('should retrieve all users', async () => {
-        const users = [{ id: 'userId', email: 'test@example.com' }];
+        const users = [{ id: 'userId', email: 'test@example.com' }] as any[];
         jest.spyOn(service, 'findAll').mockResolvedValue(users);
         const result = await controller.findAll('institutionId');
         expect(result).toEqual(users);

@@ -40,7 +40,7 @@ describe('SubjectsController', () => {
                 institutionId: 'institutionId',
                 subjectId: 'subjectId',
             },
-        ];
+        ] as any[];
         jest.spyOn(service, 'findAll').mockResolvedValue(subjects);
         const result = await controller.findAll('institutionId');
         expect(result).toEqual(subjects);
@@ -52,7 +52,7 @@ describe('SubjectsController', () => {
             name: 'Subject Name',
             institutionId: 'institutionId',
             subjectId: 'subjectId',
-        };
+        } as any;
         jest.spyOn(service, 'findOne').mockResolvedValue(subject);
         const result = await controller.findOne('institutionId', 'subjectId');
         expect(result).toEqual(subject);

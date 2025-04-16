@@ -41,7 +41,7 @@ describe('EventsController', () => {
                 title: 'Event Title',
                 date: new Date('2023-01-01'),
             },
-        ];
+        ] as any;
         jest.spyOn(service, 'findAll').mockResolvedValue(events);
         const result = await controller.findAll('institutionId');
         expect(result).toEqual(events);
@@ -53,7 +53,7 @@ describe('EventsController', () => {
             id: 'eventId',
             title: 'Event Title',
             date: new Date('2023-01-01'),
-        };
+        } as any;
         jest.spyOn(service, 'findOne').mockResolvedValue(event);
         const result = await controller.findOne('institutionId', 'eventId');
         expect(result).toEqual(event);

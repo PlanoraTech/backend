@@ -56,6 +56,7 @@ describe('LoginService', () => {
 
         expect(result).toEqual({
             user: {
+                id: user.id,
                 institutions: user.institutions,
             },
             token: 'token',

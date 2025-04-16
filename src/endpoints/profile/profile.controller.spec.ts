@@ -34,7 +34,7 @@ describe('ProfileController', () => {
                     role: 'admin',
                 },
             ],
-        };
+        } as any;
 
         jest.spyOn(service, 'get').mockResolvedValue(profile);
 
