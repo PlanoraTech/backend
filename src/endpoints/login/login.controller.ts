@@ -8,8 +8,8 @@ import { AccessType } from '@prisma/client';
 import { LoginService } from './login.service';
 import { Access } from '@app/decorators/access.decorator';
 import { LoginDto } from './dto/login.dto';
-import { Login } from './interfaces/login.interface';
 import { User } from '@app/interfaces/user.interface';
+import type { Login } from './interfaces/login.interface';
 
 @ApiTags('Login')
 @Controller('login')
