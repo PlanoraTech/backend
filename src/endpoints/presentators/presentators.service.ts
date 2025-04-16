@@ -285,7 +285,7 @@ export class PresentatorsService {
                                 throw e;
                             });
                         if (
-                            substitution.from.getTime() ===
+                            substitution.from.getTime() >=
                                 new Date(substitutionDto.from).getTime() &&
                             substitution.to.getTime() >
                                 new Date(substitutionDto.to).getTime()
@@ -300,7 +300,7 @@ export class PresentatorsService {
                         } else if (
                             substitution.from.getTime() <
                                 new Date(substitutionDto.from).getTime() &&
-                            substitution.to.getTime() ===
+                            substitution.to.getTime() <=
                                 new Date(substitutionDto.to).getTime()
                         ) {
                             await prisma.substitutions.create({
