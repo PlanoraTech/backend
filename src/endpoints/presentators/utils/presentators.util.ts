@@ -147,3 +147,25 @@ export async function getOverlappingAppointments(
         },
     });
 }
+
+export function getOverlappingSubstitutions(
+    substitutions: Prisma.SubstitutionsGetPayload<{
+        select: {
+            id: true;
+            from: true;
+            to: true;
+        };
+    }>[],
+    to: Date,
+    from: Date,
+): Prisma.SubstitutionsGetPayload<{
+    select: {
+        id: true;
+        from: true;
+        to: true;
+    };
+}>[] {
+    return substitutions.filter(
+        (sub) => sub.from <= new Date(to) && sub.to >= new Date(from),
+    );
+}

@@ -18,6 +18,7 @@ import {
 } from '@app/utils/generic.util';
 import {
     getOverlappingAppointments,
+    getOverlappingSubstitutions,
     getPresentator,
     getPresentators,
     presentatorsSelect,
@@ -207,10 +208,10 @@ export class PresentatorsService {
                             from: true;
                             to: true;
                         };
-                    }>[] = substitutions.filter(
-                        (sub) =>
-                            sub.from <= new Date(substitutionDto.to) &&
-                            sub.to >= new Date(substitutionDto.from),
+                    }>[] = getOverlappingSubstitutions(
+                        substitutions,
+                        new Date(substitutionDto.to),
+                        new Date(substitutionDto.from),
                     );
                     await prisma.substitutions.deleteMany({
                         where: {
@@ -257,20 +258,32 @@ export class PresentatorsService {
                             from: true;
                             to: true;
                         };
-                    }>[] = substitutions.filter(
-                        (sub) =>
-                            sub.from <= new Date(substitutionDto.to) &&
-                            sub.to >= new Date(substitutionDto.from),
+                    }>[] = getOverlappingSubstitutions(
+                        substitutions,
+                        new Date(substitutionDto.to),
+                        new Date(substitutionDto.from),
                     );
                     for (const substitution of overlappingSubstitutions) {
-                        await prisma.substitutions.delete({
-                            select: {
-                                id: true,
-                            },
-                            where: {
-                                id: substitution.id,
-                            },
-                        });
+                        await prisma.substitutions
+                            .delete({
+                                select: {
+                                    id: true,
+                                },
+                                where: {
+                                    id: substitution.id,
+                                },
+                            })
+                            .catch((e) => {
+                                if (
+                                    e instanceof PrismaClientKnownRequestError
+                                ) {
+                                    switch (e.code) {
+                                        case 'P2025':
+                                            return;
+                                    }
+                                }
+                                throw e;
+                            });
                         if (
                             substitution.from.getTime() <
                                 new Date(substitutionDto.from).getTime() &&
