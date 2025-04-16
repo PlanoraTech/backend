@@ -305,8 +305,8 @@ export class PresentatorsService {
                         ) {
                             await prisma.substitutions.create({
                                 data: {
-                                    from: new Date(substitutionDto.to),
-                                    to: substitution.to,
+                                    from: substitution.from,
+                                    to: new Date(substitutionDto.from),
                                     presentatorId: id,
                                 },
                             });
