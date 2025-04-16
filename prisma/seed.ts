@@ -516,7 +516,7 @@ async function createUsers(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions,
 			})
 			await prisma.usersToInstitutions.create({
 				data: {
-					role: users[i]!.role,
+					role: (users[i]!.role) ? users[i]!.role : Prisma.skip,
 					user: {
 						connect: {
 							email: users[i]!.email,
