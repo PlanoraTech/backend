@@ -79,10 +79,12 @@ export class EventsService {
                 institutionId: institutionId,
             },
             data: {
-                title: updateEventDto.title,
+                title: updateEventDto.title
+                    ? updateEventDto.title
+                    : Prisma.skip,
                 date: updateEventDto.date
                     ? new Date(updateEventDto.date)
-                    : undefined,
+                    : Prisma.skip,
             },
         });
     }

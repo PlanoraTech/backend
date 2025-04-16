@@ -7,10 +7,16 @@ import { GlobalExceptionFilter } from './exception-filter/global-exception.filte
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-        logger: new ConsoleLogger({
-            prefix: 'Planora',
-            logLevels: process.env.DEBUG ? undefined : ['log', 'warn', 'error'],
-        }),
+        logger: new ConsoleLogger(
+            process.env.DEBUG
+                ? {
+                      prefix: 'Planora',
+                  }
+                : {
+                      prefix: 'Planora',
+                      logLevels: ['log', 'warn', 'error'],
+                  },
+        ),
     });
     app.enableCors({
         origin: '*',

@@ -53,7 +53,7 @@ export async function getAppointment(
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 rooms: dataService.roomId
                     ? {
                           some: {
@@ -61,7 +61,7 @@ export async function getAppointment(
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 presentators: dataService.presentatorId
                     ? {
                           some: {
@@ -75,7 +75,7 @@ export async function getAppointment(
                               },
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
             },
         })
         .catch((e) => {

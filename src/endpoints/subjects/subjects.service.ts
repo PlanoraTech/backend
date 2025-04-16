@@ -74,7 +74,12 @@ export class SubjectsService {
                 id: true,
             },
             data: {
-                ...updateSubjectDto,
+                name: updateSubjectDto.name
+                    ? updateSubjectDto.name
+                    : Prisma.skip,
+                subjectId: updateSubjectDto.subjectId
+                    ? updateSubjectDto.subjectId
+                    : Prisma.skip,
             },
             where: {
                 id,

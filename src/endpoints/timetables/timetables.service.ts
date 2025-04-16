@@ -60,7 +60,7 @@ export class TimeTablesService {
                 data: {
                     institutionId: institutionId,
                     name: updateTimetableDto.name || timetable.name,
-                    version: updateTimetableDto.version,
+                    version: updateTimetableDto.version || timetable.version,
                     appointments: {
                         connect: timetable.appointments.map((appointment) => ({
                             id: appointment.id,
@@ -177,7 +177,7 @@ export class TimeTablesFromAppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 rooms: dataService.roomId
                     ? {
                           some: {
@@ -185,7 +185,7 @@ export class TimeTablesFromAppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 presentators: dataService.presentatorId
                     ? {
                           some: {
@@ -199,7 +199,7 @@ export class TimeTablesFromAppointmentsService {
                               },
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
             },
         });
     }
@@ -228,7 +228,7 @@ export class TimeTablesFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         rooms: dataService.roomId
                             ? {
                                   some: {
@@ -236,7 +236,7 @@ export class TimeTablesFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         presentators: dataService.presentatorId
                             ? {
                                   some: {
@@ -250,7 +250,7 @@ export class TimeTablesFromAppointmentsService {
                                       },
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                     },
                 },
             },
@@ -283,7 +283,7 @@ export class TimeTablesFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         rooms: dataService.roomId
                             ? {
                                   some: {
@@ -291,7 +291,7 @@ export class TimeTablesFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         presentators: dataService.presentatorId
                             ? {
                                   some: {
@@ -305,7 +305,7 @@ export class TimeTablesFromAppointmentsService {
                                       },
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                     },
                 },
             },
@@ -338,7 +338,7 @@ export class TimeTablesFromAppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 rooms: dataService.roomId
                     ? {
                           some: {
@@ -346,7 +346,7 @@ export class TimeTablesFromAppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 presentators: dataService.presentatorId
                     ? {
                           some: {
@@ -360,7 +360,7 @@ export class TimeTablesFromAppointmentsService {
                               },
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
             },
         });
     }

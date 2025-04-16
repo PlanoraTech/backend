@@ -79,9 +79,11 @@ export async function getPresentators(
             ...select,
         },
         where: {
-            id: {
-                in: presentatorIds,
-            },
+            id: presentatorIds
+                ? {
+                      in: presentatorIds,
+                  }
+                : Prisma.skip,
             institutions: {
                 some: {
                     id: institutionId,
