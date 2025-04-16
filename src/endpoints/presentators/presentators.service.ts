@@ -285,6 +285,32 @@ export class PresentatorsService {
                                 throw e;
                             });
                         if (
+                            substitution.from.getTime() ===
+                                new Date(substitutionDto.from).getTime() &&
+                            substitution.to.getTime() >
+                                new Date(substitutionDto.to).getTime()
+                        ) {
+                            await prisma.substitutions.create({
+                                data: {
+                                    from: new Date(substitutionDto.to),
+                                    to: substitution.to,
+                                    presentatorId: id,
+                                },
+                            });
+                        } else if (
+                            substitution.from.getTime() <
+                                new Date(substitutionDto.from).getTime() &&
+                            substitution.to.getTime() ===
+                                new Date(substitutionDto.to).getTime()
+                        ) {
+                            await prisma.substitutions.create({
+                                data: {
+                                    from: new Date(substitutionDto.to),
+                                    to: substitution.to,
+                                    presentatorId: id,
+                                },
+                            });
+                        } else if (
                             substitution.from.getTime() <
                                 new Date(substitutionDto.from).getTime() &&
                             substitution.to.getTime() >
