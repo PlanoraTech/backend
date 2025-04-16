@@ -25,14 +25,14 @@ describe('UsersController', () => {
     it('should create a user', async () => {
         jest.spyOn(service, 'add').mockResolvedValue();
         await expect(
-            controller.create('institutionId', {
+            controller.add('institutionId', {
                 email: 'test@example.com',
             } as UserDto),
         ).resolves.not.toThrow();
     });
 
     it('should retrieve all users', async () => {
-        const users = [{ id: 'userId', email: 'test@example.com' }];
+        const users = [{ id: 'userId', email: 'test@example.com' }] as any[];
         jest.spyOn(service, 'findAll').mockResolvedValue(users);
         const result = await controller.findAll('institutionId');
         expect(result).toEqual(users);

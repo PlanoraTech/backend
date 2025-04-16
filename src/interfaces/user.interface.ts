@@ -1,10 +1,16 @@
-import { Roles } from '@prisma/client';
+import { UsersToInstitutions } from '@prisma/client';
 
+/**
+ * Represents a user in the system.
+ */
 export interface User {
+    /**
+     * Unique identifier for the user.
+     */
     id: string;
-    institutions: {
-        institutionId: string;
-        role: Roles;
-        presentatorId: string | null;
-    }[];
+
+    /**
+     * List of institutions the user is associated with, along with their roles.
+     */
+    institutions: Omit<UsersToInstitutions, 'userId'>[];
 }

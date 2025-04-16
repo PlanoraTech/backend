@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Users } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UserDto } from './dto/user.dto';
+
+export const usersSelect: Prisma.UsersSelect = {
+    id: true,
+    email: true,
+};
 
 @Injectable()
 export class UsersService {
@@ -27,11 +32,14 @@ export class UsersService {
         });
     }
 
-    async findAll(institutionId: string): Promise<Partial<Users>[]> {
+    async findAll(institutionId: string): Promise<
+        Prisma.UsersGetPayload<{
+            select: typeof usersSelect;
+        }>[]
+    > {
         return await this.prisma.users.findMany({
             select: {
-                id: true,
-                email: true,
+                ...usersSelect,
             },
             where: {
                 institutions: {

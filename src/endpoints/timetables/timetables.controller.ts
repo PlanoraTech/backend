@@ -6,6 +6,7 @@ import {
     Patch,
     Param,
     Delete,
+    HttpCode,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -13,10 +14,12 @@ import {
     ApiOkResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
-import { AccessType, TimeTables } from '@prisma/client';
+import { AccessType, Prisma } from '@prisma/client';
 import {
     TimeTablesFromAppointmentsService,
+    timeTablesSelect,
     TimeTablesService,
 } from './timetables.service';
 import { Access } from '@app/decorators/access.decorator';
@@ -36,7 +39,7 @@ export class TimeTablesController {
      * This endpoint allows creating a new timetable under a specified institution.
      */
     @Post()
-    @ApiOkResponse({ description: 'Successfully created the timetable.' })
+    @ApiCreatedResponse({ description: 'Successfully created the timetable.' })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to create a timetable.',
@@ -55,7 +58,7 @@ export class TimeTablesController {
      * This endpoint allows cloning an existing timetable with all of its appointments under a specified institution.
      */
     @Post(':id/clone')
-    @ApiOkResponse({ description: 'Successfully cloned the timetable.' })
+    @ApiCreatedResponse({ description: 'Successfully cloned the timetable.' })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to clone a timetable.',
@@ -85,9 +88,11 @@ export class TimeTablesController {
         description:
             'Forbidden. You do not have permission to access timetables.',
     })
-    findAll(
-        @Param('institutionId') institutionId: string,
-    ): Promise<TimeTables[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>[]
+    > {
         return this.timetablesService.findAll(institutionId);
     }
 
@@ -110,7 +115,11 @@ export class TimeTablesController {
     findOne(
         @Param('institutionId') institutionId: string,
         @Param('id') id: string,
-    ): Promise<TimeTables> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>
+    > {
         return this.timetablesService.findOne(institutionId, id);
     }
 
@@ -183,6 +192,7 @@ export class TimeTablesFromAppointmentsController {
      * Links an existing timetable to a specific appointment.
      */
     @Post(':id')
+    @HttpCode(200)
     @ApiOkResponse({
         description: 'Successfully added timetable to appointment.',
     })
@@ -229,7 +239,11 @@ export class TimeTablesFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<TimeTables[]> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>[]
+    > {
         return this.timetablesService.findAll(institutionId, {
             timetableId: timetableId,
             presentatorId: presentatorId,
@@ -261,7 +275,11 @@ export class TimeTablesFromAppointmentsController {
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
-    ): Promise<TimeTables> {
+    ): Promise<
+        Prisma.TimeTablesGetPayload<{
+            select: typeof timeTablesSelect;
+        }>
+    > {
         return this.timetablesService.findOne(
             institutionId,
             {

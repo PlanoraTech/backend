@@ -1,5 +1,9 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiForbiddenResponse } from '@nestjs/swagger';
+import {
+    ApiTags,
+    ApiForbiddenResponse,
+    ApiCreatedResponse,
+} from '@nestjs/swagger';
 import { RegisterService } from './register.service';
 import { RegisterDto } from './dto/register.dto';
 import { Access } from '@app/decorators/access.decorator';
@@ -17,7 +21,7 @@ export class RegisterController {
      */
     @Post()
     @Access(AccessType.PUBLIC)
-    @ApiOkResponse({
+    @ApiCreatedResponse({
         description: 'Successfully registered and returned the token.',
     })
     @ApiForbiddenResponse({

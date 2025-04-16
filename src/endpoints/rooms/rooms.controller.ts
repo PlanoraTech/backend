@@ -7,6 +7,7 @@ import {
     Param,
     Delete,
     ParseArrayPipe,
+    HttpCode,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -15,6 +16,7 @@ import {
     ApiForbiddenResponse,
     ApiNotFoundResponse,
     ApiBadRequestResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
 import {
     AccessType,
@@ -42,7 +44,7 @@ export class RoomsController {
      * @remarks This operation creates a new room under a specified institution.
      */
     @Post()
-    @ApiOkResponse({ description: 'Successfully created the room.' })
+    @ApiCreatedResponse({ description: 'Successfully created the room.' })
     @ApiForbiddenResponse({
         description: 'Forbidden. You do not have permission to create a room.',
     })
@@ -144,6 +146,7 @@ export class RoomsFromAppointmentsController {
      * @remarks This operation assigns a room to a specific appointment.
      */
     @Post(':id')
+    @HttpCode(200)
     @ApiOkResponse({
         description: 'Successfully added the room to the appointment.',
     })

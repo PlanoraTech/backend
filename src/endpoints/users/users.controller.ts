@@ -6,8 +6,8 @@ import {
     ApiForbiddenResponse,
     ApiNotFoundResponse,
 } from '@nestjs/swagger';
-import { Users } from '@prisma/client';
-import { UsersService } from './users.service';
+import { Prisma } from '@prisma/client';
+import { usersSelect, UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
 
 @ApiTags('Users')
@@ -17,16 +17,16 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     /**
-     * Create a new user.
+     * Assing a user to an institution.
      *
-     * @remarks This endpoint creates a new user in the given institution.
+     * @remarks This endpoint assigns a new user to the given institution.
      */
     @Post()
-    @ApiOkResponse({ description: 'Successfully created the user.' })
+    @ApiOkResponse({ description: 'Successfully assigned the user.' })
     @ApiForbiddenResponse({
         description: 'Forbidden. You do not have permission to create a user.',
     })
-    create(
+    add(
         @Param('institutionId') institutionId: string,
         @Body() userDto: UserDto,
     ): Promise<void> {
@@ -43,16 +43,18 @@ export class UsersController {
     @ApiForbiddenResponse({
         description: 'Forbidden. You do not have permission to view users.',
     })
-    findAll(
-        @Param('institutionId') institutionId: string,
-    ): Promise<Partial<Users>[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.UsersGetPayload<{
+            select: typeof usersSelect;
+        }>[]
+    > {
         return this.usersService.findAll(institutionId);
     }
 
     /**
-     * Remove a user by ID.
+     * Remove a user by ID from an institution.
      *
-     * @remarks This endpoint deletes a user with the given ID in the specified institution.
+     * @remarks This endpoint removes a user with the given ID from the specified institution.
      */
     @Delete(':id')
     @ApiOkResponse({ description: 'Successfully removed the user.' })

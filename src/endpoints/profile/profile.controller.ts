@@ -6,8 +6,8 @@ import {
     ApiForbiddenResponse,
     ApiNotFoundResponse,
 } from '@nestjs/swagger';
-import { Users } from '@prisma/client';
-import { ProfileService } from './profile.service';
+import { Prisma } from '@prisma/client';
+import { profileSelect, ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { User } from '@app/interfaces/user.interface';
 
@@ -28,7 +28,11 @@ export class ProfileController {
         description:
             'Forbidden. You do not have permission to access this profile.',
     })
-    get(@Req() req: Request & { user: User }): Promise<Partial<Users>> {
+    get(@Req() req: Request & { user: User }): Promise<
+        Prisma.UsersGetPayload<{
+            select: typeof profileSelect;
+        }>
+    > {
         return this.profileService.get(req.user.id);
     }
 

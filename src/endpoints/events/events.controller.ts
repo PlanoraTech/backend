@@ -13,9 +13,10 @@ import {
     ApiOkResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
-import { AccessType, Events } from '@prisma/client';
-import { EventsService } from './events.service';
+import { AccessType, Prisma } from '@prisma/client';
+import { eventsSelect, EventsService } from './events.service';
 import { Access } from '@app/decorators/access.decorator';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -32,7 +33,7 @@ export class EventsController {
      * @remarks This operation allows creating a new event under a given institution.
      */
     @Post()
-    @ApiOkResponse({ description: 'Successfully created the event.' })
+    @ApiCreatedResponse({ description: 'Successfully created the event.' })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to create an event.',
@@ -56,7 +57,11 @@ export class EventsController {
         description:
             'Forbidden. You do not have permission to access these events.',
     })
-    findAll(@Param('institutionId') institutionId: string): Promise<Events[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.EventsGetPayload<{
+            select: typeof eventsSelect;
+        }>[]
+    > {
         return this.eventsService.findAll(institutionId);
     }
 
@@ -76,7 +81,11 @@ export class EventsController {
     findOne(
         @Param('institutionId') institutionId: string,
         @Param('id') id: string,
-    ): Promise<Events> {
+    ): Promise<
+        Prisma.EventsGetPayload<{
+            select: typeof eventsSelect;
+        }>
+    > {
         return this.eventsService.findOne(institutionId, id);
     }
 

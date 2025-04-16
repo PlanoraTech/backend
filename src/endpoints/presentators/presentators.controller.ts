@@ -7,11 +7,12 @@ import {
     Param,
     Delete,
     ParseArrayPipe,
+    HttpCode,
 } from '@nestjs/common';
 import {
     AccessType,
     Permissions,
-    Presentators,
+    Prisma,
     SpecialPermissions,
 } from '@prisma/client';
 import {
@@ -20,11 +21,13 @@ import {
     ApiOkResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
 import {
     PresentatorsFromAppointmentsService,
     PresentatorsService,
 } from './presentators.service';
+import { presentatorsSelect } from './utils/presentators.util';
 import { Access } from '@app/decorators/access.decorator';
 import { Permission } from '@app/decorators/permission.decorator';
 import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
@@ -47,7 +50,9 @@ export class PresentatorsController {
      * @remarks This operation creates a new presentator under a specified institution.
      */
     @Post(':id')
-    @ApiOkResponse({ description: 'Successfully created the presentator.' })
+    @ApiCreatedResponse({
+        description: 'Successfully created the presentator.',
+    })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to create a presentator.',
@@ -76,9 +81,11 @@ export class PresentatorsController {
         description:
             'Forbidden. You do not have permission to access presentators.',
     })
-    findAll(
-        @Param('institutionId') institutionId: string,
-    ): Promise<Partial<Presentators>[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return this.presentatorsService.findAll(institutionId);
     }
 
@@ -100,7 +107,11 @@ export class PresentatorsController {
     findOne(
         @Param('institutionId') institutionId: string,
         @Param('id') id: string,
-    ): Promise<Partial<Presentators>> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>
+    > {
         return this.presentatorsService.findOne(institutionId, id);
     }
 
@@ -172,6 +183,7 @@ export class PresentatorsFromAppointmentsController {
      * @remarks This operation adds a presentator to a specified appointment and timetable.
      */
     @Post(':id')
+    @HttpCode(200)
     @ApiOkResponse({ description: 'Successfully added the presentator.' })
     @ApiForbiddenResponse({
         description:
@@ -221,7 +233,11 @@ export class PresentatorsFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<Presentators[]> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return this.presentatorsService.findAll(institutionId, {
             timetableId: timetableId,
             presentatorId: presentatorId,
@@ -252,7 +268,11 @@ export class PresentatorsFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<Presentators[]> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return this.presentatorsService.findAvailablePresentators(
             institutionId,
             {
@@ -289,7 +309,11 @@ export class PresentatorsFromAppointmentsController {
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
-    ): Promise<Presentators> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>
+    > {
         return this.presentatorsService.findOne(
             institutionId,
             {

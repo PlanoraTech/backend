@@ -6,8 +6,11 @@ import {
     ApiForbiddenResponse,
     ApiNotFoundResponse,
 } from '@nestjs/swagger';
-import { AccessType, Institutions } from '@prisma/client';
-import { InstitutionsService } from './institutions.service';
+import { AccessType, Prisma } from '@prisma/client';
+import {
+    institutionsSelect,
+    InstitutionsService,
+} from './institutions.service';
 import { Access } from '@app/decorators/access.decorator';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 
@@ -29,7 +32,11 @@ export class InstitutionsController {
         description:
             'Forbidden. You do not have permission to access these institutions.',
     })
-    findAll(): Promise<Institutions[]> {
+    findAll(): Promise<
+        Prisma.InstitutionsGetPayload<{
+            select: typeof institutionsSelect;
+        }>[]
+    > {
         return this.institutionsService.findAll();
     }
 
@@ -48,7 +55,11 @@ export class InstitutionsController {
     @ApiNotFoundResponse({
         description: 'Institution not found with the given ID.',
     })
-    findOne(@Param('institutionId') id: string): Promise<Institutions> {
+    findOne(@Param('institutionId') id: string): Promise<
+        Prisma.InstitutionsGetPayload<{
+            select: typeof institutionsSelect;
+        }>
+    > {
         return this.institutionsService.findOne(id);
     }
 

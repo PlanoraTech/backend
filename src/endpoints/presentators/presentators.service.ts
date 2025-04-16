@@ -6,12 +6,22 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
 import { PushNotificationsService } from '@app/push-notifications/push-notifications.service';
-import { Presentators, Prisma, PrismaClient, Roles } from '@prisma/client';
+import { Prisma, Roles } from '@prisma/client';
 import {
-    DefaultArgs,
     PrismaClientKnownRequestError,
     PrismaClientUnknownRequestError,
 } from '@prisma/client/runtime/library';
+import {
+    appointmentSelect,
+    appointmentsSelect,
+    getAppointment,
+} from '@app/utils/generic.util';
+import {
+    getOverlappingAppointments,
+    getPresentator,
+    getPresentators,
+    presentatorsSelect,
+} from './utils/presentators.util';
 import { CreatePresentatorDto } from './dto/create-presentator.dto';
 import {
     UpdateSubstitutionDto,
@@ -19,10 +29,6 @@ import {
 } from './dto/update-substitution.dto';
 import { UpdateMassDto } from '@app/dto/update-mass.dto';
 import { AppointmentsDataService } from '@app/interfaces/dataservice.interface';
-
-const presentatorsSelect = {
-    name: true,
-};
 
 @Injectable()
 export class PresentatorsService {
@@ -110,37 +116,23 @@ export class PresentatorsService {
         });
     }
 
-    async findAll(institutionId: string): Promise<Presentators[]> {
-        return await this.prisma.presentators.findMany({
-            select: {
-                id: true,
-                ...presentatorsSelect,
-            },
-            where: {
-                institutions: {
-                    some: {
-                        id: institutionId,
-                    },
-                },
-            },
-        });
+    async findAll(institutionId: string): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
+        return await getPresentators(this.prisma, institutionId);
     }
 
-    async findOne(institutionId: string, id: string): Promise<Presentators> {
-        return await this.prisma.presentators.findUniqueOrThrow({
-            select: {
-                id: true,
-                ...presentatorsSelect,
-            },
-            where: {
-                id: id,
-                institutions: {
-                    some: {
-                        id: institutionId,
-                    },
-                },
-            },
-        });
+    async findOne(
+        institutionId: string,
+        id: string,
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>
+    > {
+        return await getPresentator(this.prisma, institutionId, id);
     }
 
     async substitute(
@@ -150,50 +142,19 @@ export class PresentatorsService {
     ): Promise<void> {
         await this.prisma.$transaction(
             async (prisma) => {
-                const presentator: { id: string; name: string } =
-                    await prisma.presentators.findUniqueOrThrow({
-                        select: {
-                            id: true,
-                            name: true,
-                        },
-                        where: {
-                            id: id,
-                            institutions: {
-                                some: {
-                                    id: institutionId,
-                                },
-                            },
-                        },
-                    });
-
-                const appointments: { id: string }[] =
-                    await prisma.appointments.findMany({
-                        select: {
-                            id: true,
-                        },
-                        where: {
-                            start: {
-                                gte: new Date(substitutionDto.from),
-                                lte: new Date(substitutionDto.to),
-                            },
-                            end: {
-                                gte: new Date(substitutionDto.from),
-                                lte: new Date(substitutionDto.to),
-                            },
-                            presentators: {
-                                some: {
-                                    presentator: {
-                                        id: id,
-                                        institutions: {
-                                            some: {
-                                                id: institutionId,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    });
+                const presentator: Prisma.PresentatorsGetPayload<{
+                    select: typeof presentatorsSelect;
+                }> = await getPresentator(prisma, institutionId, id);
+                const appointments: Prisma.AppointmentsGetPayload<{
+                    select: typeof appointmentsSelect;
+                }>[] = await getOverlappingAppointments(
+                    prisma,
+                    institutionId,
+                    [],
+                    [id],
+                    new Date(substitutionDto.from),
+                    new Date(substitutionDto.to),
+                );
 
                 if (appointments.length === 0) {
                     throw new NotFoundException(
@@ -201,26 +162,33 @@ export class PresentatorsService {
                     );
                 }
 
-                const substitutions: { id: string; from: Date; to: Date }[] =
-                    await prisma.substitutions.findMany({
-                        select: {
-                            id: true,
-                            from: true,
-                            to: true,
-                        },
-                        where: {
-                            presentatorId: id,
-                        },
-                        orderBy: {
-                            from: 'asc',
-                        },
-                    });
+                const substitutions: Prisma.SubstitutionsGetPayload<{
+                    select: {
+                        id: true;
+                        from: true;
+                        to: true;
+                    };
+                }>[] = await prisma.substitutions.findMany({
+                    select: {
+                        id: true,
+                        from: true,
+                        to: true,
+                    },
+                    where: {
+                        presentatorId: id,
+                    },
+                    orderBy: {
+                        from: 'asc',
+                    },
+                });
 
-                const adjacentSubstitutions: {
-                    id: string;
-                    from: Date;
-                    to: Date;
-                }[] = substitutions.filter(
+                const adjacentSubstitutions: Prisma.SubstitutionsGetPayload<{
+                    select: {
+                        id: true;
+                        from: true;
+                        to: true;
+                    };
+                }>[] = substitutions.filter(
                     (sub) =>
                         sub.from.getTime() ===
                             new Date(substitutionDto.from).getTime() &&
@@ -233,11 +201,13 @@ export class PresentatorsService {
                             'Substitution has been already set for this period',
                         );
                     }
-                    const overlappingSubstitutions: {
-                        id: string;
-                        from: Date;
-                        to: Date;
-                    }[] = substitutions.filter(
+                    const overlappingSubstitutions: Prisma.SubstitutionsGetPayload<{
+                        select: {
+                            id: true;
+                            from: true;
+                            to: true;
+                        };
+                    }>[] = substitutions.filter(
                         (sub) =>
                             sub.from <= new Date(substitutionDto.to) &&
                             sub.to >= new Date(substitutionDto.from),
@@ -281,11 +251,13 @@ export class PresentatorsService {
                             },
                         });
                     }
-                    const overlappingSubstitutions: {
-                        id: string;
-                        from: Date;
-                        to: Date;
-                    }[] = substitutions.filter(
+                    const overlappingSubstitutions: Prisma.SubstitutionsGetPayload<{
+                        select: {
+                            id: true;
+                            from: true;
+                            to: true;
+                        };
+                    }>[] = substitutions.filter(
                         (sub) =>
                             sub.from <= new Date(substitutionDto.to) &&
                             sub.to >= new Date(substitutionDto.from),
@@ -404,197 +376,28 @@ export class PresentatorsFromAppointmentsService {
         private readonly pushNotificationsService: PushNotificationsService,
     ) {}
 
-    private async getPresentator(
-        prisma: Omit<
-            PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-            | '$connect'
-            | '$disconnect'
-            | '$on'
-            | '$transaction'
-            | '$use'
-            | '$extends'
-        >,
-        institutionId: string,
-        presentatorId: string,
-    ): Promise<{ name: string }> {
-        return await prisma.presentators
-            .findUniqueOrThrow({
-                select: {
-                    name: true,
-                },
-                where: {
-                    id: presentatorId,
-                    institutions: {
-                        some: {
-                            id: institutionId,
-                        },
-                    },
-                },
-            })
-            .catch((e) => {
-                if (e instanceof PrismaClientKnownRequestError) {
-                    switch (e.code) {
-                        case 'P2025':
-                            throw new NotFoundException(
-                                'A presentator with the given id does not exists',
-                            );
-                    }
-                }
-                throw e;
-            });
-    }
-
-    private async getAppointment(
-        prisma: Omit<
-            PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-            | '$connect'
-            | '$disconnect'
-            | '$on'
-            | '$transaction'
-            | '$use'
-            | '$extends'
-        >,
-        institutionId: string,
-        dataService: AppointmentsDataService,
-    ): Promise<{
-        start: Date;
-        end: Date;
-        subject: { name: string };
-    }> {
-        return await prisma.appointments
-            .findUniqueOrThrow({
-                select: {
-                    start: true,
-                    end: true,
-                    subject: {
-                        select: {
-                            name: true,
-                        },
-                    },
-                },
-                where: {
-                    id: dataService.appointmentId,
-                    timetables: dataService.timetableId
-                        ? {
-                              some: {
-                                  id: dataService.timetableId,
-                                  institutionId: institutionId,
-                              },
-                          }
-                        : undefined,
-                    rooms: dataService.roomId
-                        ? {
-                              some: {
-                                  id: dataService.roomId,
-                                  institutionId: institutionId,
-                              },
-                          }
-                        : undefined,
-                    presentators: dataService.presentatorId
-                        ? {
-                              some: {
-                                  presentator: {
-                                      id: dataService.presentatorId,
-                                      institutions: {
-                                          some: {
-                                              id: institutionId,
-                                          },
-                                      },
-                                  },
-                              },
-                          }
-                        : undefined,
-                },
-            })
-            .catch((e) => {
-                if (e instanceof PrismaClientKnownRequestError) {
-                    switch (e.code) {
-                        case 'P2025':
-                            throw new NotFoundException(
-                                'Appointment not found',
-                            );
-                    }
-                }
-                throw e;
-            });
-    }
-
-    private async getOverlappingAppointments(
-        prisma: Omit<
-            PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-            | '$connect'
-            | '$disconnect'
-            | '$on'
-            | '$transaction'
-            | '$use'
-            | '$extends'
-        >,
-        institutionId: string,
-        excludedAppointmentIds: string[],
-        presentatorIds: string[],
-        start: Date,
-        end: Date,
-    ): Promise<{ id: string }[]> {
-        return await prisma.appointments.findMany({
-            select: {
-                id: true,
-            },
-            where: {
-                id: {
-                    notIn: excludedAppointmentIds,
-                },
-                presentators: {
-                    some: {
-                        presentator: {
-                            id: {
-                                in: presentatorIds,
-                            },
-                            institutions: {
-                                some: {
-                                    id: institutionId,
-                                },
-                            },
-                        },
-                    },
-                },
-                start: {
-                    gte: start,
-                    lte: end,
-                },
-                end: {
-                    gte: start,
-                    lte: end,
-                },
-                isCancelled: false,
-            },
-        });
-    }
-
     async add(
         institutionId: string,
         dataService: AppointmentsDataService,
         presentatorId: string,
     ): Promise<void> {
         await this.prisma.$transaction(async (prisma) => {
-            const presentator: { name: string } = await this.getPresentator(
+            const presentator: Prisma.PresentatorsGetPayload<{
+                select: typeof presentatorsSelect;
+            }> = await getPresentator(prisma, institutionId, presentatorId);
+            const appointment: Prisma.AppointmentsGetPayload<{
+                select: typeof appointmentSelect;
+            }> = await getAppointment(prisma, institutionId, dataService);
+            const appointments: Prisma.AppointmentsGetPayload<{
+                select: typeof appointmentsSelect;
+            }>[] = await getOverlappingAppointments(
                 prisma,
                 institutionId,
-                presentatorId,
+                [dataService.appointmentId],
+                [presentatorId],
+                appointment.start,
+                appointment.end,
             );
-            const appointment: {
-                start: Date;
-                end: Date;
-                subject: { name: string };
-            } = await this.getAppointment(prisma, institutionId, dataService);
-            const appointments: { id: string }[] =
-                await this.getOverlappingAppointments(
-                    prisma,
-                    institutionId,
-                    [dataService.appointmentId],
-                    [presentatorId],
-                    appointment.start,
-                    appointment.end,
-                );
             if (appointments.length > 0) {
                 throw new ConflictException(
                     'This presentator is already assigned to an appointment during the time period this appointment is scheduled',
@@ -635,10 +438,13 @@ export class PresentatorsFromAppointmentsService {
     async findAll(
         institutionId: string,
         dataService: AppointmentsDataService,
-    ): Promise<Presentators[]> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return await this.prisma.presentators.findMany({
             select: {
-                id: true,
                 ...presentatorsSelect,
             },
             where: {
@@ -687,10 +493,13 @@ export class PresentatorsFromAppointmentsService {
         institutionId: string,
         dataService: AppointmentsDataService,
         presentatorId: string,
-    ): Promise<Presentators> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>
+    > {
         return await this.prisma.presentators.findUniqueOrThrow({
             select: {
-                id: true,
                 ...presentatorsSelect,
             },
             where: {
@@ -739,71 +548,33 @@ export class PresentatorsFromAppointmentsService {
     async findAvailablePresentators(
         institutionId: string,
         dataService: AppointmentsDataService,
-    ): Promise<Presentators[]> {
+    ): Promise<
+        Prisma.PresentatorsGetPayload<{
+            select: typeof presentatorsSelect;
+        }>[]
+    > {
         return await this.prisma.$transaction(async (prisma) => {
-            const appointment: {
-                start: Date;
-                end: Date;
-                presentators: { presentatorId: string }[];
-            } = await prisma.appointments
-                .findUniqueOrThrow({
+            const appointment: Prisma.AppointmentsGetPayload<{
+                select: {
+                    start: true;
+                    end: true;
+                    presentators: {
+                        select: {
+                            presentatorId: true;
+                        };
+                    };
+                };
+            }> = await getAppointment(prisma, institutionId, dataService, {
+                start: true,
+                end: true,
+                presentators: {
                     select: {
-                        start: true,
-                        end: true,
-                        presentators: {
-                            select: {
-                                presentatorId: true,
-                            },
-                        },
+                        presentatorId: true,
                     },
-                    where: {
-                        id: dataService.appointmentId,
-                        timetables: dataService.timetableId
-                            ? {
-                                  some: {
-                                      id: dataService.timetableId,
-                                      institutionId: institutionId,
-                                  },
-                              }
-                            : undefined,
-                        rooms: dataService.roomId
-                            ? {
-                                  some: {
-                                      id: dataService.roomId,
-                                      institutionId: institutionId,
-                                  },
-                              }
-                            : undefined,
-                        presentators: dataService.presentatorId
-                            ? {
-                                  some: {
-                                      presentator: {
-                                          id: dataService.presentatorId,
-                                          institutions: {
-                                              some: {
-                                                  id: institutionId,
-                                              },
-                                          },
-                                      },
-                                  },
-                              }
-                            : undefined,
-                    },
-                })
-                .catch((e) => {
-                    if (e instanceof PrismaClientKnownRequestError) {
-                        switch (e.code) {
-                            case 'P2025':
-                                throw new NotFoundException(
-                                    'Appointment not found',
-                                );
-                        }
-                    }
-                    throw e;
-                });
+                },
+            });
             return await this.prisma.presentators.findMany({
                 select: {
-                    id: true,
                     ...presentatorsSelect,
                 },
                 where: {
@@ -864,18 +635,26 @@ export class PresentatorsFromAppointmentsService {
         presentatorId: string,
         substitutionDto: UpdateSubstitutionDto,
     ): Promise<void> {
-        const query: {
-            presentator: {
-                name: string;
-            };
-            appointment: {
-                start: Date;
-                end: Date;
-                subject: {
-                    name: string;
+        const query: Prisma.PresentatorsToAppointmentsGetPayload<{
+            select: {
+                presentator: {
+                    select: {
+                        name: true;
+                    };
+                };
+                appointment: {
+                    select: {
+                        start: true;
+                        end: true;
+                        subject: {
+                            select: {
+                                name: true;
+                            };
+                        };
+                    };
                 };
             };
-        } = await this.prisma.presentatorsToAppointments
+        }> = await this.prisma.presentatorsToAppointments
             .update({
                 select: {
                     appointment: {
@@ -964,25 +743,15 @@ export class PresentatorsFromAppointmentsService {
         updateMassDto: UpdateMassDto[],
     ): Promise<void> {
         await this.prisma.$transaction(async (prisma) => {
-            const presentators: { id: string; name: string }[] =
-                await prisma.presentators.findMany({
-                    select: {
-                        id: true,
-                        name: true,
-                    },
-                    where: {
-                        id: {
-                            in: updateMassDto.map((presentator) => {
-                                return presentator.id;
-                            }),
-                        },
-                        institutions: {
-                            some: {
-                                id: institutionId,
-                            },
-                        },
-                    },
-                });
+            const presentators: Prisma.PresentatorsGetPayload<{
+                select: typeof presentatorsSelect;
+            }>[] = await getPresentators(
+                prisma,
+                institutionId,
+                updateMassDto.map((presentator) => {
+                    return presentator.id;
+                }),
+            );
             if (
                 !updateMassDto.every((presentator) => {
                     return presentators.find((p) => p.id === presentator.id);
@@ -992,13 +761,11 @@ export class PresentatorsFromAppointmentsService {
                     'One or more presentator IDs were invalid',
                 );
             }
-            const appointment: {
-                start: Date;
-                end: Date;
-                subject: { name: string };
-            } = await this.getAppointment(prisma, institutionId, dataService);
+            const appointment: Prisma.AppointmentsGetPayload<{
+                select: typeof appointmentSelect;
+            }> = await getAppointment(prisma, institutionId, dataService);
             const appointments: { id: string }[] =
-                await this.getOverlappingAppointments(
+                await getOverlappingAppointments(
                     prisma,
                     institutionId,
                     [dataService.appointmentId],
@@ -1049,10 +816,26 @@ export class PresentatorsFromAppointmentsService {
         dataService: AppointmentsDataService,
         presentatorId: string,
     ): Promise<void> {
-        const query: {
-            presentator: { name: string };
-            appointment: { start: Date; end: Date; subject: { name: string } };
-        } = await this.prisma.presentatorsToAppointments.delete({
+        const query: Prisma.PresentatorsToAppointmentsGetPayload<{
+            select: {
+                presentator: {
+                    select: {
+                        name: true;
+                    };
+                };
+                appointment: {
+                    select: {
+                        start: true;
+                        end: true;
+                        subject: {
+                            select: {
+                                name: true;
+                            };
+                        };
+                    };
+                };
+            };
+        }> = await this.prisma.presentatorsToAppointments.delete({
             select: {
                 presentator: {
                     select: {

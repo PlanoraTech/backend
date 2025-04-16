@@ -13,9 +13,10 @@ import {
     ApiOkResponse,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
+    ApiCreatedResponse,
 } from '@nestjs/swagger';
-import { AccessType, Subjects } from '@prisma/client';
-import { SubjectsService } from './subjects.service';
+import { AccessType, Prisma } from '@prisma/client';
+import { subjectsSelect, SubjectsService } from './subjects.service';
 import { Access } from '@app/decorators/access.decorator';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
@@ -32,7 +33,7 @@ export class SubjectsController {
      * @remarks This operation creates a new subject under a specified institution.
      */
     @Post()
-    @ApiOkResponse({ description: 'Successfully created the subject.' })
+    @ApiCreatedResponse({ description: 'Successfully created the subject.' })
     @ApiForbiddenResponse({
         description:
             'Forbidden. You do not have permission to create a subject.',
@@ -56,9 +57,11 @@ export class SubjectsController {
         description:
             'Forbidden. You do not have permission to access subjects.',
     })
-    findAll(
-        @Param('institutionId') institutionId: string,
-    ): Promise<Subjects[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.SubjectsGetPayload<{
+            select: typeof subjectsSelect;
+        }>[]
+    > {
         return this.subjectsService.findAll(institutionId);
     }
 
@@ -80,7 +83,11 @@ export class SubjectsController {
     findOne(
         @Param('institutionId') institutionId: string,
         @Param('id') id: string,
-    ): Promise<Subjects> {
+    ): Promise<
+        Prisma.SubjectsGetPayload<{
+            select: typeof subjectsSelect;
+        }>
+    > {
         return this.subjectsService.findOne(institutionId, id);
     }
 

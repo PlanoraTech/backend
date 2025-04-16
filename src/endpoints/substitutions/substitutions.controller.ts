@@ -6,8 +6,11 @@ import {
     ApiForbiddenResponse,
     ApiNotFoundResponse,
 } from '@nestjs/swagger';
-import { Permissions, SpecialPermissions, Substitutions } from '@prisma/client';
-import { SubstitutionsService } from './substitutions.service';
+import { Permissions, Prisma, SpecialPermissions } from '@prisma/client';
+import {
+    substitutionsSelect,
+    SubstitutionsService,
+} from './substitutions.service';
 import { Permission } from '@app/decorators/permission.decorator';
 import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
 
@@ -36,7 +39,11 @@ export class SubstitutionsController {
     findAll(
         @Param('institutionId') institutionId: string,
         @Param('substitutePresentatorId') presentatorId: string,
-    ): Promise<Substitutions[]> {
+    ): Promise<
+        Prisma.SubstitutionsGetPayload<{
+            select: typeof substitutionsSelect;
+        }>[]
+    > {
         return this.substitutionsService.findAll(institutionId, presentatorId);
     }
 
@@ -60,7 +67,11 @@ export class SubstitutionsController {
         @Param('institutionId') institutionId: string,
         @Param('substitutePresentatorId') presentatorId: string,
         @Param('id') id: string,
-    ): Promise<Substitutions> {
+    ): Promise<
+        Prisma.SubstitutionsGetPayload<{
+            select: typeof substitutionsSelect;
+        }>
+    > {
         return this.substitutionsService.findOne(
             institutionId,
             presentatorId,

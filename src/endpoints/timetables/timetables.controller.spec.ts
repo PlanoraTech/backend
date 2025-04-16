@@ -40,7 +40,7 @@ describe('TimeTablesController', () => {
                 version: 'B',
                 institutionId: 'institutionId',
             },
-        ];
+        ] as any[];
         jest.spyOn(service, 'findAll').mockResolvedValue(timetables);
         const result = await controller.findAll('institutionId');
         expect(result).toEqual(timetables);
@@ -52,7 +52,7 @@ describe('TimeTablesController', () => {
             name: 'Timetable Name',
             version: 'B',
             institutionId: 'institutionId',
-        };
+        } as any;
         jest.spyOn(service, 'findOne').mockResolvedValue(timetable);
         const result = await controller.findOne('institutionId', 'timetableId');
         expect(result).toEqual(timetable);

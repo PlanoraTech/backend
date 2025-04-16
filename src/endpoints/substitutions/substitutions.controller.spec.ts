@@ -26,7 +26,7 @@ describe('SubstitutionsController', () => {
     it('should retrieve all substitutions', async () => {
         const substitutions = [
             { id: '1', from: new Date(), to: new Date(), presentatorId: '123' },
-        ];
+        ] as any;
 
         jest.spyOn(service, 'findAll').mockResolvedValue(substitutions);
 
@@ -47,7 +47,7 @@ describe('SubstitutionsController', () => {
             from: new Date(),
             to: new Date(),
             presentatorId: '123',
-        };
+        } as any;
 
         jest.spyOn(service, 'findOne').mockResolvedValue(substitution);
 
