@@ -86,7 +86,7 @@ describe('SubjectsService', () => {
     });
 
     it('should update a subject', async () => {
-        const subject: UpdateSubjectDto = { name: 'Updated Math' };
+        const subject: UpdateSubjectDto = { name: 'Updated Math', subjectId: 'MATH102' };
         jest.spyOn(prismaService.subjects, 'update').mockResolvedValue(
             {} as any,
         );

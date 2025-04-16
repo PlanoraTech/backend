@@ -4,21 +4,20 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '@app/prisma/prisma.service';
-import { Prisma, PrismaClient, Rooms } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { getAppointment } from '@app/utils/generic.util';
 import {
-    DefaultArgs,
-    PrismaClientKnownRequestError,
-} from '@prisma/client/runtime/library';
+    getOverlappingAppointments,
+    getRoom,
+    getRooms,
+    roomsSelect,
+} from './utils/rooms.util';
 import { PushNotificationsService } from '@app/push-notifications/push-notifications.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { UpdateMassDto } from '@app/dto/update-mass.dto';
 import { AppointmentsDataService } from '@app/interfaces/dataservice.interface';
-
-const roomsSelect = {
-    name: true,
-    institutionId: false,
-};
 
 @Injectable()
 export class RoomsService {
@@ -39,29 +38,23 @@ export class RoomsService {
         });
     }
 
-    async findAll(institutionId: string): Promise<Rooms[]> {
-        return await this.prisma.rooms.findMany({
-            select: {
-                id: true,
-                ...roomsSelect,
-            },
-            where: {
-                institutionId: institutionId,
-            },
-        });
+    async findAll(institutionId: string): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>[]
+    > {
+        return await getRooms(this.prisma, institutionId);
     }
 
-    async findOne(institutionId: string, id: string): Promise<Rooms> {
-        return await this.prisma.rooms.findUniqueOrThrow({
-            select: {
-                id: true,
-                ...roomsSelect,
-            },
-            where: {
-                id: id,
-                institutionId: institutionId,
-            },
-        });
+    async findOne(
+        institutionId: string,
+        id: string,
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>
+    > {
+        return await getRoom(this.prisma, institutionId, id);
     }
 
     async update(
@@ -103,169 +96,13 @@ export class RoomsFromAppointmentsService {
         private readonly pushNotificationsService: PushNotificationsService,
     ) {}
 
-    private async getRoom(
-        prisma: Omit<
-            PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-            | '$connect'
-            | '$disconnect'
-            | '$on'
-            | '$transaction'
-            | '$use'
-            | '$extends'
-        >,
-        institutionId: string,
-        roomId: string,
-    ): Promise<{ name: string }> {
-        return await prisma.rooms
-            .findUniqueOrThrow({
-                select: {
-                    name: true,
-                },
-                where: {
-                    id: roomId,
-                    institutionId: institutionId,
-                },
-            })
-            .catch((e) => {
-                if (e instanceof PrismaClientKnownRequestError) {
-                    switch (e.code) {
-                        case 'P2025':
-                            throw new NotFoundException(
-                                'A room with the given id does not exists',
-                            );
-                    }
-                }
-                throw e;
-            });
-    }
-
-    private async getAppointment(
-        prisma: Omit<
-            PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-            | '$connect'
-            | '$disconnect'
-            | '$on'
-            | '$transaction'
-            | '$use'
-            | '$extends'
-        >,
-        institutionId: string,
-        dataService: AppointmentsDataService,
-    ): Promise<{
-        start: Date;
-        end: Date;
-        subject: { name: string };
-    }> {
-        return await prisma.appointments
-            .findUniqueOrThrow({
-                select: {
-                    start: true,
-                    end: true,
-                    subject: {
-                        select: {
-                            name: true,
-                        },
-                    },
-                },
-                where: {
-                    id: dataService.appointmentId,
-                    timetables: dataService.timetableId
-                        ? {
-                              some: {
-                                  id: dataService.timetableId,
-                                  institutionId: institutionId,
-                              },
-                          }
-                        : undefined,
-                    rooms: dataService.roomId
-                        ? {
-                              some: {
-                                  id: dataService.roomId,
-                                  institutionId: institutionId,
-                              },
-                          }
-                        : undefined,
-                    presentators: dataService.presentatorId
-                        ? {
-                              some: {
-                                  presentator: {
-                                      id: dataService.presentatorId,
-                                      institutions: {
-                                          some: {
-                                              id: institutionId,
-                                          },
-                                      },
-                                  },
-                              },
-                          }
-                        : undefined,
-                },
-            })
-            .catch((e) => {
-                if (e instanceof PrismaClientKnownRequestError) {
-                    switch (e.code) {
-                        case 'P2025':
-                            throw new NotFoundException(
-                                'Appointment not found',
-                            );
-                    }
-                }
-                throw e;
-            });
-    }
-
-    private async getOverlappingAppointments(
-        prisma: Omit<
-            PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-            | '$connect'
-            | '$disconnect'
-            | '$on'
-            | '$transaction'
-            | '$use'
-            | '$extends'
-        >,
-        institutionId: string,
-        excludedAppointmentIds: string[],
-        roomsIds: string[],
-        start: Date,
-        end: Date,
-    ): Promise<{ id: string }[]> {
-        return await prisma.appointments.findMany({
-            select: {
-                id: true,
-            },
-            where: {
-                id: {
-                    notIn: excludedAppointmentIds,
-                },
-                rooms: {
-                    some: {
-                        id: {
-                            in: roomsIds,
-                        },
-                        institutionId: institutionId,
-                    },
-                },
-                start: {
-                    gte: start,
-                    lte: end,
-                },
-                end: {
-                    gte: start,
-                    lte: end,
-                },
-                isCancelled: false,
-            },
-        });
-    }
-
     async add(
         institutionId: string,
         dataService: AppointmentsDataService,
         roomId: string,
     ): Promise<void> {
         await this.prisma.$transaction(async (prisma) => {
-            const room: { name: string } = await this.getRoom(
+            const room: { name: string } = await getRoom(
                 prisma,
                 institutionId,
                 roomId,
@@ -274,9 +111,9 @@ export class RoomsFromAppointmentsService {
                 start: Date;
                 end: Date;
                 subject: { name: string };
-            } = await this.getAppointment(prisma, institutionId, dataService);
+            } = await getAppointment(prisma, institutionId, dataService);
             const appointments: { id: string }[] =
-                await this.getOverlappingAppointments(
+                await getOverlappingAppointments(
                     prisma,
                     institutionId,
                     [dataService.appointmentId],
@@ -311,7 +148,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         rooms: dataService.roomId
                             ? {
                                   some: {
@@ -319,7 +156,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         presentators: dataService.presentatorId
                             ? {
                                   some: {
@@ -333,7 +170,7 @@ export class RoomsFromAppointmentsService {
                                       },
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                     },
                 })
                 .catch((e) => {
@@ -360,7 +197,11 @@ export class RoomsFromAppointmentsService {
     async findAll(
         institutionId: string,
         dataService: AppointmentsDataService,
-    ): Promise<Rooms[]> {
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>[]
+    > {
         return await this.prisma.rooms.findMany({
             select: {
                 id: true,
@@ -377,7 +218,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         rooms: dataService.roomId
                             ? {
                                   some: {
@@ -385,7 +226,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         presentators: dataService.presentatorId
                             ? {
                                   some: {
@@ -399,7 +240,7 @@ export class RoomsFromAppointmentsService {
                                       },
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                     },
                 },
             },
@@ -410,7 +251,11 @@ export class RoomsFromAppointmentsService {
         institutionId: string,
         dataService: AppointmentsDataService,
         roomId: string,
-    ): Promise<Rooms> {
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>
+    > {
         return await this.prisma.rooms.findUniqueOrThrow({
             select: {
                 id: true,
@@ -428,7 +273,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         rooms: dataService.roomId
                             ? {
                                   some: {
@@ -436,7 +281,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         presentators: dataService.presentatorId
                             ? {
                                   some: {
@@ -450,7 +295,7 @@ export class RoomsFromAppointmentsService {
                                       },
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                     },
                 },
             },
@@ -460,7 +305,11 @@ export class RoomsFromAppointmentsService {
     async findAvailableRooms(
         institutionId: string,
         dataService: AppointmentsDataService,
-    ): Promise<Rooms[]> {
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>[]
+    > {
         return await this.prisma.$transaction(async (prisma) => {
             const appointment: {
                 start: Date;
@@ -486,7 +335,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         rooms: dataService.roomId
                             ? {
                                   some: {
@@ -494,7 +343,7 @@ export class RoomsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         presentators: dataService.presentatorId
                             ? {
                                   some: {
@@ -508,7 +357,7 @@ export class RoomsFromAppointmentsService {
                                       },
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                     },
                 })
                 .catch((e) => {
@@ -608,9 +457,9 @@ export class RoomsFromAppointmentsService {
                 start: Date;
                 end: Date;
                 subject: { name: string };
-            } = await this.getAppointment(prisma, institutionId, dataService);
+            } = await getAppointment(prisma, institutionId, dataService);
             const appointments: { id: string }[] =
-                await this.getOverlappingAppointments(
+                await getOverlappingAppointments(
                     prisma,
                     institutionId,
                     [dataService.appointmentId],
@@ -647,7 +496,7 @@ export class RoomsFromAppointmentsService {
                                   institutionId: institutionId,
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                     rooms: dataService.roomId
                         ? {
                               some: {
@@ -655,7 +504,7 @@ export class RoomsFromAppointmentsService {
                                   institutionId: institutionId,
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                     presentators: dataService.presentatorId
                         ? {
                               some: {
@@ -669,7 +518,7 @@ export class RoomsFromAppointmentsService {
                                   },
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                 },
             });
             await this.pushNotificationsService.sendNotificationToPushServer(
@@ -694,7 +543,7 @@ export class RoomsFromAppointmentsService {
         roomId: string,
     ): Promise<void> {
         await this.prisma.$transaction(async (prisma) => {
-            const room: { name: string } = await this.getRoom(
+            const room: { name: string } = await getRoom(
                 prisma,
                 institutionId,
                 roomId,
@@ -732,7 +581,7 @@ export class RoomsFromAppointmentsService {
                                   institutionId: institutionId,
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                     rooms: dataService.roomId
                         ? {
                               some: {
@@ -740,7 +589,7 @@ export class RoomsFromAppointmentsService {
                                   institutionId: institutionId,
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                     presentators: dataService.presentatorId
                         ? {
                               some: {
@@ -754,7 +603,7 @@ export class RoomsFromAppointmentsService {
                                   },
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                 },
             });
             await this.pushNotificationsService.sendNotificationToPushServer(

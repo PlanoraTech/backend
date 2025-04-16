@@ -75,7 +75,7 @@ export class AppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 rooms: dataService.roomId
                     ? {
                           some: {
@@ -83,7 +83,7 @@ export class AppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 presentators: dataService.presentatorId
                     ? {
                           some: {
@@ -97,7 +97,7 @@ export class AppointmentsService {
                               },
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
             },
         });
         return appointments.map((appointment) => ({
@@ -130,7 +130,7 @@ export class AppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 rooms: dataService.roomId
                     ? {
                           some: {
@@ -138,7 +138,7 @@ export class AppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
                 presentators: dataService.presentatorId
                     ? {
                           some: {
@@ -152,7 +152,7 @@ export class AppointmentsService {
                               },
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
             },
         });
         return {
@@ -222,11 +222,13 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
             data: {
                 start: updateAppointmentDto.start
                     ? new Date(updateAppointmentDto.start)
-                    : undefined,
+                    : Prisma.skip,
                 end: updateAppointmentDto.end
                     ? new Date(updateAppointmentDto.end)
-                    : undefined,
-                isCancelled: updateAppointmentDto.isCancelled,
+                    : Prisma.skip,
+                isCancelled: updateAppointmentDto.isCancelled
+                    ? updateAppointmentDto.isCancelled
+                    : Prisma.skip,
                 subject: updateAppointmentDto.subjectId
                     ? {
                           connect: {
@@ -234,7 +236,7 @@ export class AppointmentsFromTimeTablesService extends AppointmentsService {
                               institutionId: institutionId,
                           },
                       }
-                    : undefined,
+                    : Prisma.skip,
             },
             where: {
                 id: id,

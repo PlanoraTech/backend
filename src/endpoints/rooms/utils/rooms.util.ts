@@ -4,14 +4,14 @@ import {
     DefaultArgs,
     PrismaClientKnownRequestError,
 } from '@prisma/client/runtime/library';
-import { appointmentsSelect } from '@app/utils/generic.util';
 
-export const presentatorsSelect: Prisma.PresentatorsSelect = {
+export const roomsSelect: Prisma.RoomsSelect = {
     id: true,
     name: true,
+    institutionId: false,
 };
 
-export async function getPresentator(
+export async function getRoom(
     prisma: Omit<
         PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
         | '$connect'
@@ -22,25 +22,21 @@ export async function getPresentator(
         | '$extends'
     >,
     institutionId: string,
-    presentatorId: string,
-    select: Prisma.PresentatorsSelect = presentatorsSelect,
+    roomId: string,
+    select: Prisma.RoomsSelect = roomsSelect,
 ): Promise<
-    Prisma.PresentatorsGetPayload<{
+    Prisma.RoomsGetPayload<{
         select: typeof select;
     }>
 > {
-    return await prisma.presentators
+    return await prisma.rooms
         .findUniqueOrThrow({
             select: {
                 ...select,
             },
             where: {
-                id: presentatorId,
-                institutions: {
-                    some: {
-                        id: institutionId,
-                    },
-                },
+                id: roomId,
+                institutionId: institutionId,
             },
         })
         .catch((e) => {
@@ -48,7 +44,7 @@ export async function getPresentator(
                 switch (e.code) {
                     case 'P2025':
                         throw new NotFoundException(
-                            'A presentator with the given id does not exists',
+                            'A room with the given id does not exists',
                         );
                 }
             }
@@ -56,7 +52,7 @@ export async function getPresentator(
         });
 }
 
-export async function getPresentators(
+export async function getRooms(
     prisma: Omit<
         PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
         | '$connect'
@@ -67,28 +63,24 @@ export async function getPresentators(
         | '$extends'
     >,
     institutionId: string,
-    presentatorIds?: string[],
-    select: Prisma.PresentatorsSelect = presentatorsSelect,
+    roomIds?: string[],
+    select: Prisma.RoomsSelect = roomsSelect,
 ): Promise<
-    Prisma.PresentatorsGetPayload<{
+    Prisma.RoomsGetPayload<{
         select: typeof select;
     }>[]
 > {
-    return await prisma.presentators.findMany({
+    return await prisma.rooms.findMany({
         select: {
             ...select,
         },
         where: {
-            id: presentatorIds
+            id: roomIds
                 ? {
-                      in: presentatorIds,
+                      in: roomIds,
                   }
                 : Prisma.skip,
-            institutions: {
-                some: {
-                    id: institutionId,
-                },
-            },
+            institutionId: institutionId,
         },
     });
 }
@@ -105,36 +97,24 @@ export async function getOverlappingAppointments(
     >,
     institutionId: string,
     excludedAppointmentIds: string[],
-    presentatorIds: string[],
+    roomsIds: string[],
     start: Date,
     end: Date,
-    isCancelled: boolean = false,
-    select: Prisma.AppointmentsSelect = appointmentsSelect,
-): Promise<
-    Prisma.AppointmentsGetPayload<{
-        select: typeof select;
-    }>[]
-> {
+): Promise<{ id: string }[]> {
     return await prisma.appointments.findMany({
         select: {
-            ...select,
+            id: true,
         },
         where: {
             id: {
                 notIn: excludedAppointmentIds,
             },
-            presentators: {
+            rooms: {
                 some: {
-                    presentator: {
-                        id: {
-                            in: presentatorIds,
-                        },
-                        institutions: {
-                            some: {
-                                id: institutionId,
-                            },
-                        },
+                    id: {
+                        in: roomsIds,
                     },
+                    institutionId: institutionId,
                 },
             },
             start: {
@@ -145,29 +125,7 @@ export async function getOverlappingAppointments(
                 gte: start,
                 lte: end,
             },
-            isCancelled: isCancelled,
+            isCancelled: false,
         },
     });
-}
-
-export function getOverlappingSubstitutions(
-    substitutions: Prisma.SubstitutionsGetPayload<{
-        select: {
-            id: true;
-            from: true;
-            to: true;
-        };
-    }>[],
-    to: Date,
-    from: Date,
-): Prisma.SubstitutionsGetPayload<{
-    select: {
-        id: true;
-        from: true;
-        to: true;
-    };
-}>[] {
-    return substitutions.filter(
-        (sub) => sub.from <= new Date(to) && sub.to >= new Date(from),
-    );
 }

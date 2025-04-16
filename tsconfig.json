@@ -29,10 +29,9 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "forceConsistentCasingInFileNames": true,
+    "exactOptionalPropertyTypes": true,
     "paths": {
       "@app/*": ["src/*"],
     },
-    
-    "exactOptionalPropertyTypes": false,
   }
 }

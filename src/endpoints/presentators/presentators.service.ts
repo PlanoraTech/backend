@@ -498,7 +498,7 @@ export class PresentatorsFromAppointmentsService {
                                           institutionId: institutionId,
                                       },
                                   }
-                                : undefined,
+                                : Prisma.skip,
                             rooms: dataService.roomId
                                 ? {
                                       some: {
@@ -506,7 +506,7 @@ export class PresentatorsFromAppointmentsService {
                                           institutionId: institutionId,
                                       },
                                   }
-                                : undefined,
+                                : Prisma.skip,
                             presentators: dataService.presentatorId
                                 ? {
                                       some: {
@@ -520,7 +520,7 @@ export class PresentatorsFromAppointmentsService {
                                           },
                                       },
                                   }
-                                : undefined,
+                                : Prisma.skip,
                         },
                     },
                 },
@@ -554,7 +554,7 @@ export class PresentatorsFromAppointmentsService {
                                           institutionId: institutionId,
                                       },
                                   }
-                                : undefined,
+                                : Prisma.skip,
                             rooms: dataService.roomId
                                 ? {
                                       some: {
@@ -562,7 +562,7 @@ export class PresentatorsFromAppointmentsService {
                                           institutionId: institutionId,
                                       },
                                   }
-                                : undefined,
+                                : Prisma.skip,
                             presentators: dataService.presentatorId
                                 ? {
                                       some: {
@@ -576,7 +576,7 @@ export class PresentatorsFromAppointmentsService {
                                           },
                                       },
                                   }
-                                : undefined,
+                                : Prisma.skip,
                         },
                     },
                 },
@@ -730,7 +730,7 @@ export class PresentatorsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         rooms: dataService.roomId
                             ? {
                                   some: {
@@ -738,7 +738,7 @@ export class PresentatorsFromAppointmentsService {
                                       institutionId: institutionId,
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                         presentators: dataService.presentatorId
                             ? {
                                   some: {
@@ -752,7 +752,7 @@ export class PresentatorsFromAppointmentsService {
                                       },
                                   },
                               }
-                            : undefined,
+                            : Prisma.skip,
                     },
                 },
             })
@@ -822,9 +822,11 @@ export class PresentatorsFromAppointmentsService {
             await prisma.presentatorsToAppointments.deleteMany({
                 where: {
                     appointmentId: dataService.appointmentId,
-                    presentatorId: {
-                        not: dataService.presentatorId,
-                    },
+                    presentatorId: dataService.presentatorId
+                        ? {
+                              not: dataService.presentatorId,
+                          }
+                        : Prisma.skip,
                 },
             });
             await prisma.presentatorsToAppointments.createMany({
@@ -915,7 +917,7 @@ export class PresentatorsFromAppointmentsService {
                                   institutionId: institutionId,
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                     rooms: dataService.roomId
                         ? {
                               some: {
@@ -923,7 +925,7 @@ export class PresentatorsFromAppointmentsService {
                                   institutionId: institutionId,
                               },
                           }
-                        : undefined,
+                        : Prisma.skip,
                 },
             },
         });

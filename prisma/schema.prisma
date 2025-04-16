@@ -5,8 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client-js"
-    previewFeatures = ["relationJoins"]
+    provider        = "prisma-client-js"
+    previewFeatures = ["relationJoins", "strictUndefinedChecks"]
 }
 
 datasource db {
