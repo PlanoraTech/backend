@@ -434,20 +434,24 @@ async function createAppointments(prisma: Omit<PrismaClient<Prisma.PrismaClientO
 					}
 				},
 				rooms: {
-					connect: appointments[i]!.rooms.map((room) => {
-						return {
-							id: room?.id,
-							institutionId: institutionId,
-						}
-					}),
+					connect: appointments[i]!.rooms
+						.filter((room) => room?.id !== undefined)
+						.map((room) => {
+							return {
+								id: room!.id!,
+								institutionId: institutionId,
+							};
+						}),
 				},
 				timetables: {
-					connect: appointments[i]!.timetables.map((timetable) => {
-						return {
-							id: timetable?.id,
-							institutionId: institutionId,
-						}
-					}),
+					connect: appointments[i]!.timetables
+						.filter((timetable) => timetable?.id !== undefined)
+						.map((timetable) => {
+							return {
+								id: timetable!.id!,
+								institutionId: institutionId,
+							};
+						}),
 				},
 				start: new Date(appointments[i]!.start),
 				end: new Date(appointments[i]!.end),
@@ -474,7 +478,7 @@ async function presentatorsToAppointments(prisma: Omit<PrismaClient<Prisma.Prism
 				},
 				presentator: {
 					connect: {
-						id: presentators[i]?.id,
+						id: presentators[i]!.id,
 					},
 				},
 				isSubstituted: presentators[i]?.isSubstituted || false,
@@ -527,7 +531,7 @@ async function createUsers(prisma: Omit<PrismaClient<Prisma.PrismaClientOptions,
 						connect: {
 							name: users[i]!.name,
 						}
-					} : undefined,
+					} : Prisma.skip,
 				}
 			}).catch((e) => {
 				if (e instanceof PrismaClientKnownRequestError) {
