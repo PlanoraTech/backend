@@ -21,10 +21,11 @@ import {
 import {
     AccessType,
     Permissions,
-    Rooms,
+    Prisma,
     SpecialPermissions,
 } from '@prisma/client';
 import { RoomsFromAppointmentsService, RoomsService } from './rooms.service';
+import { roomsSelect } from './utils/rooms.util';
 import { Access } from '@app/decorators/access.decorator';
 import { Permission } from '@app/decorators/permission.decorator';
 import { SpecialPermission } from '@app/decorators/specialPermission.decorator';
@@ -66,7 +67,11 @@ export class RoomsController {
     @ApiForbiddenResponse({
         description: 'Forbidden. You do not have permission to access rooms.',
     })
-    findAll(@Param('institutionId') institutionId: string): Promise<Rooms[]> {
+    findAll(@Param('institutionId') institutionId: string): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>[]
+    > {
         return this.roomsService.findAll(institutionId);
     }
 
@@ -86,7 +91,11 @@ export class RoomsController {
     findOne(
         @Param('institutionId') institutionId: string,
         @Param('id') id: string,
-    ): Promise<Rooms> {
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>
+    > {
         return this.roomsService.findOne(institutionId, id);
     }
 
@@ -194,7 +203,11 @@ export class RoomsFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<Rooms[]> {
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>[]
+    > {
         return this.roomsService.findAll(institutionId, {
             timetableId: timetableId,
             presentatorId: presentatorId,
@@ -227,7 +240,11 @@ export class RoomsFromAppointmentsController {
         @Param('presentatorId') presentatorId: string,
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
-    ): Promise<Rooms[]> {
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>[]
+    > {
         return this.roomsService.findAvailableRooms(institutionId, {
             timetableId: timetableId,
             presentatorId: presentatorId,
@@ -260,7 +277,11 @@ export class RoomsFromAppointmentsController {
         @Param('roomId') roomId: string,
         @Param('appointmentId') appointmentId: string,
         @Param('id') id: string,
-    ): Promise<Rooms> {
+    ): Promise<
+        Prisma.RoomsGetPayload<{
+            select: typeof roomsSelect;
+        }>
+    > {
         return this.roomsService.findOne(
             institutionId,
             {
